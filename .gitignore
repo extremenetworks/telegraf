@@ -7,4 +7,4 @@
 .DS_Store
 process.yml
 .cache
-telegraf.*-*.tar
+telegraf_*_*.tar

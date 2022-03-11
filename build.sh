@@ -43,7 +43,7 @@ upload()
             exit 1
         fi
     fi
-    jfrog rt upload ${target} xos-binaries-local-release/telegraf/${target} --server-id ${salem}
+    jfrog rt upload ${target} xos-binaries-local-release/telegraf/${arch}/${target} --server-id ${salem}
 }
 
 #######################
@@ -68,7 +68,7 @@ if [ "$arch" = "x86_64" ]; then
 else
     bld_arch=${arch}
 fi
-target=telegraf.${arch}-${version}.tar
+target=telegraf_${arch}_${version}.tar
 
 # check action argument
 case $2 in
