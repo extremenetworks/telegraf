@@ -59,7 +59,7 @@ go env -w GOMODCACHE=/opt/go/pkg/mod
 go env -w GOCACHE=$(pwd -P)/.cache/go-build
 # grab version string
 version=$(cat build_version.txt)
-salem=Salemm
+salem=Salem
 
 # set architecture name and build architecture as used by golang
 arch=$1
