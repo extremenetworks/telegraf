@@ -6,3 +6,5 @@
 /vendor
 .DS_Store
 process.yml
+.cache
+telegraf.*-*.tar
