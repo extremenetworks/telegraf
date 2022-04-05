@@ -44,9 +44,9 @@ StatsCpu,node=NODE1  cpu=1,min=31,max=42,avg=76,interval=1,samplePeriod=10 15568
 StatsCpu,node=NODE1  cpu=2,min=22,max=52,avg=11,interval=1,samplePeriod=10 1556813561098000000
 EventInterfaceStatus,node=NODE2  ifIndex="1001",port="1:1",adminStatus=1,operStatus=1 1557813561098000000
 EventInterfaceStatus,node=NODE2  ifIndex="1002",port="1:2",adminStatus=0,operStatus=0 1557813561098000000
-```text
+```
 
-will serialize int the following extr JSON ouput
+will serialize into the following extr JSON ouput
    
 ```json
 [{
@@ -64,6 +64,6 @@ will serialize int the following extr JSON ouput
       {"adminStatus":1,"ifIndex":"1001","operStatus":1,"port":"1:1"},
       {"adminStatus":0,"ifIndex":"1002","operStatus":0,"port":"1:2"}],
    "name":"EventInterfaceStatus",
-   "tags":{"node":"NODE2},
-   "timestamp":1556899561}]
+   "tags":{"node":"NODE2"},
+   "timestamp":1557899561}]
 ```
