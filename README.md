@@ -393,6 +393,7 @@ For documentation on the latest development code see the [documentation index][d
 - [ServiceNow](/plugins/serializers/nowmetric)
 - [SplunkMetric](/plugins/serializers/splunkmetric)
 - [Wavefront](/plugins/serializers/wavefront)
+- [ExtremeNetworks](/plugins/serializers/extr)
 
 ## Processor Plugins
 
