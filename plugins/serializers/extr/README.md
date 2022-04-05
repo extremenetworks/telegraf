@@ -1,6 +1,6 @@
-\# EXTR
+# EXTR
 
-The `extr` output data format converts metrics into JSON documents, combining those sequential metrics matching name, tags, and timestamps into a single JSON metric, combining the fields of each metric in an array.
+The `extr` output data format converts metrics into JSON documents, combining those sequential metrics matching name, tags, and timestamps into a single JSON metric, combining the fields of each metric into an array of fields.
 
 ### Configuration
 
