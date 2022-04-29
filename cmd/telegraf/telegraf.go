@@ -23,6 +23,7 @@ import (
 	"github.com/influxdata/telegraf/config"
 	"github.com/influxdata/telegraf/internal"
 	"github.com/influxdata/telegraf/internal/goplugin"
+	"github.com/influxdata/telegraf/internal/subscription"
 	"github.com/influxdata/telegraf/logger"
 	_ "github.com/influxdata/telegraf/plugins/aggregators/all"
 	"github.com/influxdata/telegraf/plugins/inputs"
@@ -99,6 +100,8 @@ var fRunAsConsole = flag.Bool("console", false,
 var fPlugins = flag.String("plugin-directory", "",
 	"path to directory containing external plugins")
 var fRunOnce = flag.Bool("once", false, "run one gather and exit")
+
+var fRestApiAddr = flag.String("subscription-addr", "", "address to listen on for subscription for stats, not activate REST API server if empty.")
 
 var (
 	version string
@@ -340,6 +343,11 @@ func formatFullVersion() string {
 	return strings.Join(parts, " ")
 }
 
+func keepalive(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(200)
+	w.Write([]byte("OK"))
+}
+
 func main() {
 	flag.Var(&fConfigs, "config", "configuration file to load")
 	flag.Var(&fConfigDirs, "config-directory", "directory containing additional *.conf files")
@@ -397,6 +405,26 @@ func main() {
 				log.Fatal("E! " + err.Error())
 			}
 		}()
+	}
+
+	if *fRestApiAddr != "" {
+		if len(fConfigDirs) > 0 {
+			configDir := fConfigDirs[0]
+			log.Printf("I! Using config directory %s to persist subscriptions.", configDir)
+
+			go func() {
+				h := subscription.SubscriptionListener{
+					Address:   *fRestApiAddr,
+					ConfigDir: configDir,
+				}
+				err := h.Start()
+				if err != nil {
+					log.Fatal("E! Initializing listener at " + h.Address + ": " + err.Error())
+				}
+			}()
+		} else {
+			log.Fatal("E! --subscription-addr requires to specify at least one config directory via --config-directory")
+		}
 	}
 
 	if len(args) > 0 {

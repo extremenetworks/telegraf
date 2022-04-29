@@ -43,6 +43,7 @@ The commands & flags are:
   --test-wait                    wait up to this many seconds for service inputs to complete
                                  in test or once mode. Implies --test if not used with --once.
   --usage <plugin>               print usage for a plugin, ie, 'telegraf --usage mysql'
+  --subscription-addr <address>  address to listen on for subscription for stats and state updates. If empty then subscription server is not started. Subscription server requires to specify at least one config directory via --config-directory
   --version                      display the version and exit
 
 Examples:
