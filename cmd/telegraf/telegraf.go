@@ -343,11 +343,6 @@ func formatFullVersion() string {
 	return strings.Join(parts, " ")
 }
 
-func keepalive(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
-	w.Write([]byte("OK"))
-}
-
 func main() {
 	flag.Var(&fConfigs, "config", "configuration file to load")
 	flag.Var(&fConfigDirs, "config-directory", "directory containing additional *.conf files")
