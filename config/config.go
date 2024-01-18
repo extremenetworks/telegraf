@@ -21,6 +21,7 @@ import (
 
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/internal"
+
 	//"github.com/influxdata/telegraf/internal/choice"
 	"github.com/influxdata/telegraf/models"
 	"github.com/influxdata/telegraf/plugins/aggregators"
@@ -1409,11 +1410,11 @@ func (c *Config) getParserConfig(name string, tbl *ast.Table) (*parsers.Config, 
 	c.getFieldString(tbl, "json_timezone", &pc.JSONTimezone)
 	c.getFieldBool(tbl, "json_strict", &pc.JSONStrict)
 	c.getFieldString(tbl, "data_type", &pc.DataType)
-	c.getFieldString(tbl, "collectd_auth_file", &pc.CollectdAuthFile)
-	c.getFieldString(tbl, "collectd_security_level", &pc.CollectdSecurityLevel)
-	c.getFieldString(tbl, "collectd_parse_multivalue", &pc.CollectdSplit)
+	// c.getFieldString(tbl, "collectd_auth_file", &pc.CollectdAuthFile)
+	// c.getFieldString(tbl, "collectd_security_level", &pc.CollectdSecurityLevel)
+	// c.getFieldString(tbl, "collectd_parse_multivalue", &pc.CollectdSplit)
 
-	c.getFieldStringSlice(tbl, "collectd_typesdb", &pc.CollectdTypesDB)
+	// c.getFieldStringSlice(tbl, "collectd_typesdb", &pc.CollectdTypesDB)
 
 	c.getFieldString(tbl, "dropwizard_metric_registry_path", &pc.DropwizardMetricRegistryPath)
 	c.getFieldString(tbl, "dropwizard_time_path", &pc.DropwizardTimePath)
@@ -1609,8 +1610,8 @@ func (c *Config) buildSerializer(tbl *ast.Table) (serializers.Serializer, error)
 	c.getFieldBool(tbl, "splunkmetric_hec_routing", &sc.HecRouting)
 	c.getFieldBool(tbl, "splunkmetric_multimetric", &sc.SplunkmetricMultiMetric)
 
-	c.getFieldStringSlice(tbl, "wavefront_source_override", &sc.WavefrontSourceOverride)
-	c.getFieldBool(tbl, "wavefront_use_strict", &sc.WavefrontUseStrict)
+	// c.getFieldStringSlice(tbl, "wavefront_source_override", &sc.WavefrontSourceOverride)
+	// c.getFieldBool(tbl, "wavefront_use_strict", &sc.WavefrontUseStrict)
 
     /*
 	c.getFieldBool(tbl, "prometheus_export_timestamp", &sc.PrometheusExportTimestamp)

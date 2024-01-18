@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/parsers/collectd"
+	// "github.com/influxdata/telegraf/plugins/parsers/collectd"
 	"github.com/influxdata/telegraf/plugins/parsers/csv"
 	"github.com/influxdata/telegraf/plugins/parsers/dropwizard"
 	"github.com/influxdata/telegraf/plugins/parsers/form_urlencoded"
@@ -15,6 +15,7 @@ import (
 	"github.com/influxdata/telegraf/plugins/parsers/json_v2"
 	"github.com/influxdata/telegraf/plugins/parsers/logfmt"
 	"github.com/influxdata/telegraf/plugins/parsers/nagios"
+
 	//"github.com/influxdata/telegraf/plugins/parsers/prometheus"
 	//"github.com/influxdata/telegraf/plugins/parsers/prometheusremotewrite"
 	"github.com/influxdata/telegraf/plugins/parsers/value"
@@ -97,15 +98,15 @@ type Config struct {
 	// Whether to continue if a JSON object can't be coerced
 	JSONStrict bool `toml:"json_strict"`
 
-	// Authentication file for collectd
-	CollectdAuthFile string `toml:"collectd_auth_file"`
-	// One of none (default), sign, or encrypt
-	CollectdSecurityLevel string `toml:"collectd_security_level"`
-	// Dataset specification for collectd
-	CollectdTypesDB []string `toml:"collectd_types_db"`
+	// // Authentication file for collectd
+	// CollectdAuthFile string `toml:"collectd_auth_file"`
+	// // One of none (default), sign, or encrypt
+	// CollectdSecurityLevel string `toml:"collectd_security_level"`
+	// // Dataset specification for collectd
+	// CollectdTypesDB []string `toml:"collectd_types_db"`
 
-	// whether to split or join multivalue metrics
-	CollectdSplit string `toml:"collectd_split"`
+	// // whether to split or join multivalue metrics
+	// CollectdSplit string `toml:"collectd_split"`
 
 	// DataType only applies to value, this will be the type to parse value to
 	DataType string `toml:"data_type"`
@@ -212,9 +213,9 @@ func NewParser(config *Config) (Parser, error) {
 	case "graphite":
 		parser, err = NewGraphiteParser(config.Separator,
 			config.Templates, config.DefaultTags)
-	case "collectd":
-		parser, err = NewCollectdParser(config.CollectdAuthFile,
-			config.CollectdSecurityLevel, config.CollectdTypesDB, config.CollectdSplit)
+	// case "collectd":
+	// 	parser, err = NewCollectdParser(config.CollectdAuthFile,
+	// 		config.CollectdSecurityLevel, config.CollectdTypesDB, config.CollectdSplit)
 	case "dropwizard":
 		parser, err = NewDropwizardParser(
 			config.DropwizardMetricRegistryPath,
@@ -335,14 +336,14 @@ func NewValueParser(
 	return value.NewValueParser(metricName, dataType, fieldName, defaultTags), nil
 }
 
-func NewCollectdParser(
-	authFile string,
-	securityLevel string,
-	typesDB []string,
-	split string,
-) (Parser, error) {
-	return collectd.NewCollectdParser(authFile, securityLevel, typesDB, split)
-}
+// func NewCollectdParser(
+// 	authFile string,
+// 	securityLevel string,
+// 	typesDB []string,
+// 	split string,
+// ) (Parser, error) {
+// 	return collectd.NewCollectdParser(authFile, securityLevel, typesDB, split)
+// }
 
 func NewDropwizardParser(
 	metricRegistryPath string,
