@@ -18,7 +18,7 @@ import (
 	//"github.com/influxdata/telegraf/plugins/parsers/prometheus"
 	//"github.com/influxdata/telegraf/plugins/parsers/prometheusremotewrite"
 	"github.com/influxdata/telegraf/plugins/parsers/value"
-	"github.com/influxdata/telegraf/plugins/parsers/wavefront"
+	// "github.com/influxdata/telegraf/plugins/parsers/wavefront"
 	//"github.com/influxdata/telegraf/plugins/parsers/xpath"
 )
 
@@ -225,8 +225,8 @@ func NewParser(config *Config) (Parser, error) {
 			config.DefaultTags,
 			config.Separator,
 			config.Templates)
-	case "wavefront":
-		parser, err = NewWavefrontParser(config.DefaultTags)
+	// case "wavefront":
+	// 	parser, err = NewWavefrontParser(config.DefaultTags)
 	case "grok":
 		parser, err = newGrokParser(
 			config.MetricName,
@@ -374,9 +374,9 @@ func NewLogFmtParser(metricName string, defaultTags map[string]string) (Parser, 
 	return logfmt.NewParser(metricName, defaultTags), nil
 }
 
-func NewWavefrontParser(defaultTags map[string]string) (Parser, error) {
-	return wavefront.NewWavefrontParser(defaultTags), nil
-}
+// func NewWavefrontParser(defaultTags map[string]string) (Parser, error) {
+// 	return wavefront.NewWavefrontParser(defaultTags), nil
+// }
 
 func NewFormUrlencodedParser(
 	metricName string,

@@ -15,7 +15,7 @@ import (
 	//"github.com/influxdata/telegraf/plugins/serializers/prometheus"
 	//"github.com/influxdata/telegraf/plugins/serializers/prometheusremotewrite"
 	"github.com/influxdata/telegraf/plugins/serializers/splunkmetric"
-	"github.com/influxdata/telegraf/plugins/serializers/wavefront"
+	// "github.com/influxdata/telegraf/plugins/serializers/wavefront"
 )
 
 // SerializerOutput is an interface for output plugins that are able to
@@ -98,12 +98,12 @@ type Config struct {
 	// Enable Splunk MultiMetric output (Splunk 8.0+)
 	SplunkmetricMultiMetric bool `toml:"splunkmetric_multi_metric"`
 
-	// Point tags to use as the source name for Wavefront (if none found, host will be used).
-	WavefrontSourceOverride []string `toml:"wavefront_source_override"`
+	// // Point tags to use as the source name for Wavefront (if none found, host will be used).
+	// WavefrontSourceOverride []string `toml:"wavefront_source_override"`
 
-	// Use Strict rules to sanitize metric and tag names from invalid characters for Wavefront
-	// When enabled forward slash (/) and comma (,) will be accepted
-	WavefrontUseStrict bool `toml:"wavefront_use_strict"`
+	// // Use Strict rules to sanitize metric and tag names from invalid characters for Wavefront
+	// // When enabled forward slash (/) and comma (,) will be accepted
+	// WavefrontUseStrict bool `toml:"wavefront_use_strict"`
     
     /*
 	// Include the metric timestamp on each sample.
@@ -136,8 +136,8 @@ func NewSerializer(config *Config) (Serializer, error) {
 		serializer, err = NewNowSerializer()
 	case "carbon2":
 		serializer, err = NewCarbon2Serializer(config.Carbon2Format, config.Carbon2SanitizeReplaceChar)
-	case "wavefront":
-		serializer, err = NewWavefrontSerializer(config.Prefix, config.WavefrontUseStrict, config.WavefrontSourceOverride)
+	// case "wavefront":
+	// 	serializer, err = NewWavefrontSerializer(config.Prefix, config.WavefrontUseStrict, config.WavefrontSourceOverride)
     /*
 	case "prometheus":
 		serializer, err = NewPrometheusSerializer(config)
@@ -196,9 +196,9 @@ func NewPrometheusSerializer(config *Config) (Serializer, error) {
 }
 */
 
-func NewWavefrontSerializer(prefix string, useStrict bool, sourceOverride []string) (Serializer, error) {
-	return wavefront.NewSerializer(prefix, useStrict, sourceOverride)
-}
+// func NewWavefrontSerializer(prefix string, useStrict bool, sourceOverride []string) (Serializer, error) {
+// 	return wavefront.NewSerializer(prefix, useStrict, sourceOverride)
+// }
 
 func NewJSONSerializer(timestampUnits time.Duration, timestampFormat string) (Serializer, error) {
 	return json.NewSerializer(timestampUnits, timestampFormat)
