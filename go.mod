@@ -7,7 +7,6 @@ require (
 	github.com/alecthomas/units v0.0.0-20231202071711-9a357b53e9c9
 	github.com/benbjohnson/clock v1.3.5
 	github.com/bmatcuk/doublestar/v3 v3.0.0
-	github.com/caio/go-tdigest v3.1.0+incompatible
 	github.com/coreos/go-semver v0.3.1
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/fatih/color v1.16.0
@@ -42,7 +41,6 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
-	github.com/leesper/go_rng v0.0.0-20190531154944-a612b043e353 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/naoina/go-stringutil v0.1.0 // indirect
@@ -51,7 +49,6 @@ require (
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
-	gonum.org/v1/gonum v0.11.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
