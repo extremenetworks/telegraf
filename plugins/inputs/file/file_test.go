@@ -1,7 +1,7 @@
 //go:build !windows
 
 // TODO: Windows - should be enabled for Windows when super asterisk is fixed on Windows
-// https://github.com/influxdata/telegraf/issues/6248
+// https://github.com/extremenetworks/telegraf/issues/6248
 
 package file
 
@@ -14,12 +14,12 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
-	"github.com/influxdata/telegraf/plugins/parsers/csv"
-	"github.com/influxdata/telegraf/plugins/parsers/grok"
-	"github.com/influxdata/telegraf/plugins/parsers/json"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
+	"github.com/extremenetworks/telegraf/plugins/parsers/csv"
+	"github.com/extremenetworks/telegraf/plugins/parsers/grok"
+	"github.com/extremenetworks/telegraf/plugins/parsers/json"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestRefreshFilePaths(t *testing.T) {

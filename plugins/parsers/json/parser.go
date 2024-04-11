@@ -10,11 +10,11 @@ import (
 
 	"github.com/tidwall/gjson"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/filter"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/metric"
-	"github.com/influxdata/telegraf/plugins/parsers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/filter"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/metric"
+	"github.com/extremenetworks/telegraf/plugins/parsers"
 )
 
 var (

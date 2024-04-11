@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/filter"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/filter"
 )
 
 type converterType int

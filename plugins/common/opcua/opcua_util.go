@@ -21,7 +21,7 @@ import (
 	"github.com/gopcua/opcua/debug"
 	"github.com/gopcua/opcua/ua"
 
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 // SELF SIGNED CERT FUNCTIONS

@@ -13,14 +13,14 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	tlsint "github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/parsers/influx"
-	"github.com/influxdata/telegraf/plugins/parsers/influx/influx_upstream"
-	"github.com/influxdata/telegraf/selfstat"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	tlsint "github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx/influx_upstream"
+	"github.com/extremenetworks/telegraf/selfstat"
 )
 
 //go:embed sample.conf

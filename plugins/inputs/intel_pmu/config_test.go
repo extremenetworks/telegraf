@@ -11,7 +11,7 @@ import (
 	ia "github.com/intel/iaevents"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestConfigParser_parseEntities(t *testing.T) {

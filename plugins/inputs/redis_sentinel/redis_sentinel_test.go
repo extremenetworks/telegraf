@@ -14,8 +14,8 @@ import (
 	"github.com/testcontainers/testcontainers-go/network"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 const masterName = "mymaster"

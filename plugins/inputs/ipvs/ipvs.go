@@ -12,9 +12,9 @@ import (
 
 	"github.com/moby/ipvs"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/common/logrus"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/common/logrus"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 //go:embed sample.conf

@@ -8,8 +8,8 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/influxdata/telegraf"
-	telegrafMetric "github.com/influxdata/telegraf/metric"
+	"github.com/extremenetworks/telegraf"
+	telegrafMetric "github.com/extremenetworks/telegraf/metric"
 )
 
 type metricDiff struct {

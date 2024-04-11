@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/inputs/internet_speed" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/inputs/internet_speed" // register plugin

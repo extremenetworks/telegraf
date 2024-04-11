@@ -10,7 +10,7 @@ import (
 
 	ptel "github.com/intel/powertelemetry"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // cpuMetricType is an enum type to identify core metrics.

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 // A subscription can be used to watch multiple ctrlX Data Layer nodes for changes.

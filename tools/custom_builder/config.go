@@ -11,7 +11,7 @@ import (
 	"github.com/influxdata/toml"
 	"github.com/influxdata/toml/ast"
 
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 type instance struct {

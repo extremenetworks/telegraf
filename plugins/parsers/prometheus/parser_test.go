@@ -9,10 +9,10 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/models"
-	"github.com/influxdata/telegraf/testutil"
-	test "github.com/influxdata/telegraf/testutil/plugin_input"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/models"
+	"github.com/extremenetworks/telegraf/testutil"
+	test "github.com/extremenetworks/telegraf/testutil/plugin_input"
 )
 
 func TestCases(t *testing.T) {

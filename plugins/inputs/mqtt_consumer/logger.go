@@ -1,7 +1,7 @@
 package mqtt_consumer
 
 import (
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type mqttLogger struct {

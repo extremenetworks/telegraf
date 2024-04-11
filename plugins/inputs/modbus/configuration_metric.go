@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"hash/maphash"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 //go:embed sample_metric.conf

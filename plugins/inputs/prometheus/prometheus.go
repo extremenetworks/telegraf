@@ -19,14 +19,14 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/tools/cache"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/filter"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/models"
-	httpconfig "github.com/influxdata/telegraf/plugins/common/http"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	parser "github.com/influxdata/telegraf/plugins/parsers/prometheus"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/filter"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/models"
+	httpconfig "github.com/extremenetworks/telegraf/plugins/common/http"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	parser "github.com/extremenetworks/telegraf/plugins/parsers/prometheus"
 )
 
 //go:embed sample.conf

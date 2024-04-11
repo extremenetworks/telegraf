@@ -1,4 +1,4 @@
-module github.com/influxdata/telegraf
+module github.com/extremenetworks/telegraf
 
 go 1.22
 

@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tbrandon/mbserver"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestRequest(t *testing.T) {

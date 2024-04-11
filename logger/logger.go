@@ -11,8 +11,8 @@ import (
 
 	"github.com/influxdata/wlog"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal/rotate"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal/rotate"
 )
 
 var prefixRegex = regexp.MustCompile("^[DIWE]!")

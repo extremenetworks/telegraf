@@ -3,5 +3,5 @@
 package all
 
 import (
-	_ "github.com/influxdata/telegraf/plugins/serializers/template" // register plugin
+	_ "github.com/extremenetworks/telegraf/plugins/serializers/template" // register plugin
 )

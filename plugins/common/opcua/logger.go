@@ -1,7 +1,7 @@
 package opcua
 
 import (
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // DebugLogger logs messages from opcua at the debug level.

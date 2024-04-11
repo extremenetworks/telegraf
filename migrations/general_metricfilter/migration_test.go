@@ -7,10 +7,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	_ "github.com/influxdata/telegraf/migrations/general_metricfilter" // register migration
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	_ "github.com/extremenetworks/telegraf/migrations/general_metricfilter" // register migration
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 func TestNoMigration(t *testing.T) {

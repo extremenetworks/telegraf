@@ -15,12 +15,12 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/gofrs/uuid/v5"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	v1 "github.com/influxdata/telegraf/plugins/inputs/mysql/v1"
-	v2 "github.com/influxdata/telegraf/plugins/inputs/mysql/v2"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	v1 "github.com/extremenetworks/telegraf/plugins/inputs/mysql/v1"
+	v2 "github.com/extremenetworks/telegraf/plugins/inputs/mysql/v2"
 )
 
 //go:embed sample.conf
@@ -1127,7 +1127,7 @@ func getColSlice(rows *sql.Rows) ([]interface{}, error) {
 			}
 
 			// Percona 8 has some special fields that are float instead of ints
-			// see: https://github.com/influxdata/telegraf/issues/7360
+			// see: https://github.com/extremenetworks/telegraf/issues/7360
 			switch ct.ScanType().Kind() {
 			case reflect.Float32, reflect.Float64:
 				cols = append(cols, new(float64))

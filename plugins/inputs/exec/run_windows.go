@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal"
 	"github.com/kballard/go-shellquote"
 )
 

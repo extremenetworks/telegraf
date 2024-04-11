@@ -11,8 +11,8 @@ import (
 
 	"github.com/netsampler/goflow2/v2/decoders/netflow"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
 )
 
 var regexpIPFIXPENMapping = regexp.MustCompile(`\d+\.\d+`)
@@ -709,8 +709,8 @@ func (d *netflowDecoder) decodeValueV9(field netflow.DataField) ([]telegraf.Fiel
 	}
 
 	// Fallback to IPFIX mappings as some devices seem to send IPFIX elements in
-	// Netflow v9 packets. See https://github.com/influxdata/telegraf/issues/14902
-	// and https://github.com/influxdata/telegraf/issues/14903.
+	// Netflow v9 packets. See https://github.com/extremenetworks/telegraf/issues/14902
+	// and https://github.com/extremenetworks/telegraf/issues/14903.
 	if mappings, found := fieldMappingsIPFIX[elementID]; found {
 		var fields []telegraf.Field
 		for _, m := range mappings {

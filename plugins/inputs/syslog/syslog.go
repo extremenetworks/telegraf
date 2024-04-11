@@ -18,9 +18,9 @@ import (
 	"github.com/influxdata/go-syslog/v3/rfc3164"
 	"github.com/influxdata/go-syslog/v3/rfc5424"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/common/socket"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/common/socket"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 //go:embed sample.conf

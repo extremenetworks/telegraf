@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // struct that implements the translator interface. This calls existing

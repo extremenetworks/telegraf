@@ -1,6 +1,6 @@
 package processors
 
-import "github.com/influxdata/telegraf"
+import "github.com/extremenetworks/telegraf"
 
 type Creator func() telegraf.Processor
 type StreamingCreator func() telegraf.StreamingProcessor

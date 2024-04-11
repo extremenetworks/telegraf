@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/metric"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/metric"
 )
 
 type BinaryPart struct {

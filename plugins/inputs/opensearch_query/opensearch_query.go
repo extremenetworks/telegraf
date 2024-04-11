@@ -16,10 +16,10 @@ import (
 	"github.com/opensearch-project/opensearch-go/v2"
 	"github.com/opensearch-project/opensearch-go/v2/opensearchapi"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	influxtls "github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	influxtls "github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 //go:embed sample.conf

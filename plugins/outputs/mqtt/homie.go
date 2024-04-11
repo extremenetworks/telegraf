@@ -8,8 +8,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 var idRe = regexp.MustCompile(`([^a-z0-9]+)`)

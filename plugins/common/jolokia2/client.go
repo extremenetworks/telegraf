@@ -10,7 +10,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/influxdata/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/common/tls"
 )
 
 type Client struct {

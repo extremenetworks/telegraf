@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/influxdata/telegraf/plugins/inputs/zipkin/codec/thrift/gen-go/zipkincore"
+	"github.com/extremenetworks/telegraf/plugins/inputs/zipkin/codec/thrift/gen-go/zipkincore"
 )
 
 func Test_endpointHost(t *testing.T) {

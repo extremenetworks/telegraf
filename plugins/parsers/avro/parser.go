@@ -10,10 +10,10 @@ import (
 	"github.com/jeremywohl/flatten/v2"
 	"github.com/linkedin/goavro/v2"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/metric"
-	"github.com/influxdata/telegraf/plugins/parsers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/metric"
+	"github.com/extremenetworks/telegraf/plugins/parsers"
 )
 
 // If SchemaRegistry is set, we assume that our input will be in

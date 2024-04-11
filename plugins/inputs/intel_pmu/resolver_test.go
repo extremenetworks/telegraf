@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 	ia "github.com/intel/iaevents"
 	"github.com/stretchr/testify/require"
 )

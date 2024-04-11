@@ -1,7 +1,7 @@
 package prometheus
 
 import (
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 	dto "github.com/prometheus/client_model/go"
 )
 

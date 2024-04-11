@@ -9,12 +9,12 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal/choice"
-	"github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	jsonparser "github.com/influxdata/telegraf/plugins/parsers/json"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	jsonparser "github.com/extremenetworks/telegraf/plugins/parsers/json"
 )
 
 //go:embed sample.conf

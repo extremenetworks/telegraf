@@ -21,10 +21,10 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/filter"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/filter"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
 )
 
 //go:embed sample.conf

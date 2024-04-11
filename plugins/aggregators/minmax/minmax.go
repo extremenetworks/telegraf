@@ -4,8 +4,8 @@ package minmax
 import (
 	_ "embed"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/aggregators"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/aggregators"
 )
 
 //go:embed sample.conf

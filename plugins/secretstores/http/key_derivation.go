@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/crypto/pbkdf2"
 
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 type KDFConfig struct {

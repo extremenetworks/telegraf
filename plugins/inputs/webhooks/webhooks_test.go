@@ -4,11 +4,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/influxdata/telegraf/plugins/inputs/webhooks/artifactory"
-	"github.com/influxdata/telegraf/plugins/inputs/webhooks/github"
-	"github.com/influxdata/telegraf/plugins/inputs/webhooks/papertrail"
-	"github.com/influxdata/telegraf/plugins/inputs/webhooks/particle"
-	"github.com/influxdata/telegraf/plugins/inputs/webhooks/rollbar"
+	"github.com/extremenetworks/telegraf/plugins/inputs/webhooks/artifactory"
+	"github.com/extremenetworks/telegraf/plugins/inputs/webhooks/github"
+	"github.com/extremenetworks/telegraf/plugins/inputs/webhooks/papertrail"
+	"github.com/extremenetworks/telegraf/plugins/inputs/webhooks/particle"
+	"github.com/extremenetworks/telegraf/plugins/inputs/webhooks/rollbar"
 )
 
 func TestAvailableWebhooks(t *testing.T) {

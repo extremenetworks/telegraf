@@ -11,7 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 var privateKey = testutil.NewPKI("../../../testutil/pki").ReadServerKey()

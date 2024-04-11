@@ -16,9 +16,9 @@ import (
 	"github.com/docker/docker/api/types/system"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal/choice"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 type MockClient struct {

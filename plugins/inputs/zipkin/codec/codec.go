@@ -3,8 +3,8 @@ package codec
 import (
 	"time"
 
-	"github.com/influxdata/telegraf/plugins/inputs/zipkin/codec/thrift/gen-go/zipkincore"
-	"github.com/influxdata/telegraf/plugins/inputs/zipkin/trace"
+	"github.com/extremenetworks/telegraf/plugins/inputs/zipkin/codec/thrift/gen-go/zipkincore"
+	"github.com/extremenetworks/telegraf/plugins/inputs/zipkin/trace"
 )
 
 // now is a mockable time for now

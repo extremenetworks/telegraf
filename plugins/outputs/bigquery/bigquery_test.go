@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/bigquery"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/api/option"
 )

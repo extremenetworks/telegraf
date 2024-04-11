@@ -5,10 +5,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
-	"github.com/influxdata/telegraf/plugins/serializers"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
+	"github.com/extremenetworks/telegraf/plugins/serializers"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func toTelegrafMetric(m Metric) telegraf.Metric {

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs/sflow/binaryio"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs/sflow/binaryio"
 )
 
 type PacketDecoder struct {

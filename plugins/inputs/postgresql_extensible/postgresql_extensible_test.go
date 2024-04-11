@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/inputs/postgresql"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/inputs/postgresql"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func queryRunner(t *testing.T, q query) *testutil.Accumulator {

@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/fatih/color"
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // Logger defines a logging structure for plugins.

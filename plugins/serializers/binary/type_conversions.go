@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"math"
 
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 func (e *Entry) convertToString(value interface{}, _ binary.ByteOrder) ([]byte, error) {

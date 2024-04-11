@@ -19,8 +19,8 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/slb"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vpc"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal/limiter"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal/limiter"
 )
 
 type discoveryRequest interface {

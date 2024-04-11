@@ -12,9 +12,9 @@ import (
 	corev2 "github.com/sensu/sensu-go/api/core/v2"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal/choice"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestResolveEventEndpointUrl(t *testing.T) {

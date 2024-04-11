@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/outputs/groundwork" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/outputs/groundwork" // register plugin

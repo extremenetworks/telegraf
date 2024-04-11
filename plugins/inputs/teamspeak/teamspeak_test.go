@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 const welcome = `Welcome to the TeamSpeak 3 ServerQuery interface, type "help" for a list of commands and ` +

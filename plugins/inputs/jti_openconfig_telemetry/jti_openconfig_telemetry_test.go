@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 
-	"github.com/influxdata/telegraf/config"
-	telemetry "github.com/influxdata/telegraf/plugins/inputs/jti_openconfig_telemetry/oc"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/config"
+	telemetry "github.com/extremenetworks/telegraf/plugins/inputs/jti_openconfig_telemetry/oc"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 var cfg = &OpenConfigTelemetry{

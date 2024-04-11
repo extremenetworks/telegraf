@@ -19,12 +19,12 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	jnprHeader "github.com/influxdata/telegraf/plugins/inputs/gnmi/extensions/jnpr_gnmi_extention"
-	"github.com/influxdata/telegraf/plugins/parsers/influx"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	jnprHeader "github.com/extremenetworks/telegraf/plugins/inputs/gnmi/extensions/jnpr_gnmi_extention"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestParsePath(t *testing.T) {

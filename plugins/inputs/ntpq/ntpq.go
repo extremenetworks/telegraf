@@ -14,9 +14,9 @@ import (
 
 	"github.com/kballard/go-shellquote"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal/choice"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 //go:embed sample.conf
@@ -24,7 +24,7 @@ var sampleConfig string
 
 // Due to problems with a parsing, we have to use regexp expression in order
 // to remove string that starts from '(' and ends with space
-// see: https://github.com/influxdata/telegraf/issues/2386
+// see: https://github.com/extremenetworks/telegraf/issues/2386
 var reBrackets = regexp.MustCompile(`\s+\([\S]*`)
 
 type elementType int64
@@ -283,7 +283,7 @@ func (n *NTPQ) gatherServer(acc telegraf.Accumulator, server string) {
 
 func processLine(line string) (string, []string) {
 	// if there is an ntpq state prefix, remove it and make it it's own tag
-	// see https://github.com/influxdata/telegraf/issues/1161
+	// see https://github.com/extremenetworks/telegraf/issues/1161
 	var prefix string
 	if strings.ContainsAny(string(line[0]), "*#o+x.-") {
 		prefix = string(line[0])

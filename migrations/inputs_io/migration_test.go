@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	_ "github.com/influxdata/telegraf/migrations/inputs_io"  // register migration
-	_ "github.com/influxdata/telegraf/plugins/inputs/diskio" // register plugin
+	"github.com/extremenetworks/telegraf/config"
+	_ "github.com/extremenetworks/telegraf/migrations/inputs_io"  // register migration
+	_ "github.com/extremenetworks/telegraf/plugins/inputs/diskio" // register plugin
 )
 
 func TestCases(t *testing.T) {

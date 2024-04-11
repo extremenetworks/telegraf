@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // makemetric applies new metric plugin and agent measurement and tag

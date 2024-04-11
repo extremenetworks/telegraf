@@ -17,11 +17,11 @@ import (
 	"github.com/influxdata/tail"
 	"github.com/pborman/ansi"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal/globpath"
-	"github.com/influxdata/telegraf/plugins/common/encoding"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/parsers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal/globpath"
+	"github.com/extremenetworks/telegraf/plugins/common/encoding"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/parsers"
 )
 
 //go:embed sample.conf

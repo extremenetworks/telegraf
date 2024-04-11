@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/internal/snmp"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/internal/snmp"
 )
 
 type execer func(config.Duration, string, ...string) ([]byte, error)

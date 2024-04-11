@@ -8,8 +8,8 @@ import (
 
 	"github.com/jackc/pgx/v4"
 
-	"github.com/influxdata/telegraf/plugins/outputs/postgresql/sqltemplate"
-	"github.com/influxdata/telegraf/plugins/outputs/postgresql/utils"
+	"github.com/extremenetworks/telegraf/plugins/outputs/postgresql/sqltemplate"
+	"github.com/extremenetworks/telegraf/plugins/outputs/postgresql/utils"
 )
 
 // This is an arbitrary constant value shared between multiple telegraf processes used for locking schema updates.

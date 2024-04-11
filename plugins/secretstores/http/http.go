@@ -14,10 +14,10 @@ import (
 
 	"github.com/blues/jsonata-go"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	chttp "github.com/influxdata/telegraf/plugins/common/http"
-	"github.com/influxdata/telegraf/plugins/secretstores"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	chttp "github.com/extremenetworks/telegraf/plugins/common/http"
+	"github.com/extremenetworks/telegraf/plugins/secretstores"
 )
 
 //go:embed sample.conf

@@ -9,12 +9,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/plugins/common/mqtt"
-	"github.com/influxdata/telegraf/plugins/outputs"
-	"github.com/influxdata/telegraf/plugins/serializers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/plugins/common/mqtt"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf/plugins/serializers"
 )
 
 //go:embed sample.conf

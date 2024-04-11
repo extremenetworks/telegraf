@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/go-ldap/ldap/v3"
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
 )
 
 // Empty mappings are identity mappings

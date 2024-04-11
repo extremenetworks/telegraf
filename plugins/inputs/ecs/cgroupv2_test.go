@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/plugins/parsers/influx"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 const cgroupID = "c69461b2c836cc3f0e3e5deb07b1f16e25f6009da2a48bb0adc7dd580befaf55"

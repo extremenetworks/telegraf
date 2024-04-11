@@ -8,8 +8,8 @@ import (
 
 	paho "github.com/eclipse/paho.mqtt.golang"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/common/tls"
 )
 
 // mqtt v5-specific publish properties.

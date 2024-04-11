@@ -7,8 +7,8 @@ import (
 	"github.com/datadope-io/go-zabbix/v2"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 // TestZabbixAutoregisterDisabledAdd tests that Add does not store information if autoregister is disabled.

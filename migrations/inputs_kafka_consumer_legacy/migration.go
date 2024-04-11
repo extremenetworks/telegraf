@@ -3,7 +3,7 @@ package inputs_kafka_consumer_legacy
 import (
 	"github.com/influxdata/toml/ast"
 
-	"github.com/influxdata/telegraf/migrations"
+	"github.com/extremenetworks/telegraf/migrations"
 )
 
 const msg = `

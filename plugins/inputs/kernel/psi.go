@@ -8,7 +8,7 @@ import (
 
 	"github.com/prometheus/procfs"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // Gather PSI metrics

@@ -15,12 +15,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/filter"
-	httpconfig "github.com/influxdata/telegraf/plugins/common/http"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	jsonparser "github.com/influxdata/telegraf/plugins/parsers/json"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/filter"
+	httpconfig "github.com/extremenetworks/telegraf/plugins/common/http"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	jsonparser "github.com/extremenetworks/telegraf/plugins/parsers/json"
 )
 
 //go:embed sample.conf

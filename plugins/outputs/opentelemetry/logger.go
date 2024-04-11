@@ -3,7 +3,7 @@ package opentelemetry
 import (
 	"strings"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type otelLogger struct {

@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/filter"
-	"github.com/influxdata/telegraf/plugins/serializers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/filter"
+	"github.com/extremenetworks/telegraf/plugins/serializers"
 )
 
 const DefaultTemplate = "host.tags.measurement.field"

@@ -10,8 +10,8 @@ import (
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/gofrs/uuid/v5"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/serializers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/serializers"
 )
 
 const (

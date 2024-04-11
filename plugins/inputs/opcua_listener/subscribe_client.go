@@ -10,10 +10,10 @@ import (
 	"github.com/gopcua/opcua"
 	"github.com/gopcua/opcua/ua"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	opcuaclient "github.com/influxdata/telegraf/plugins/common/opcua"
-	"github.com/influxdata/telegraf/plugins/common/opcua/input"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	opcuaclient "github.com/extremenetworks/telegraf/plugins/common/opcua"
+	"github.com/extremenetworks/telegraf/plugins/common/opcua/input"
 )
 
 type SubscribeClientConfig struct {

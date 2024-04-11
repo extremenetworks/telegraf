@@ -12,7 +12,7 @@ import (
 
 	"go.step.sm/crypto/pemutil"
 
-	"github.com/influxdata/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/internal/choice"
 )
 
 const TLSMinVersionDefault = tls.VersionTLS12

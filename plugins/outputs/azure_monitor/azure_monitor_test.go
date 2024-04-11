@@ -13,8 +13,8 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestAggregate(t *testing.T) {

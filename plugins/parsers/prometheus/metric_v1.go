@@ -7,8 +7,8 @@ import (
 
 	dto "github.com/prometheus/client_model/go"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
 )
 
 func (p *Parser) extractMetricsV1(prommetrics *dto.MetricFamily) []telegraf.Metric {

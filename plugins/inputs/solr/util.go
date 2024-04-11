@@ -3,7 +3,7 @@ package solr
 import (
 	"math"
 
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 // Get float64 from interface

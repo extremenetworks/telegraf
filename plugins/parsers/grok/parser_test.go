@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestGrokParse(t *testing.T) {
@@ -1149,7 +1149,7 @@ func TestEmptyYearInTimestamp(t *testing.T) {
 }
 
 func TestTrimRegression(t *testing.T) {
-	// https://github.com/influxdata/telegraf/issues/4998
+	// https://github.com/extremenetworks/telegraf/issues/4998
 	p := &Parser{
 		Patterns: []string{`%{GREEDYDATA:message:string}`},
 	}

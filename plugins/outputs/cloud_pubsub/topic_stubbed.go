@@ -13,11 +13,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/api/support/bundler"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/plugins/parsers/influx"
-	serializer "github.com/influxdata/telegraf/plugins/serializers/influx"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx"
+	serializer "github.com/extremenetworks/telegraf/plugins/serializers/influx"
 )
 
 const (

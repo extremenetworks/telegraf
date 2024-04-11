@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type TopicNameGenerator struct {

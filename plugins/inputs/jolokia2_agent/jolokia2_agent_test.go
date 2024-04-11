@@ -16,11 +16,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
-	common "github.com/influxdata/telegraf/plugins/common/jolokia2"
-	"github.com/influxdata/telegraf/plugins/inputs/jolokia2_agent"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
+	common "github.com/extremenetworks/telegraf/plugins/common/jolokia2"
+	"github.com/extremenetworks/telegraf/plugins/inputs/jolokia2_agent"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestScalarValues(t *testing.T) {

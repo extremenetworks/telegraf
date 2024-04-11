@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/parsers/json_v2" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/parsers/json_v2" // register plugin

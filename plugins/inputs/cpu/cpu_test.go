@@ -7,8 +7,8 @@ import (
 	cpuUtil "github.com/shirou/gopsutil/v3/cpu"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/plugins/inputs/system"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/plugins/inputs/system"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func NewCPUStats(ps system.PS) *CPUStats {

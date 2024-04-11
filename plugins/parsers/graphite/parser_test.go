@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/internal/templating"
-	"github.com/influxdata/telegraf/metric"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/internal/templating"
+	"github.com/extremenetworks/telegraf/metric"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func BenchmarkParse(b *testing.B) {

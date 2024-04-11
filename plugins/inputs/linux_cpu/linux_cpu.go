@@ -14,9 +14,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal/choice"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 const (

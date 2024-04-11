@@ -17,11 +17,11 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/filter"
-	"github.com/influxdata/telegraf/internal/globpath"
-	"github.com/influxdata/telegraf/plugins/inputs/dpdk/mocks"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/filter"
+	"github.com/extremenetworks/telegraf/internal/globpath"
+	"github.com/extremenetworks/telegraf/plugins/inputs/dpdk/mocks"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func Test_Init(t *testing.T) {

@@ -12,10 +12,10 @@ import (
 	"github.com/influxdata/toml/ast"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	common "github.com/influxdata/telegraf/plugins/common/jolokia2"
-	"github.com/influxdata/telegraf/plugins/inputs/jolokia2_proxy"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	common "github.com/extremenetworks/telegraf/plugins/common/jolokia2"
+	"github.com/extremenetworks/telegraf/plugins/inputs/jolokia2_proxy"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestJolokia2_ProxyTargets(t *testing.T) {

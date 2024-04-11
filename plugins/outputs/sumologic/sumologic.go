@@ -10,15 +10,15 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/models"
-	"github.com/influxdata/telegraf/plugins/outputs"
-	"github.com/influxdata/telegraf/plugins/serializers"
-	"github.com/influxdata/telegraf/plugins/serializers/carbon2"
-	"github.com/influxdata/telegraf/plugins/serializers/graphite"
-	"github.com/influxdata/telegraf/plugins/serializers/prometheus"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/models"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf/plugins/serializers"
+	"github.com/extremenetworks/telegraf/plugins/serializers/carbon2"
+	"github.com/extremenetworks/telegraf/plugins/serializers/graphite"
+	"github.com/extremenetworks/telegraf/plugins/serializers/prometheus"
 )
 
 //go:embed sample.conf

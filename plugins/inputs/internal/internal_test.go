@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/selfstat"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/selfstat"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestSelfPlugin(t *testing.T) {

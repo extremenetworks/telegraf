@@ -26,7 +26,7 @@ func TestSplitRepositoryNameWithWorkingExample(t *testing.T) {
 		owner      string
 		repository string
 	}{
-		{"influxdata/telegraf", "influxdata", "telegraf"},
+		{"extremenetworks/telegraf", "influxdata", "telegraf"},
 		{"influxdata/influxdb", "influxdata", "influxdb"},
 		{"rawkode/saltstack-dotfiles", "rawkode", "saltstack-dotfiles"},
 	}

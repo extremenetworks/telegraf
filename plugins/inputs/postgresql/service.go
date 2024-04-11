@@ -13,8 +13,8 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 // Based on parseURLSettings() at https://github.com/jackc/pgx/blob/master/pgconn/config.go
@@ -128,10 +128,10 @@ func (p *Service) Start(telegraf.Accumulator) (err error) {
 	connConfig.Host = socketRegexp.ReplaceAllLiteralString(connConfig.Host, "")
 
 	// Specific support to make it work with PgBouncer too
-	// See https://github.com/influxdata/telegraf/issues/3253#issuecomment-357505343
+	// See https://github.com/extremenetworks/telegraf/issues/3253#issuecomment-357505343
 	if p.IsPgBouncer {
 		// Remove DriveConfig and revert it by the ParseConfig method
-		// See https://github.com/influxdata/telegraf/issues/9134
+		// See https://github.com/extremenetworks/telegraf/issues/9134
 		connConfig.PreferSimpleProtocol = true
 	}
 

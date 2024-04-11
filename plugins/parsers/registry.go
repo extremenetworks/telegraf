@@ -1,7 +1,7 @@
 package parsers
 
 import (
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // Creator is the function to create a new parser

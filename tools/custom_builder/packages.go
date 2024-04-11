@@ -15,7 +15,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/influxdata/telegraf/filter"
+	"github.com/extremenetworks/telegraf/filter"
 )
 
 // Define the categories we can handle and package filters

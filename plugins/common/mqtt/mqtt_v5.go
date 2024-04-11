@@ -10,8 +10,8 @@ import (
 	mqttv5 "github.com/eclipse/paho.golang/paho"
 	paho "github.com/eclipse/paho.mqtt.golang"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 type mqttv5Client struct {

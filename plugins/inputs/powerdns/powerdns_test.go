@@ -3,7 +3,7 @@ package powerdns
 import (
 	"testing"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 var metrics = "corrupt-packets=0,deferred-cache-inserts=0,deferred-cache-lookup=0," +

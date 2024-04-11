@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 type Entry struct {

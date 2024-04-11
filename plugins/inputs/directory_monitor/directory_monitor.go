@@ -19,12 +19,12 @@ import (
 	"github.com/djherbis/times"
 	"golang.org/x/sync/semaphore"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal/choice"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/parsers"
-	"github.com/influxdata/telegraf/selfstat"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/parsers"
+	"github.com/extremenetworks/telegraf/selfstat"
 )
 
 //go:embed sample.conf
@@ -355,7 +355,7 @@ func (monitor *DirectoryMonitor) moveFile(srcPath string, dstBaseDir string) {
 
 	// We need to close the file for remove on Windows as we otherwise
 	// will run into a "being used by another process" error
-	// (see https://github.com/influxdata/telegraf/issues/12287)
+	// (see https://github.com/extremenetworks/telegraf/issues/12287)
 	if err := inputFile.Close(); err != nil {
 		monitor.Log.Errorf("Could not close input file: %s", err)
 	}

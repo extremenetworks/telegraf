@@ -17,9 +17,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/timestreamwrite/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	internalaws "github.com/influxdata/telegraf/plugins/common/aws"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	internalaws "github.com/extremenetworks/telegraf/plugins/common/aws"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 const tsDbName = "testDb"

@@ -14,12 +14,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/inputs/nvidia_smi/schema_v11"
-	"github.com/influxdata/telegraf/plugins/inputs/nvidia_smi/schema_v12"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/inputs/nvidia_smi/schema_v11"
+	"github.com/extremenetworks/telegraf/plugins/inputs/nvidia_smi/schema_v12"
 )
 
 //go:embed sample.conf
@@ -118,7 +118,7 @@ func (smi *NvidiaSMI) parse(acc telegraf.Accumulator, data []byte) error {
 
 	smi.once.Do(func() {
 		smi.Log.Warnf(`Unknown schema version %q, using latest know schema for parsing.
-		Please report this as an issue to https://github.com/influxdata/telegraf together
+		Please report this as an issue to https://github.com/extremenetworks/telegraf together
 		with a sample output of 'nvidia_smi -q -x'!`, schema)
 	})
 	return schema_v12.Parse(acc, data)

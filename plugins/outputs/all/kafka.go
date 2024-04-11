@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/outputs/kafka" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/outputs/kafka" // register plugin

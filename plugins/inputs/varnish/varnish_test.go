@@ -11,8 +11,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func fakeVarnishRunner(output string) func(string, bool, []string, config.Duration) (*bytes.Buffer, error) {

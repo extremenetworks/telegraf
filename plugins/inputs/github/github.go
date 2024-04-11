@@ -14,10 +14,10 @@ import (
 	githubLib "github.com/google/go-github/v32/github"
 	"golang.org/x/oauth2"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/selfstat"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/selfstat"
 )
 
 //go:embed sample.conf

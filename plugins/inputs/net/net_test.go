@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/influxdata/telegraf/plugins/inputs/system"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/plugins/inputs/system"
+	"github.com/extremenetworks/telegraf/testutil"
 	"github.com/shirou/gopsutil/v3/net"
 	"github.com/stretchr/testify/require"
 )

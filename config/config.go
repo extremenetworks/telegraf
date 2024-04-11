@@ -24,18 +24,18 @@ import (
 	"github.com/influxdata/toml"
 	"github.com/influxdata/toml/ast"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/models"
-	"github.com/influxdata/telegraf/persister"
-	"github.com/influxdata/telegraf/plugins/aggregators"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/outputs"
-	"github.com/influxdata/telegraf/plugins/parsers"
-	"github.com/influxdata/telegraf/plugins/parsers/csv"
-	"github.com/influxdata/telegraf/plugins/processors"
-	"github.com/influxdata/telegraf/plugins/secretstores"
-	"github.com/influxdata/telegraf/plugins/serializers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/models"
+	"github.com/extremenetworks/telegraf/persister"
+	"github.com/extremenetworks/telegraf/plugins/aggregators"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf/plugins/parsers"
+	"github.com/extremenetworks/telegraf/plugins/parsers/csv"
+	"github.com/extremenetworks/telegraf/plugins/processors"
+	"github.com/extremenetworks/telegraf/plugins/secretstores"
+	"github.com/extremenetworks/telegraf/plugins/serializers"
 )
 
 var (
@@ -708,7 +708,7 @@ func (c *Config) LoadConfigData(data []byte) error {
 
 // trimBOM trims the Byte-Order-Marks from the beginning of the file.
 // this is for Windows compatibility only.
-// see https://github.com/influxdata/telegraf/issues/1378
+// see https://github.com/extremenetworks/telegraf/issues/1378
 func trimBOM(f []byte) []byte {
 	return bytes.TrimPrefix(f, []byte("\xef\xbb\xbf"))
 }

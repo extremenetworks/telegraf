@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/inputs/fibaro/hc2"
-	"github.com/influxdata/telegraf/plugins/inputs/fibaro/hc3"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/inputs/fibaro/hc2"
+	"github.com/extremenetworks/telegraf/plugins/inputs/fibaro/hc3"
 )
 
 //go:embed sample.conf

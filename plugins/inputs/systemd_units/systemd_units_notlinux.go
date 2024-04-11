@@ -2,7 +2,7 @@
 
 package systemd_units
 
-import "github.com/influxdata/telegraf"
+import "github.com/extremenetworks/telegraf"
 
 type archParams struct{}
 

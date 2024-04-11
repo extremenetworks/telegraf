@@ -12,8 +12,8 @@ import (
 
 	"github.com/coreos/go-systemd/v22/dbus"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/filter"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/filter"
 )
 
 // Below are mappings of systemd state tables as defined in

@@ -3,7 +3,7 @@ package http_test
 import (
 	"compress/gzip"
 	"fmt"
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 	"io"
 	"math/rand"
 	"net"
@@ -18,15 +18,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	httpconfig "github.com/influxdata/telegraf/plugins/common/http"
-	"github.com/influxdata/telegraf/plugins/common/oauth"
-	httpplugin "github.com/influxdata/telegraf/plugins/inputs/http"
-	"github.com/influxdata/telegraf/plugins/parsers/csv"
-	"github.com/influxdata/telegraf/plugins/parsers/influx"
-	"github.com/influxdata/telegraf/plugins/parsers/json"
-	"github.com/influxdata/telegraf/plugins/parsers/value"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	httpconfig "github.com/extremenetworks/telegraf/plugins/common/http"
+	"github.com/extremenetworks/telegraf/plugins/common/oauth"
+	httpplugin "github.com/extremenetworks/telegraf/plugins/inputs/http"
+	"github.com/extremenetworks/telegraf/plugins/parsers/csv"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx"
+	"github.com/extremenetworks/telegraf/plugins/parsers/json"
+	"github.com/extremenetworks/telegraf/plugins/parsers/value"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestHTTPWithJSONFormat(t *testing.T) {

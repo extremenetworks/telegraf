@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/inputs/http_listener_v2" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/inputs/http_listener_v2" // register plugin

@@ -13,9 +13,9 @@ import (
 	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 type MockClient struct {
@@ -74,7 +74,7 @@ func Test(t *testing.T) {
 						{
 							ID:    "deadbeef",
 							Names: []string{"/telegraf"},
-							Image: "influxdata/telegraf:1.11.0",
+							Image: "extremenetworks/telegraf:1.11.0",
 						},
 					}, nil
 				},
@@ -94,7 +94,7 @@ func Test(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -115,7 +115,7 @@ func Test(t *testing.T) {
 						{
 							ID:    "deadbeef",
 							Names: []string{"/telegraf"},
-							Image: "influxdata/telegraf:1.11.0",
+							Image: "extremenetworks/telegraf:1.11.0",
 						},
 					}, nil
 				},
@@ -138,7 +138,7 @@ func Test(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "stdout",
 						"source":            "deadbeef",

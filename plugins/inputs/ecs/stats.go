@@ -7,8 +7,8 @@ import (
 
 	"github.com/docker/docker/api/types"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs/docker"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs/docker"
 )
 
 func parseContainerStats(c *Container, acc telegraf.Accumulator, tags map[string]string) {

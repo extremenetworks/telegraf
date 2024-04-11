@@ -5,7 +5,7 @@ import (
 
 	v1 "k8s.io/api/apps/v1"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 func collectDeployments(ctx context.Context, acc telegraf.Accumulator, ki *KubernetesInventory) {

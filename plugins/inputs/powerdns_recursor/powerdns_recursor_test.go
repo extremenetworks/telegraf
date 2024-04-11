@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 var metrics = "all-outqueries\t3591637\nanswers-slow\t36451\nanswers0-1\t177297\nanswers1-10\t1209328\n" +

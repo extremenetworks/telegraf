@@ -13,16 +13,16 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	kafkacontainer "github.com/testcontainers/testcontainers-go/modules/kafka"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/common/kafka"
-	"github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/plugins/outputs"
-	kafkaOutput "github.com/influxdata/telegraf/plugins/outputs/kafka"
-	"github.com/influxdata/telegraf/plugins/parsers/influx"
-	"github.com/influxdata/telegraf/plugins/parsers/value"
-	influxSerializer "github.com/influxdata/telegraf/plugins/serializers/influx"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/common/kafka"
+	"github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
+	kafkaOutput "github.com/extremenetworks/telegraf/plugins/outputs/kafka"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx"
+	"github.com/extremenetworks/telegraf/plugins/parsers/value"
+	influxSerializer "github.com/extremenetworks/telegraf/plugins/serializers/influx"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 type FakeConsumerGroup struct {

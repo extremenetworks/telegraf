@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/secretstores/oauth2" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/secretstores/oauth2" // register plugin

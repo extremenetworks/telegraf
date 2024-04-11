@@ -10,7 +10,7 @@ import (
 	"github.com/influxdata/toml/ast"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 // Set config file variables to point to fake directory structure instead of /proc?

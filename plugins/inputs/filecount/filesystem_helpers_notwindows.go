@@ -2,7 +2,7 @@
 
 // TODO: These types are not used in Windows tests because they are disabled for Windows.
 // They can be moved to filesystem_helpers.go when following bug is fixed:
-// https://github.com/influxdata/telegraf/issues/6248
+// https://github.com/extremenetworks/telegraf/issues/6248
 
 package filecount
 
@@ -14,7 +14,7 @@ import (
 
 /*
 	The following are for mocking the filesystem - this allows us to mock Stat() files. This means that we can set file attributes, and know that they
-	will be the same regardless of the platform sitting underneath our tests (directory sizes vary see https://github.com/influxdata/telegraf/issues/6011)
+	will be the same regardless of the platform sitting underneath our tests (directory sizes vary see https://github.com/extremenetworks/telegraf/issues/6011)
 
 	NOTE: still need the on-disk file structure to mirror this because the 3rd party library ("github.com/karrick/godirwalk") uses its own
 	walk functions, that we cannot mock from here.

@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/metric"
+	"github.com/extremenetworks/telegraf/metric"
 )
 
 func TestSerializer(t *testing.T) {

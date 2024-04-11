@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/migrations/inputs_gnmi" // register migration
+import _ "github.com/extremenetworks/telegraf/migrations/inputs_gnmi" // register migration

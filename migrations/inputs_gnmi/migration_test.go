@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	_ "github.com/influxdata/telegraf/migrations/inputs_gnmi" // register migration
-	"github.com/influxdata/telegraf/plugins/inputs/gnmi"
+	"github.com/extremenetworks/telegraf/config"
+	_ "github.com/extremenetworks/telegraf/migrations/inputs_gnmi" // register migration
+	"github.com/extremenetworks/telegraf/plugins/inputs/gnmi"
 )
 
 func TestNoMigration(t *testing.T) {

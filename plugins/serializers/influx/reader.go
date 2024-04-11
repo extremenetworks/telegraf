@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // reader is an io.Reader for line protocol.

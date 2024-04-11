@@ -11,11 +11,11 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/gofrs/uuid/v5"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/common/kafka"
-	"github.com/influxdata/telegraf/plugins/common/proxy"
-	"github.com/influxdata/telegraf/plugins/outputs"
-	"github.com/influxdata/telegraf/plugins/serializers"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/common/kafka"
+	"github.com/extremenetworks/telegraf/plugins/common/proxy"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf/plugins/serializers"
 )
 
 //go:embed sample.conf

@@ -8,7 +8,7 @@ import (
 
 	"github.com/sleepinggenius2/gosmi"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // must init, append path for each directory, load module for every file

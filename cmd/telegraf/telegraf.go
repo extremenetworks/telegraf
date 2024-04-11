@@ -16,17 +16,17 @@ import (
 	"github.com/influxdata/tail/watch"
 	"gopkg.in/tomb.v1"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/agent"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/logger"
-	"github.com/influxdata/telegraf/plugins/aggregators"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/outputs"
-	"github.com/influxdata/telegraf/plugins/parsers"
-	"github.com/influxdata/telegraf/plugins/processors"
-	"github.com/influxdata/telegraf/plugins/secretstores"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/agent"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/logger"
+	"github.com/extremenetworks/telegraf/plugins/aggregators"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf/plugins/parsers"
+	"github.com/extremenetworks/telegraf/plugins/processors"
+	"github.com/extremenetworks/telegraf/plugins/secretstores"
 )
 
 var stop chan struct{}

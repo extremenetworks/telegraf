@@ -5,8 +5,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/selfstat"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/selfstat"
 )
 
 const (

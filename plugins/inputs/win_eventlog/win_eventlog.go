@@ -21,8 +21,8 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 //go:embed sample.conf
@@ -415,7 +415,7 @@ func (w *WinEventLog) renderEvent(eventHandle EvtHandle) (Event, error) {
 	// Do resolve local messages the usual way, while using built-in information for events forwarded by WEC.
 	// This is a safety measure as the underlying Windows-internal EvtFormatMessage might segfault in cases
 	// where the publisher (i.e. the remote machine which forwarded the event) is unavailable e.g. due to
-	// a reboot. See https://github.com/influxdata/telegraf/issues/12328 for the full story.
+	// a reboot. See https://github.com/extremenetworks/telegraf/issues/12328 for the full story.
 	if event.RenderingInfo == nil {
 		return w.renderLocalMessage(event, eventHandle)
 	}

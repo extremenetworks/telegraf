@@ -20,12 +20,12 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	internaltls "github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	authentication "github.com/influxdata/telegraf/plugins/inputs/jti_openconfig_telemetry/auth"
-	telemetry "github.com/influxdata/telegraf/plugins/inputs/jti_openconfig_telemetry/oc"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	internaltls "github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	authentication "github.com/extremenetworks/telegraf/plugins/inputs/jti_openconfig_telemetry/auth"
+	telemetry "github.com/extremenetworks/telegraf/plugins/inputs/jti_openconfig_telemetry/oc"
 )
 
 //go:embed sample.conf

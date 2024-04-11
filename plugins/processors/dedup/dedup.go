@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/parsers/influx"
-	"github.com/influxdata/telegraf/plugins/processors"
-	influxSerializer "github.com/influxdata/telegraf/plugins/serializers/influx"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/parsers/influx"
+	"github.com/extremenetworks/telegraf/plugins/processors"
+	influxSerializer "github.com/extremenetworks/telegraf/plugins/serializers/influx"
 )
 
 //go:embed sample.conf

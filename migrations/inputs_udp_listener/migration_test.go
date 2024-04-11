@@ -7,10 +7,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	_ "github.com/influxdata/telegraf/migrations/inputs_udp_listener" // register migration
-	_ "github.com/influxdata/telegraf/plugins/inputs/socket_listener" // register plugin
-	_ "github.com/influxdata/telegraf/plugins/parsers/all"            // register parsers
+	"github.com/extremenetworks/telegraf/config"
+	_ "github.com/extremenetworks/telegraf/migrations/inputs_udp_listener" // register migration
+	_ "github.com/extremenetworks/telegraf/plugins/inputs/socket_listener" // register plugin
+	_ "github.com/extremenetworks/telegraf/plugins/parsers/all"            // register parsers
 )
 
 func TestCases(t *testing.T) {

@@ -8,8 +8,8 @@ import (
 	riemanngo "github.com/riemann/riemann-go-client"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestSocketListener_tcp(t *testing.T) {

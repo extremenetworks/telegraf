@@ -7,7 +7,7 @@ import (
 	"github.com/gosnmp/gosnmp"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func getGosmiTr(t *testing.T) Translator {

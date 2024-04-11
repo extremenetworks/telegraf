@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"hash/fnv"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/outputs/postgresql/utils"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/outputs/postgresql/utils"
 )
 
 type columnList struct {

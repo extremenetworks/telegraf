@@ -27,7 +27,7 @@ This is a tool build Telegraf with a custom set of plugins. The plugins are
 select according to the specified Telegraf configuration files. This allows
 to shrink the binary size by only selecting the plugins you really need.
 A more detailed documentation is available at
-http://github.com/influxdata/telegraf/tools/custom_builder/README.md
+http://github.com/extremenetworks/telegraf/tools/custom_builder/README.md
 `
 
 const examples = `

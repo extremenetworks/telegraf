@@ -13,9 +13,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	internalaws "github.com/influxdata/telegraf/plugins/common/aws"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	internalaws "github.com/extremenetworks/telegraf/plugins/common/aws"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 type mockCloudWatchLogs struct {
@@ -351,7 +351,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -366,7 +366,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -389,7 +389,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -404,7 +404,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -426,7 +426,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -441,7 +441,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -463,7 +463,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -487,7 +487,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -503,7 +503,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -519,7 +519,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -535,7 +535,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",
@@ -551,7 +551,7 @@ func TestWrite(t *testing.T) {
 					"docker_log",
 					map[string]string{
 						"container_name":    "telegraf",
-						"container_image":   "influxdata/telegraf",
+						"container_image":   "extremenetworks/telegraf",
 						"container_version": "1.11.0",
 						"stream":            "tty",
 						"source":            "deadbeef",

@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/migrations/outputs_riemann_legacy" // register migration
+import _ "github.com/extremenetworks/telegraf/migrations/outputs_riemann_legacy" // register migration

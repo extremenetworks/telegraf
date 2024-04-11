@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/models"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/models"
 )
 
 //go:embed sample_register.conf

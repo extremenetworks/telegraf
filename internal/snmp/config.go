@@ -3,7 +3,7 @@ package snmp
 import (
 	"time"
 
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 type ClientConfig struct {

@@ -6,10 +6,10 @@ import (
 
 	"github.com/gopcua/opcua/ua"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/common/opcua"
-	"github.com/influxdata/telegraf/plugins/common/opcua/input"
-	"github.com/influxdata/telegraf/selfstat"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/common/opcua"
+	"github.com/extremenetworks/telegraf/plugins/common/opcua/input"
+	"github.com/extremenetworks/telegraf/selfstat"
 )
 
 type ReadClientWorkarounds struct {

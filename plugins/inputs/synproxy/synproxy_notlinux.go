@@ -3,8 +3,8 @@
 package synproxy
 
 import (
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 func (k *Synproxy) Init() error {

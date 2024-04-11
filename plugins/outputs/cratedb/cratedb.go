@@ -15,9 +15,9 @@ import (
 
 	_ "github.com/jackc/pgx/v4/stdlib" //to register stdlib from PostgreSQL Driver and Toolkit
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
 )
 
 //go:embed sample.conf
@@ -117,7 +117,7 @@ VALUES
 // plugin should probably refrain from using it in combination with untrusted
 // inputs.
 //
-// [1] https://github.com/influxdata/telegraf/pull/3210#issuecomment-339273371
+// [1] https://github.com/extremenetworks/telegraf/pull/3210#issuecomment-339273371
 func escapeValue(val interface{}, keyReplacement string) (string, error) {
 	switch t := val.(type) {
 	case string:
@@ -199,7 +199,7 @@ func escapeString(s string, quote string) string {
 // and tags. It's used instead of m.HashID() because it's not considered stable
 // and because a cryptographic hash makes more sense for the use case of
 // deduplication.
-// [1] https://github.com/influxdata/telegraf/pull/3210#discussion_r148411201
+// [1] https://github.com/extremenetworks/telegraf/pull/3210#discussion_r148411201
 func hashID(m telegraf.Metric) int64 {
 	h := sha512.New()
 	h.Write([]byte(m.Name()))

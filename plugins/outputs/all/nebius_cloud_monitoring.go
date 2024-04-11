@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/outputs/nebius_cloud_monitoring" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/outputs/nebius_cloud_monitoring" // register plugin

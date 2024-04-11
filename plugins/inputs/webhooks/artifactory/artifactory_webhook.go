@@ -10,7 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type ArtifactoryWebhook struct {

@@ -5,7 +5,7 @@ import (
 
 	netv1 "k8s.io/api/networking/v1"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 func collectIngress(ctx context.Context, acc telegraf.Accumulator, ki *KubernetesInventory) {

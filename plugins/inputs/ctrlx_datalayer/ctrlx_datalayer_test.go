@@ -10,10 +10,10 @@ import (
 	"github.com/boschrexroth/ctrlx-datalayer-golang/pkg/token"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	httpconfig "github.com/influxdata/telegraf/plugins/common/http"
-	"github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/config"
+	httpconfig "github.com/extremenetworks/telegraf/plugins/common/http"
+	"github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 const path = "/automation/api/v2/events"

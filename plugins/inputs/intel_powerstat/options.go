@@ -8,7 +8,7 @@ import (
 
 	ptel "github.com/intel/powertelemetry"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // optConfig represents plugin configuration fields needed to generate options.

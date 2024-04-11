@@ -17,8 +17,8 @@ import (
 	vsanmethods "github.com/vmware/govmomi/vsan/methods"
 	vsantypes "github.com/vmware/govmomi/vsan/types"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 const (

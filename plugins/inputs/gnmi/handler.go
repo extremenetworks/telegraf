@@ -20,11 +20,11 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal/choice"
-	"github.com/influxdata/telegraf/metric"
-	jnprHeader "github.com/influxdata/telegraf/plugins/inputs/gnmi/extensions/jnpr_gnmi_extention"
-	"github.com/influxdata/telegraf/selfstat"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/metric"
+	jnprHeader "github.com/extremenetworks/telegraf/plugins/inputs/gnmi/extensions/jnpr_gnmi_extention"
+	"github.com/extremenetworks/telegraf/selfstat"
 )
 
 const eidJuniperTelemetryHeader = 1

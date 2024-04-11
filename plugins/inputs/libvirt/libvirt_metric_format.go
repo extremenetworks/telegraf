@@ -6,7 +6,7 @@ import (
 
 	golibvirt "github.com/digitalocean/go-libvirt"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 var (

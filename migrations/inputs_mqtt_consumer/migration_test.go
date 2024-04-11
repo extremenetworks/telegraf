@@ -7,10 +7,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	_ "github.com/influxdata/telegraf/migrations/inputs_mqtt_consumer" // register migration
-	_ "github.com/influxdata/telegraf/plugins/inputs/mqtt_consumer"    // register plugin
-	_ "github.com/influxdata/telegraf/plugins/parsers/all"             // register parsers
+	"github.com/extremenetworks/telegraf/config"
+	_ "github.com/extremenetworks/telegraf/migrations/inputs_mqtt_consumer" // register migration
+	_ "github.com/extremenetworks/telegraf/plugins/inputs/mqtt_consumer"    // register plugin
+	_ "github.com/extremenetworks/telegraf/plugins/parsers/all"             // register parsers
 )
 
 func TestNoMigration(t *testing.T) {
@@ -89,7 +89,7 @@ func TestNoMigration(t *testing.T) {
   ## Data format to consume.
   ## Each data format has its own unique set of configuration options, read
   ## more about them here:
-  ## https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md
+  ## https://github.com/extremenetworks/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md
   data_format = "influx"
 
   ## Enable extracting tag values from MQTT topics

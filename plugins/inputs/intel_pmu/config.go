@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // Maximum size of core IDs or socket IDs (8192). Based on maximum value of CPUs that linux kernel supports.

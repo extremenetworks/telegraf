@@ -13,11 +13,11 @@ import (
 
 	wavefront "github.com/wavefronthq/wavefront-sdk-go/senders"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	httpconfig "github.com/influxdata/telegraf/plugins/common/http"
-	"github.com/influxdata/telegraf/plugins/outputs"
-	serializer "github.com/influxdata/telegraf/plugins/serializers/wavefront"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	httpconfig "github.com/extremenetworks/telegraf/plugins/common/http"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
+	serializer "github.com/extremenetworks/telegraf/plugins/serializers/wavefront"
 )
 
 //go:embed sample.conf

@@ -9,7 +9,7 @@ import (
 	"github.com/sleepinggenius2/gosmi/models"
 	"github.com/sleepinggenius2/gosmi/types"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type gosmiTranslator struct {

@@ -20,7 +20,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/influxdata/telegraf/internal/choice"
+	"github.com/extremenetworks/telegraf/internal/choice"
 )
 
 const alphanum string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -417,7 +417,7 @@ func parseTime(format string, timestamp string, location *time.Location) (time.T
 		const msg = `Your config is using abbreviated timezones and parsing was changed in v1.27.0!
 		Please see the change log, remove any workarounds in place, and carefully
 		check your data timestamps! If case you experience any problems, please
-		file an issue on https://github.com/influxdata/telegraf/issues!`
+		file an issue on https://github.com/extremenetworks/telegraf/issues!`
 		log.Print("W! " + msg)
 	})
 

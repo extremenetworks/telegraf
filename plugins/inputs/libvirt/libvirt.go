@@ -11,8 +11,8 @@ import (
 	libvirtutils "github.com/thomasklein94/packer-plugin-libvirt/libvirt-utils"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 //go:embed sample.conf

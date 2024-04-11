@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type LineParser interface {

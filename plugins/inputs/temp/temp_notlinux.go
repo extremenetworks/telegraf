@@ -10,7 +10,7 @@ import (
 
 	"github.com/shirou/gopsutil/v3/host"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 func (t *Temperature) Init() error {

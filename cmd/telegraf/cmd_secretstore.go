@@ -46,7 +46,7 @@ func getSecretStoreCommands(m App) []*cli.Command {
 The 'list' command requires passing in your configuration file
 containing the secret-store definitions you want to access. To get a
 list of available secret-store plugins, please have a look at
-https://github.com/influxdata/telegraf/tree/master/plugins/secretstores.
+https://github.com/extremenetworks/telegraf/tree/master/plugins/secretstores.
 
 For help on how to define secret-stores, check the documentation of the
 different plugins.
@@ -132,7 +132,7 @@ To also reveal the actual secret, i.e. the value, you can pass the
 The 'get' command requires passing in your configuration file
 containing the secret-store definitions you want to access. To get a
 list of available secret-store plugins, please have a look at
-https://github.com/influxdata/telegraf/tree/master/plugins/secretstores.
+https://github.com/extremenetworks/telegraf/tree/master/plugins/secretstores.
 and use the 'secrets list' command to get the IDs of available stores and
 key(s) of available secrets.
 
@@ -190,7 +190,7 @@ with the ID 'mystore'.
 The 'set' command requires passing in your configuration file
 containing the secret-store definitions you want to access. To get a
 list of available secret-store plugins, please have a look at
-https://github.com/influxdata/telegraf/tree/master/plugins/secretstores.
+https://github.com/extremenetworks/telegraf/tree/master/plugins/secretstores.
 and use the 'secrets list' command to get the IDs of available stores and keys.
 
 For help on how to define secret-stores, check the documentation of the

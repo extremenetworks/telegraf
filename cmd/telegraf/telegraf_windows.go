@@ -12,7 +12,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sys/windows"
 
-	"github.com/influxdata/telegraf/logger"
+	"github.com/extremenetworks/telegraf/logger"
 )
 
 func cliFlags() []cli.Flag {

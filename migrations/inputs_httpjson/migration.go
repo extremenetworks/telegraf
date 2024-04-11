@@ -7,9 +7,9 @@ import (
 	"github.com/influxdata/toml"
 	"github.com/influxdata/toml/ast"
 
-	"github.com/influxdata/telegraf/migrations"
-	"github.com/influxdata/telegraf/migrations/common"
-	"github.com/influxdata/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/migrations"
+	"github.com/extremenetworks/telegraf/migrations/common"
+	"github.com/extremenetworks/telegraf/plugins/common/tls"
 )
 
 const msg = `

@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/config"
-	_ "github.com/influxdata/telegraf/migrations/outputs_riemann_legacy" // register migration
-	_ "github.com/influxdata/telegraf/plugins/outputs/riemann"           // register plugin
+	"github.com/extremenetworks/telegraf/config"
+	_ "github.com/extremenetworks/telegraf/migrations/outputs_riemann_legacy" // register migration
+	_ "github.com/extremenetworks/telegraf/plugins/outputs/riemann"           // register plugin
 )
 
 func TestCases(t *testing.T) {

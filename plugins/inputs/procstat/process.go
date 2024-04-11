@@ -8,8 +8,8 @@ import (
 
 	"github.com/shirou/gopsutil/v3/process"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/metric"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/metric"
 )
 
 type Process interface {

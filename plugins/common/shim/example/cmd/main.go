@@ -9,7 +9,7 @@ import (
 	// TODO: import your plugins
 	// _ "github.com/my_github_user/my_plugin_repo/plugins/inputs/mypluginname"
 
-	"github.com/influxdata/telegraf/plugins/common/shim"
+	"github.com/extremenetworks/telegraf/plugins/common/shim"
 )
 
 var pollInterval = flag.Duration("poll_interval", 1*time.Second, "how often to send metrics")

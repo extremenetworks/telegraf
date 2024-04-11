@@ -8,9 +8,9 @@ import (
 
 	"go.starlark.net/starlark"
 
-	"github.com/influxdata/telegraf"
-	common "github.com/influxdata/telegraf/plugins/common/starlark"
-	"github.com/influxdata/telegraf/plugins/processors"
+	"github.com/extremenetworks/telegraf"
+	common "github.com/extremenetworks/telegraf/plugins/common/starlark"
+	"github.com/extremenetworks/telegraf/plugins/processors"
 )
 
 //go:embed sample.conf

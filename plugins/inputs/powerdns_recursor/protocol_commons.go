@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 func parseResponse(metrics string) map[string]interface{} {

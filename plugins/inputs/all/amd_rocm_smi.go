@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/inputs/amd_rocm_smi" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/inputs/amd_rocm_smi" // register plugin

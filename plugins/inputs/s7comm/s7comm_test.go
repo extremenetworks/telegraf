@@ -11,7 +11,7 @@ import (
 	"github.com/robinson/gos7"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func TestSampleConfig(t *testing.T) {

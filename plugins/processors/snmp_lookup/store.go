@@ -7,7 +7,7 @@ import (
 
 	"github.com/alitto/pond"
 	"github.com/hashicorp/golang-lru/v2/expirable"
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 var ErrNotYetAvailable = errors.New("data not yet available")

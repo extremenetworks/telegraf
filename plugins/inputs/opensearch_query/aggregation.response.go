@@ -3,7 +3,7 @@ package opensearch_query
 import (
 	"encoding/json"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type AggregationResponse struct {

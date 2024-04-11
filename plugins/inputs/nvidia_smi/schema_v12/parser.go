@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs/nvidia_smi/common"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs/nvidia_smi/common"
 )
 
 func Parse(acc telegraf.Accumulator, buf []byte) error {

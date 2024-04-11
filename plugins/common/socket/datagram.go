@@ -13,8 +13,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 type packetListener struct {

@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 // V3 (4.6.0+) Protocol:

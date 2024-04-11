@@ -3,7 +3,7 @@ package modbus
 import (
 	"sort"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type request struct {

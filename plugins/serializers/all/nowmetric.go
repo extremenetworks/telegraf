@@ -3,5 +3,5 @@
 package all
 
 import (
-	_ "github.com/influxdata/telegraf/plugins/serializers/nowmetric" // register plugin
+	_ "github.com/extremenetworks/telegraf/plugins/serializers/nowmetric" // register plugin
 )

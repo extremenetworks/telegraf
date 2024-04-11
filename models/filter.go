@@ -11,8 +11,8 @@ import (
 	"github.com/google/cel-go/common/types/ref"
 	"github.com/google/cel-go/ext"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/filter"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/filter"
 )
 
 // TagFilter is the name of a tag, and the values on which to filter
@@ -329,7 +329,7 @@ func ShouldTagsPass(passFilters []TagFilter, dropFilters []TagFilter, tags []*te
 	}
 
 	// Add additional logic in case where both parameters are set.
-	// see: https://github.com/influxdata/telegraf/issues/2860
+	// see: https://github.com/extremenetworks/telegraf/issues/2860
 	if passFilters != nil && dropFilters != nil {
 		// return true only in case when tag pass and won't be dropped (true, true).
 		// in case when the same tag should be passed and dropped it will be dropped (true, false).

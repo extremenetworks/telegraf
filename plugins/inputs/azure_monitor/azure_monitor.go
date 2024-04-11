@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 	receiver "github.com/logzio/azure-monitor-metrics-receiver"
 )
 

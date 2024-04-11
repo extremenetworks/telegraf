@@ -4,7 +4,7 @@ import (
 	"container/list"
 	"sync"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type backlogEntry struct {

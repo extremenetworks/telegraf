@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/models"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/models"
 )
 
 var (

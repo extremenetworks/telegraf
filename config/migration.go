@@ -13,8 +13,8 @@ import (
 	"github.com/influxdata/toml"
 	"github.com/influxdata/toml/ast"
 
-	"github.com/influxdata/telegraf/migrations"
-	_ "github.com/influxdata/telegraf/migrations/all" // register all migrations
+	"github.com/extremenetworks/telegraf/migrations"
+	_ "github.com/extremenetworks/telegraf/migrations/all" // register all migrations
 )
 
 type section struct {

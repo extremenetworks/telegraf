@@ -10,9 +10,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	tlsint "github.com/influxdata/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	tlsint "github.com/extremenetworks/telegraf/plugins/common/tls"
 )
 
 type CallbackData func(net.Addr, []byte)

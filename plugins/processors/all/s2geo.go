@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/processors/s2geo" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/processors/s2geo" // register plugin

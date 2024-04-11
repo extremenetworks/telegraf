@@ -12,10 +12,10 @@ import (
 
 	"github.com/datadope-io/go-zabbix/v2"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/plugins/outputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal"
+	"github.com/extremenetworks/telegraf/plugins/outputs"
 )
 
 // zabbixSender is an interface to send autoregister data to Zabbix.

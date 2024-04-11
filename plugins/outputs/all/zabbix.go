@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/outputs/zabbix" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/outputs/zabbix" // register plugin

@@ -14,8 +14,8 @@ import (
 	"strings"
 
 	"github.com/coreos/go-systemd/v22/dbus"
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/secretstores"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/secretstores"
 )
 
 const systemdMinimumVersion = 250

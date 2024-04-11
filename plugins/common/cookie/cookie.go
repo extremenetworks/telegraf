@@ -12,8 +12,8 @@ import (
 
 	clockutil "github.com/benbjohnson/clock"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 type CookieAuthConfig struct {

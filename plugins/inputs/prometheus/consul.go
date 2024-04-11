@@ -11,7 +11,7 @@ import (
 
 	"github.com/hashicorp/consul/api"
 
-	"github.com/influxdata/telegraf/config"
+	"github.com/extremenetworks/telegraf/config"
 )
 
 type ConsulConfig struct {

@@ -10,7 +10,7 @@ import (
 	monpb "cloud.google.com/go/monitoring/apiv3/v2/monitoringpb"
 	tspb "google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/influxdata/telegraf"
+	"github.com/extremenetworks/telegraf"
 )
 
 type counterCache struct {

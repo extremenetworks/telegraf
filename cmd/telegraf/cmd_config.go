@@ -10,10 +10,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/logger"
-	"github.com/influxdata/telegraf/migrations"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/logger"
+	"github.com/extremenetworks/telegraf/migrations"
 	"github.com/urfave/cli/v2"
 )
 

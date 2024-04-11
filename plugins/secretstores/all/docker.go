@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/plugins/secretstores/docker" // register plugin
+import _ "github.com/extremenetworks/telegraf/plugins/secretstores/docker" // register plugin

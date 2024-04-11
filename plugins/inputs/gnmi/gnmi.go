@@ -14,11 +14,11 @@ import (
 	gnmiLib "github.com/openconfig/gnmi/proto/gnmi"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	"github.com/influxdata/telegraf/internal/choice"
-	internaltls "github.com/influxdata/telegraf/plugins/common/tls"
-	"github.com/influxdata/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	"github.com/extremenetworks/telegraf/internal/choice"
+	internaltls "github.com/extremenetworks/telegraf/plugins/common/tls"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
 )
 
 //go:embed sample.conf
@@ -27,7 +27,7 @@ var sampleConfig string
 // Define the warning to show if we cannot get a metric name.
 const emptyNameWarning = `Got empty metric-name for response, usually indicating
 configuration issues as the response cannot be related to any subscription.
-Please open an issue on https://github.com/influxdata/telegraf including your
+Please open an issue on https://github.com/extremenetworks/telegraf including your
 device model and the following response data:
 %+v
 This message is only printed once.`
@@ -293,7 +293,7 @@ func (c *GNMI) newSubscribeRequest() (*gnmiLib.SubscribeRequest, error) {
 	}
 
 	// Do not provide an empty prefix. Required for Huawei NE40 router v8.21
-	// (and possibly others). See https://github.com/influxdata/telegraf/issues/12273.
+	// (and possibly others). See https://github.com/extremenetworks/telegraf/issues/12273.
 	if gnmiPath.Origin == "" && gnmiPath.Target == "" && len(gnmiPath.Elem) == 0 {
 		gnmiPath = nil
 	}

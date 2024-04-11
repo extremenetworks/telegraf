@@ -12,8 +12,8 @@ import (
 	"github.com/shirou/gopsutil/v3/net"
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf/plugins/inputs/system"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/plugins/inputs/system"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func restoreDflts(savedFiles, savedDirs []string) {

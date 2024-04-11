@@ -11,10 +11,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/config"
-	influxdb "github.com/influxdata/telegraf/plugins/outputs/influxdb_v2"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/config"
+	influxdb "github.com/extremenetworks/telegraf/plugins/outputs/influxdb_v2"
+	"github.com/extremenetworks/telegraf/testutil"
 )
 
 func genURL(u string) *url.URL {

@@ -4,7 +4,7 @@ package infiniband
 
 import (
 	"github.com/Mellanox/rdmamap"
-	"github.com/influxdata/telegraf/testutil"
+	"github.com/extremenetworks/telegraf/testutil"
 	"testing"
 )
 

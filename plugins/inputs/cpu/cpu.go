@@ -9,9 +9,9 @@ import (
 
 	cpuUtil "github.com/shirou/gopsutil/v3/cpu"
 
-	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/inputs"
-	"github.com/influxdata/telegraf/plugins/inputs/system"
+	"github.com/extremenetworks/telegraf"
+	"github.com/extremenetworks/telegraf/plugins/inputs"
+	"github.com/extremenetworks/telegraf/plugins/inputs/system"
 )
 
 //go:embed sample.conf

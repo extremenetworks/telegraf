@@ -2,4 +2,4 @@
 
 package all
 
-import _ "github.com/influxdata/telegraf/migrations/inputs_snmp_legacy" // register migration
+import _ "github.com/extremenetworks/telegraf/migrations/inputs_snmp_legacy" // register migration

@@ -6,7 +6,7 @@ import (
 
 	mqttv3 "github.com/eclipse/paho.mqtt.golang" // Library that supports v3.1.1
 
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 type mqttv311Client struct {

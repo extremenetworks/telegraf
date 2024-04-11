@@ -7,7 +7,7 @@ import (
 
 	"github.com/benbjohnson/clock"
 
-	"github.com/influxdata/telegraf/internal"
+	"github.com/extremenetworks/telegraf/internal"
 )
 
 type Ticker interface {
