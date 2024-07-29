@@ -34,16 +34,7 @@ type Ah_wireless struct {
 }
 
 
-func wl_ioctl(fd int, op, argp uintptr) error {
-
-	_, _, errno := syscall.RawSyscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(op), argp)
-	if errno != 0 {
-		return errno
-	}
-	return nil
-}
-
-func fe_ioctl(fd uintptr, op, argp uintptr) error {
+func ah_ioctl(fd uintptr, op, argp uintptr) error {
 	        _, _, errno := syscall.RawSyscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(op), argp)
         if errno != 0 {
                 return errno
@@ -58,7 +49,6 @@ const sampleConfig = `
   ifname = ["wifi0","wifi1"]
 `
 func NewAh_wireless(id int) *Ah_wireless {
-	log.Printf("Chayan NewAh_wireless")
 	var err error
 	// Create RAW  Socket.
         fd, err := unix.Socket(unix.AF_INET, unix.SOCK_DGRAM, 0)
@@ -98,8 +88,8 @@ func getHDDStat(fd int, ifname string) *ah_ieee80211_hdd_stats {
 
 	offsetsMutex.Lock()
 
-        if err := wl_ioctl(fd, IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+        if err := ah_ioctl(uintptr(fd), IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
                 return nil
         }
 
@@ -110,11 +100,8 @@ func getHDDStat(fd int, ifname string) *ah_ieee80211_hdd_stats {
 }
 
 func getAtrTbl(fd int, ifname string) *ah_ieee80211_atr_user {
-	log.Printf("Chayan getAtrTbl\n")
 	var cfg *ieee80211req_cfg_atr
         cfg = new(ieee80211req_cfg_atr)
-
-//	cfgss := ieee80211req_cfg_atr{}
 
 	/* first 4 bytes is subcmd */
         cfg.cmd = AH_IEEE80211_GET_ATR_TBL;
@@ -123,28 +110,18 @@ func getAtrTbl(fd int, ifname string) *ah_ieee80211_atr_user {
 
 	request := iwreq{data: iwp}
 
-//        request.data.pointer = &cfg;
-//        request.data.length = uint16(unsafe.Sizeof(cfgss));
 	request.data.length = VAP_BUFF_SIZE
-
-///	request := iwreq{data: uintptr(unsafe.Pointer(request.data.pointer))}
 
 	copy(request.ifrn_name[:], ah_ifname_radio2vap(ifname))
 
-//	var cfgs *ieee80211req_cfg_atr
-//	var cfgs = (*ieee80211req_cfg_atr)(request.data.pointer)
-
-
-//	log.Printf("Chayan getAtrTbl before ioctl cmd = %d\n", cfgs.cmd)
 	offsetsMutex.Lock()
 
-	if err := wl_ioctl(fd, IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+	if err := ah_ioctl(uintptr(fd), IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
                 return nil
         }
 
 	offsetsMutex.Unlock()
-//	log.Printf("Chayan getAtrTbl after ioctl\n")
 
 	return &cfg.atr
 
@@ -154,36 +131,17 @@ func getAtrTbl(fd int, ifname string) *ah_ieee80211_atr_user {
 
 
 func getRFStat(fd int, ifname string) *awestats {
-//	bs := awestats{}
-
-//	bs := awestats.new()
-//          var p = &bs
-    //   p = C.malloc(C.sizeof(C.struct_awestats))
-//	p := unsafe.Pointer(&bs)
-
-
-//      ifrd := ifr.withData(p)
-
 
 	var p *awestats
 	p = new(awestats)
 
-//ethtool - https://github.com/weaveworks/weave/blob/master/net/ethtool.go#L51
-        // Request current value/
 	request := IFReqData{Data: uintptr(unsafe.Pointer(p))}
-//	request := IFReqData{Data: uintptr(unsafe.Pointer(&bs))}
-//	request := IFReqData{Data: uintptr(p)}
 	copy(request.Name[:], ifname)
 
-//	p.ast_noise_floor = 1
-
-//        log.Printf("Chayan open before calling ioctl data - %d %d",int(bs.ast_as.ast_rx_bytes), int(bs.ast_noise_floor))
-
-//ethtool
 	offsetsMutex.Lock()
 
-        if err := wl_ioctl(fd, SIOCGRADIOSTATS, uintptr(unsafe.Pointer(&request))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+        if err := ah_ioctl(uintptr(fd), SIOCGRADIOSTATS, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
                 return nil
         }
 
@@ -212,8 +170,8 @@ func getStaStat(fd int, ifname string, buf unsafe.Pointer,count int) *ah_ieee802
 
         offsetsMutex.Lock()
 
-        if err := wl_ioctl(fd, IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+        if err := ah_ioctl(uintptr(fd), IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
                 return nil
         }
 
@@ -224,39 +182,26 @@ func getStaStat(fd int, ifname string, buf unsafe.Pointer,count int) *ah_ieee802
 
 func getNumAssocs (fd int, ifname string) uint32 {
 
-        //var ird *iwreq_data
-//	ird := new(iwreq_data)
-
-//	ird := iwreq_data{data: IEEE80211_PARAM_NUM_ASSOCS}
-
 	ird := iwreq_data{}
 
         /* first 4 bytes is subcmd */
         ird.data = IEEE80211_PARAM_NUM_ASSOCS
 
-    //    iwp := iw_point{pointer: unsafe.Pointer(cfg)}
-
-
         request := iwreq_clt{u: ird}
-
-    //    request.data.length = VAP_BUFF_SIZE
 
         copy(request.ifr_name[:], ah_ifname_radio2vap(ifname))
 
-//		log.Printf("Chayan getNumAssocs %s",request.ifr_name[:])
 
         offsetsMutex.Lock()
 
-        if err := wl_ioctl(fd, IEEE80211_IOCTL_GETPARAM, uintptr(unsafe.Pointer(&request))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+        if err := ah_ioctl(uintptr(fd), IEEE80211_IOCTL_GETPARAM, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
                 return 0
         }
 
-//	log.Printf("Chayan getNumAssocs %d", uint32(request.u.data))
 
         offsetsMutex.Unlock()
 
-//        return int(ird.data)
 	return uint32(request.u.data)
 }
 
@@ -271,16 +216,13 @@ func getOneStaInfo(fd int, ifname string, mac_ad [MACADDR_LEN]uint8) *ah_ieee802
         request := iwreq{data: iwp}
         request.data.length = VAP_BUFF_SIZE
         copy(request.ifrn_name[:], ifname)
-	log.Printf("Chayan ifname = %s",request.ifrn_name)
-	log.Printf("Chayan One STA MAC %x:%x:%x:%x:%x:%x", cfg.sta_info.mac[0],cfg.sta_info.mac[1],cfg.sta_info.mac[2],cfg.sta_info.mac[3],cfg.sta_info.mac[4],cfg.sta_info.mac[5])
 
         offsetsMutex.Lock()
-        if err := wl_ioctl(fd, IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+        if err := ah_ioctl(uintptr(fd), IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
                 return nil
         }
 
-	log.Printf("Chayan One STA rssi = %d, noise_floor = %d",cfg.sta_info.rssi, cfg.sta_info.noise_floor)
         offsetsMutex.Unlock()
 
         return &cfg.sta_info
@@ -288,7 +230,6 @@ func getOneStaInfo(fd int, ifname string, mac_ad [MACADDR_LEN]uint8) *ah_ieee802
 }
 
 func getOneSta(fd int, ifname string, mac_ad [MACADDR_LEN]uint8) unsafe.Pointer {
-//func getOneSta(fd int, ifname string, mac_ad [MACADDR_LEN]uint8) uintptr {
         var cfg *ieee80211req_cfg_one_sta_info
         cfg = new(ieee80211req_cfg_one_sta_info)
 
@@ -301,15 +242,14 @@ func getOneSta(fd int, ifname string, mac_ad [MACADDR_LEN]uint8) unsafe.Pointer 
         copy(request.ifrn_name[:], ah_ifname_radio2vap(ifname))
 
         offsetsMutex.Lock()
-	if err := wl_ioctl(fd, IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+	if err := ah_ioctl(uintptr(fd), IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
 		offsetsMutex.Unlock()
 		return nil
         }
 	offsetsMutex.Unlock()
 
         return request.data.pointer
-//	return uintptr(request.data.pointer)
 
 }
 
@@ -350,11 +290,9 @@ func getProcNetDev(ifname string) *ah_dcd_dev_stats {
                            &stats.rx_broadcast,
                            &stats.tx_unicast,
                            &stats.tx_broadcast)
-  //      fmt.Println(stats.rx_packets)
         fmt.Println(n)
     }
   }
-//	log.Printf(string(table))
 
 	return stats
 }
@@ -366,17 +304,15 @@ func getIfIndex(fd int, ifname string) int {
                 log.Printf("failed to create ifreq  %v", err)
         }
 
-//        log.Printf("Chayan open before calling ioctl index = %d",int(ifr.Uint32()))
 	offsetsMutex.Lock()
 
         if err := unix.IoctlIfreq(fd, unix.SIOCGIFINDEX, ifr); err != nil {
-                log.Printf("Chayan ioctl error %s",err)
+                log.Printf("ioctl error %s",err)
                 return -1
         }
 
 	offsetsMutex.Unlock()
 	return int(ifr.Uint32())
-//        log.Printf("Chayan open after calling ioctl index = %d",int(ifr.Uint32()))
 
 }
 
@@ -403,15 +339,9 @@ func load_ssid(t *Ah_wireless, ifname string) {
 			return
 		}
 
-//		log.Printf(string(output))
-
 		lines := strings.Split(string(output),"\n")
 
-//		log.Printf(lines[0])
-
 		temp  := strings.Split(lines[0]," ")
-
-//		log.Printf(temp[1])
 
 		ssid := strings.Trim(temp[1], "\"")
 		log.Printf("Adding: t.intf_m[%s][%s] = %s",ifname,ssid,vifname)
@@ -434,22 +364,15 @@ func load_arp_table(t *Ah_wireless) {
 		return
 	}
 
-//	log.Printf(string(arp_str))
-
 	arp_lines := strings.Split(string(arp_str),"\n")
-
-//	log.Printf("len = %d",len(arp_lines))
 
 	for i :=0; i<len(arp_lines); i++ {
 		log.Printf("Line[%d]:[%s]" ,i,arp_lines[i])
 		if len(arp_lines[i]) > 1 {
 			arp_eliments := strings.Split(arp_lines[i]," ")
 
-//			for j :=0; j<len(arp_eliments); j++ {
-//				log.Printf(arp_eliments[j])
 			log.Printf("Adding: t.arp_m[%s] = %s",arp_eliments[3], arp_eliments[1])
 			t.arp_m[arp_eliments[3]] = arp_eliments[1]
-//			}
 		}
 	}
 
@@ -471,23 +394,18 @@ func getFeIpnetScore(fd uintptr, clmac [MACADDR_LEN]uint8) int {
 					data: msg,
 				}
 
-//	log.Printf("Chayan calling getFeIpnetScore fd = %d size = %d msg_type = %d ioctl = %d", fd, ihdr.msg_size, ihdr.msg_type, AH_FE_IOCTL_FLOW)
-
         offsetsMutex.Lock()
 
-        if err := fe_ioctl(fd, AH_FE_IOCTL_FLOW, uintptr(unsafe.Pointer(&dev_msg))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+        if err := ah_ioctl(fd, AH_FE_IOCTL_FLOW, uintptr(unsafe.Pointer(&dev_msg))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
 		offsetsMutex.Unlock()
                 return -1
 	}
 
 	offsetsMutex.Unlock()
 
-//	log.Printf("Chayan calling getFeIpnetScore  = %d",msg.net_health_score)
-	log.Printf("Chayan calling getFeIpnetScore  = %d",dev_msg.data.net_health_score)
-
 	if dev_msg.hdr.retval < 0 {
-		log.Printf("Chayan open ioctl data erro")
+		log.Printf("Open ioctl data erro")
 		return -1
 	}
 
@@ -511,8 +429,8 @@ func getFeServerIp(fd uintptr, clmac [MACADDR_LEN]uint8) *ah_flow_get_sta_server
 
         offsetsMutex.Lock()
 
-        if err := fe_ioctl(fd, AH_FE_IOCTL_FLOW, uintptr(unsafe.Pointer(&dev_msg))); err != nil {
-                log.Printf("Chayan open ioctl data error %s",err)
+        if err := ah_ioctl(fd, AH_FE_IOCTL_FLOW, uintptr(unsafe.Pointer(&dev_msg))); err != nil {
+                log.Printf("Open ioctl data error %s",err)
                 offsetsMutex.Unlock()
                 return nil
         }
@@ -521,7 +439,7 @@ func getFeServerIp(fd uintptr, clmac [MACADDR_LEN]uint8) *ah_flow_get_sta_server
 
 
         if dev_msg.hdr.retval < 0 {
-                log.Printf("Chayan open ioctl data erro")
+                log.Printf("Open ioctl data erro")
                 return nil
         }
 
@@ -529,7 +447,6 @@ func getFeServerIp(fd uintptr, clmac [MACADDR_LEN]uint8) *ah_flow_get_sta_server
 }
 
 func open(fd, id int) *Ah_wireless {
-	log.Printf("Chayan open")
 
 	getProcNetDev("wifi1")
 	//defer unix.Close(fd)
@@ -538,7 +455,6 @@ func open(fd, id int) *Ah_wireless {
 }
 
 func (t *Ah_wireless) SampleConfig() string {
-	log.Printf("Chayan SampleConfig")
 	return sampleConfig
 }
 
@@ -547,49 +463,25 @@ func (t *Ah_wireless) Description() string {
 }
 
 func (t *Ah_wireless) Init() error {
-	log.Printf("Chayan Init")
-
-//	return init()
-//	var err error
 	return nil
 }
 
 
 func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 
-
-//	log.Printf("Chayan Gather fd = %d interface = %s",t.fd,  t.Ifname[0])
-//	t.arp_m = make(map[string]string)
-	//load_arp_table(t)
-
 	for _, intfName := range t.Ifname {
 
-//	var rfstat1 awestats
-//	var rfstat2 awestats
 	var rfstat *awestats
 	var devstats *ah_dcd_dev_stats
 	var ifindex int
 	var atrStat *ah_ieee80211_atr_user
 	var hddStat *ah_ieee80211_hdd_stats
 
-
-//	offsetsMutex.Lock()
-//	getRFStat(sockfd, "wifi0")
-//-----------------------------------------
 	rfstat  = getRFStat(t.fd, intfName)
 	ifindex = getIfIndex(t.fd, intfName)
 	devstats = getProcNetDev(intfName)
 	atrStat = getAtrTbl(t.fd, intfName)
 	hddStat = getHDDStat(t.fd, intfName)
-//-----------------------------------------
-//	offsetsMutex.Unlock()
-
-//	log.Printf("Chayan Gather wifi0 - %d %d",rfstat1.ast_as.ast_rx_bytes, rfstat1.ast_noise_floor)
-//	log.Printf("Chayan Gather %s - %d : %d %d %d -- %d %d %d -- %d %d %d",intfName, ifindex, rfstat.ast_as.ast_rx_bytes, rfstat.ast_noise_floor, 
-//		devstats.rx_packets, atrStat.atr_info[0].rxc_pcnt, atrStat.atr_info[0].rxf_pcnt, 
-//		atrStat.atr_info[0].txf_pcnt, hddStat.bs_sp_cnt, hddStat.lb_sp_cnt, hddStat.snr_sp_cnt)
-  //      log.Printf("Chayan Gather wifi0 - %d %d",int(rfstat1.ast_as.ast_rx_bytes), int(rfstat1.ast_noise_floor))
-    //    log.Printf("Chayan Gather wifi1 - %d %d",int(rfstat2.ast_as.ast_rx_bytes), int(rfstat2.ast_noise_floor))
 
 	fields := map[string]interface{}{
 
@@ -727,12 +619,8 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 		var numassoc int
 		var stainfo *ah_ieee80211_sta_info
 
-		//	var clt_item *ah_ieee80211_sta_stats_item
-		//	clt_item = new(ah_ieee80211_sta_stats_item)
 
 		numassoc = int(getNumAssocs(t.fd, intfName2))
-
-		log.Printf("Chayan interface: %s numassoc: %d",intfName2, numassoc)
 
 		if(numassoc == 0) {
 			continue;
@@ -742,20 +630,13 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 
 		clt_item := make([]ah_ieee80211_sta_stats_item, numassoc)
 
-		log.Printf("Chayan make clt_item")
 
 		ifindex2 = getIfIndex(t.fd, intfName2)
 
-		log.Printf("Chayan getIfIndex = %d",ifindex2)
-
 		cltstat = getStaStat(t.fd, intfName2, unsafe.Pointer(&clt_item[0]),  numassoc)
-
-		log.Printf("Chayan called getStaStat")
 
 		for cn := 0; cn < numassoc; cn++ {
 			client_ssid := string(bytes.Trim(clt_item[cn].ns_ssid[:], "\x00"))
-
-			log.Printf("Chayan clt_item[%d] ssid = %s",cn,client_ssid)
 
 			if(clt_item[cn].ns_mac[0] !=0 || clt_item[cn].ns_mac[1] !=0 || clt_item[cn].ns_mac[2] !=0 || clt_item[cn].ns_mac[3] !=0 || clt_item[cn].ns_mac[4] != 0 || clt_item[cn].ns_mac[5]!=0) {
 				cintfName := t.intf_m[intfName2][client_ssid]
@@ -771,9 +652,7 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 
 			f := init_fe()
 			ipnet_score := getFeIpnetScore(f.Fd(), clt_item[cn].ns_mac)
-			log.Printf("Chayan ipnet_score = %d",ipnet_score)
 			sta_ip := getFeServerIp(f.Fd(), clt_item[cn].ns_mac)
-			log.Printf("Chayan sta_ip = %d %d", sta_ip.client_static_ip, sta_ip.gateway)
 			f.Close()
 
 			client_mac := fmt.Sprintf("%02x:%02x:%02x:%02x:%02x:%02x",clt_item[cn].ns_mac[0],clt_item[cn].ns_mac[1],clt_item[cn].ns_mac[2],clt_item[cn].ns_mac[3],clt_item[cn].ns_mac[4],clt_item[cn].ns_mac[5])
@@ -781,7 +660,6 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 
 			var onesta *ieee80211req_sta_info = (*ieee80211req_sta_info)(cfgptr)
 
-			log.Printf("Chayan phymode = %d %s",onesta.isi_phymode, client_mac)
 
 			for i := 0; i < NS_HW_RATE_SIZE; i++{
 
@@ -888,15 +766,12 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 
 
 func (t *Ah_wireless) Start(acc telegraf.Accumulator) error {
-	log.Printf("Chayan Start")
 	t.intf_m = make(map[string]map[string]string)
-//	t.arp_m = make(map[string]string)
 
 	for _, intfName := range t.Ifname {
 		t.intf_m[intfName] = make(map[string]string)
 		load_ssid(t, intfName)
 	}
-//	load_arp_table(t)
 	return nil
 }
 
@@ -929,13 +804,11 @@ func init_fe() *os.File {
 
 
 func (t *Ah_wireless) Stop() {
-	log.Printf("Chayan Stop")
 	unix.Close(t.fd)
 }
 
 
 func init() {
-	log.Printf("Chayan init")
 	inputs.Add("ah_wireless", func() telegraf.Input {
 		return NewAh_wireless(1)
 	})
