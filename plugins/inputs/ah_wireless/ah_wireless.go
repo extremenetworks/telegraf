@@ -489,44 +489,87 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 		"ifindex_keys":					ifindex,
 
 	}
-		 fields["channelUtilization_min"] = 0
-		 fields["channelUtilization_max"] = 0
-		 fields["channelUtilization_avg"] = 0
 
-		 fields["interferenceUtilization_min"]		= 0
-		 fields["interferenceUtilization_max"]		= 0
-		 fields["interferenceUtilization_avg"]		= 0
+		if atrStat.count > 0 {
 
-		 fields["txUtilization_min"]				= atrStat.atr_info[1].txf_pcnt
-		fields["txUtilization_max"]				= atrStat.atr_info[1].txf_pcnt
-		fields["txUtilization_avg"]				= atrStat.atr_info[1].txf_pcnt
+			rx_util := atrStat.atr_info[atrStat.count - 1].rxf_pcnt
+			tx_util := atrStat.atr_info[atrStat.count - 1].txf_pcnt
 
-		fields["rxUtilization_min"]				= atrStat.atr_info[1].rxf_pcnt
-		fields["rxUtilization_max"]				= atrStat.atr_info[1].rxf_pcnt
-		fields["rxUtilization_avg"]				= atrStat.atr_info[1].rxf_pcnt
+			total_util := atrStat.atr_info[atrStat.count - 1].rxc_pcnt
 
-		fields["rxInbssUtilization_min"]			= atrStat.atr_info[1].rxf_inbss
-		fields["rxInbssUtilization_max"]			= atrStat.atr_info[1].rxf_inbss
-		fields["rxInbssUtilization_avg"]			= atrStat.atr_info[1].rxf_inbss
+			var chan_util int
 
-		fields["rxObssUtilization_min"]			= atrStat.atr_info[1].rxf_obss
-		fields["rxObssUtilization_max"]			= atrStat.atr_info[1].rxf_obss
-		fields["rxObssUtilization_avg"]			= atrStat.atr_info[1].rxf_obss
+			if (total_util > 100) {
+				chan_util = 100
+			} else {
+				chan_util = int(total_util)
+			}
+
+			if (total_util > (rx_util + tx_util)) {
+				fields["interferenceUtilization_min"]		= total_util - rx_util - tx_util
+				fields["interferenceUtilization_max"]		= total_util - rx_util - tx_util
+				fields["interferenceUtilization_avg"]		= total_util - rx_util - tx_util
+			} else {
+				fields["interferenceUtilization_min"]		= 0
+				fields["interferenceUtilization_max"]		= 0
+				fields["interferenceUtilization_avg"]		= 0
+			}
+
+			fields["channelUtilization_min"]		= chan_util
+			fields["channelUtilization_max"]		= chan_util
+			fields["channelUtilization_avg"]		= chan_util
+
+			fields["txUtilization_min"]				= tx_util
+			fields["txUtilization_max"]				= tx_util
+			fields["txUtilization_avg"]				= tx_util
+
+			fields["rxUtilization_min"]				= rx_util
+			fields["rxUtilization_max"]				= rx_util
+			fields["rxUtilization_avg"]				= rx_util
+
+			fields["rxInbssUtilization_min"]		= atrStat.atr_info[atrStat.count - 1].rxf_inbss
+			fields["rxInbssUtilization_max"]		= atrStat.atr_info[atrStat.count - 1].rxf_inbss
+			fields["rxInbssUtilization_avg"]		= atrStat.atr_info[atrStat.count - 1].rxf_inbss
+
+			fields["rxObssUtilization_min"]			= atrStat.atr_info[atrStat.count - 1].rxf_obss
+			fields["rxObssUtilization_max"]			= atrStat.atr_info[atrStat.count - 1].rxf_obss
+			fields["rxObssUtilization_avg"]			= atrStat.atr_info[atrStat.count - 1].rxf_obss
+		} else {
+			fields["channelUtilization_min"]		= 0
+			fields["channelUtilization_max"]		= 0
+			fields["channelUtilization_avg"]		= 0
+
+			fields["txUtilization_min"]				= 0
+			fields["txUtilization_max"]				= 0
+			fields["txUtilization_avg"]				= 0
+
+			fields["rxUtilization_min"]				= 0
+			fields["rxUtilization_max"]				= 0
+			fields["rxUtilization_avg"]				= 0
+
+			fields["rxInbssUtilization_min"]		= 0
+			fields["rxInbssUtilization_max"]		= 0
+			fields["rxInbssUtilization_avg"]		= 0
+
+			fields["rxObssUtilization_min"]			= 0
+			fields["rxObssUtilization_max"]			= 0
+			fields["rxObssUtilization_avg"]			= 0
+		}
 
 		fields["wifinterferenceUtilization_min"]		= 0
 		fields["wifinterferenceUtilization_max"]		= 0
 		fields["wifinterferenceUtilization_avg"]		= 0
 
-		fields["noise_min"]					= rfstat.ast_noise_floor
-		fields["noise_max"]					= rfstat.ast_noise_floor
-		fields["noise_avg"]					= rfstat.ast_noise_floor
+		fields["noise_min"]							= rfstat.ast_noise_floor
+		fields["noise_max"]							= rfstat.ast_noise_floor
+		fields["noise_avg"]							= rfstat.ast_noise_floor
 
-		fields["crcErrorRate_min"]				= rfstat.phy_stats.ast_rx_crcerr
-		fields["crcErrorRate_max"]				= rfstat.phy_stats.ast_rx_crcerr
-		fields["crcErrorRate_avg"]				= rfstat.phy_stats.ast_rx_crcerr
+		fields["crcErrorRate_min"]					= rfstat.phy_stats.ast_rx_crcerr
+		fields["crcErrorRate_max"]					= rfstat.phy_stats.ast_rx_crcerr
+		fields["crcErrorRate_avg"]					= rfstat.phy_stats.ast_rx_crcerr
 
 
-		    fields["txPackets"]				= devstats.tx_packets
+		fields["txPackets"]					= devstats.tx_packets
 		fields["txErrors"]				= devstats.tx_errors
 		fields["txDropped"]				= devstats.tx_dropped
 		fields["txHwDropped"]				= rfstat.ast_as.ast_tx_shortpre + rfstat.ast_as.ast_tx_xretries + rfstat.ast_as.ast_tx_fifoerr
@@ -561,9 +604,10 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 
 		fields["bsSpCnt"]				= hddStat.bs_sp_cnt
 		fields["snrSpCnt"]				= hddStat.snr_sp_cnt
-		fields["snAnswerCnt"]				= 0
-		fields["rxPrbSpCnt"]				= 0
-		fields["rxAuthCnt"]				= 0
+		fields["snAnswerCnt"]				= reportGetDiff(int(hddStat.sn_answer_cnt), int(hddStat.sn_answer_cnt))
+		fields["rxPrbSpCnt"]				= rfstat.is_rx_hdd_probe_sup
+		fields["rxAuthCnt"]					= rfstat.is_rx_hdd_auth_sup
+
 		fields["txBitrateSuc"]				= rfstat.ast_tx_rix_invalids
 		fields["rxBitrateSuc"]				= rfstat.ast_rx_rix_invalids
 
@@ -599,7 +643,7 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 		fields["rxUnicastPackets"]			= rfstat.ast_rx_rate_stats[0].ns_unicasts
 
 
-		acc.AddGauge("radioInterfaceRfStats", fields, nil)
+		acc.AddGauge("RfStats", fields, nil)
 	}
 
 	tags := map[string]string{
@@ -755,7 +799,7 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
                                 fields2[rateSucDtn]		= 0
                         }
 		}
-		acc.AddFields("radioInterfaceClientStats", fields2, tags, time.Now())
+		acc.AddFields("ClientStats", fields2, tags, time.Now())
 
 	}
 	t.numclient =  total_client_count

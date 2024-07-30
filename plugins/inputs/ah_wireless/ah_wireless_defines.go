@@ -880,3 +880,11 @@ func intToIp(num uint32) string {
     b[3] = byte(num >> 24)
     return fmt.Sprintf("%d.%d.%d.%d",b[0],b[1],b[2],b[3])
 }
+
+func reportGetDiff(curr int, last int) int {
+	if curr >= last {
+		return (curr - last)
+	} else {
+		return curr
+	}
+}
