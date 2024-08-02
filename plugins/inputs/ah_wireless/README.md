@@ -172,8 +172,9 @@ ClientStats
   txRateStats:
     description: tx distribution bit rate
     type: array
-
+   
   clientCount:
+
 
 ClientStats:
 description: |-
@@ -243,7 +244,7 @@ properties:
     description: Application health score.
     type: integer
     format: int8
-  phyMode:
+  phyMode: 
     description: client radio mode.
     type: integer
     format: int8
@@ -303,20 +304,20 @@ properties:
     description: TX spatial stream percentage.
     type: array
     maxItems: 4
-    items:
+    items: 
       type: integer
-      format: int8
-  txAirtime:
-    description: station TX airtime percentage.
+      format: int8            
+  txAirtime: 
+    description: station TX airtime percentage. 
 
-  rxAirtime:
+  rxAirtime: 
     description: station RX airtime percentage.
 
   bwUsage:
     description: Bandwidth usages.
 
   required:
-    keys
+  - keys
 
 ## Troubleshooting
 
