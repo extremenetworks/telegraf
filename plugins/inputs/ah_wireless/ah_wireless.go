@@ -883,15 +883,19 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 			acc.AddGauge("RfStats", fields, nil)
 
+			var s string
+
 			for k, v := range fields {
 				if  fmt.Sprint(v) == "0" { // Check if the value is zero
 					delete(fields, k)
+				} else {
+					s = s + k + " : " + fmt.Sprint(v) + "\n"
 				}
 			}
 
-			var s string
-			s = string(fmt.Sprint(fields))
-			//log.Printf("%s",s)
+			s = s + "---------------------------------------------------------------------------------------------"
+
+			log.Printf("ah_wireless: radio status is processed")
 
 			dumpOutput(RF_STAT_OUT_FILE, s, 1)
 
@@ -1229,15 +1233,19 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 	}
 	t.numclient =  total_client_count
 
+	var s string
+
 	for k, v := range fields2 {
-		if  fmt.Sprint(v) == "0" { // Check if the value is zero
-			delete(fields2, k)
+        if  fmt.Sprint(v) == "0" { // Check if the value is zero
+            delete(fields2, k)
+        } else {
+			s = s + k + " : " + fmt.Sprint(v) + "\n"
 		}
 	}
 
-	var s string
-	s = string(fmt.Sprint(fields2))
-	//log.Printf("%s",s)
+	s = s + "---------------------------------------------------------------------------------------------"
+
+	log.Printf("ah_wireless: client status is processed")
 
 	dumpOutput(CLT_STAT_OUT_FILE, s, 1)
 	return nil
