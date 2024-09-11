@@ -11,6 +11,7 @@ import (
 	"time"
 	"os/exec"
 	"fmt"
+	"sort"
 	"unsafe"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/inputs"
@@ -885,15 +886,27 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 			var s string
 
+			s = "Stats of interface " + intfName + "\n\n"
+
 			for k, v := range fields {
 				if  fmt.Sprint(v) == "0" { // Check if the value is zero
 					delete(fields, k)
-				} else {
-					s = s + k + " : " + fmt.Sprint(v) + "\n"
 				}
 			}
 
-			s = s + "---------------------------------------------------------------------------------------------"
+			keys := make([]string, 0, len(fields))
+
+			for k := range fields{
+				keys = append(keys, k)
+            }
+
+			sort.Strings(keys)
+
+			for _, k := range keys {
+				s = s + k + " : " + fmt.Sprint(fields[k]) + "\n"
+			}
+
+			s = s + "---------------------------------------------------------------------------------------------\n"
 
 			log.Printf("ah_wireless: radio status is processed")
 
@@ -916,6 +929,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 	var total_client_count int
 	var ii int
+	var client_mac string
 	total_client_count = 0
 	ii = 0
 
@@ -926,7 +940,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 		var ifindex2 int
 		var numassoc int
 		var stainfo *ah_ieee80211_sta_info
-		var client_mac string
+
 
 		var tx_total		int64
 		var rx_total		int64
@@ -1235,15 +1249,27 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 	var s string
 
+	s = "Stats of client [" + client_mac + "]\n\n"
+
 	for k, v := range fields2 {
         if  fmt.Sprint(v) == "0" { // Check if the value is zero
             delete(fields2, k)
-        } else {
-			s = s + k + " : " + fmt.Sprint(v) + "\n"
-		}
+        }
+    }
+
+	keys := make([]string, 0, len(fields2))
+
+	for k := range fields2{
+		keys = append(keys, k)
 	}
 
-	s = s + "---------------------------------------------------------------------------------------------"
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		s = s + k + " : " + fmt.Sprint(fields2[k]) + "\n"
+	}
+
+	s = s + "---------------------------------------------------------------------------------------------\n"
 
 	log.Printf("ah_wireless: client status is processed")
 
