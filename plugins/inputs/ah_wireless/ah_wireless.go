@@ -382,7 +382,7 @@ func load_arp_table(t *Ah_wireless) {
 
 }
 
-func getFeIpnetScore(fd uintptr, clmac [MACADDR_LEN]uint8) int {
+func getFeIpnetScore(fd uintptr, clmac [MACADDR_LEN]uint8) int32 {
 
 	msg := ah_flow_get_sta_net_health_msg{
 					mac: clmac,
@@ -689,17 +689,17 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 				total_util := atrStat.atr_info[atrStat.count - 1].rxc_pcnt
 
-				var chan_util int
-				var interface_utiliation int
+				var chan_util int32
+				var interface_utiliation int32
 				if total_util > 100 {
 					chan_util = 100
 				} else {
-					chan_util = int(total_util)
+					chan_util = int32(total_util)
 				}
 
 				/* Calculate Utilization */
 				if (total_util > (rx_util + tx_util)) {
-					interface_utiliation = int(total_util) - int(rx_util) - int(tx_util)
+					interface_utiliation = int32(total_util) - int32(rx_util) - int32(tx_util)
 				} else {
 					interface_utiliation = 0
 				}
