@@ -716,11 +716,13 @@ type ah_ieee80211_sta_info struct {
 	rssi			int32
 	tx_ratekbps		int32
 	tx_pkts			uint32
+	pad1			[4]byte
 	tx_bytes		uint64
 	rx_ratekbps		int32
 	rx_pkts			uint32
 	rx_bytes		uint64
 	bw				uint32
+	pad2			[4]byte
 }
 
 type ieee80211req_cfg_one_sta struct{
