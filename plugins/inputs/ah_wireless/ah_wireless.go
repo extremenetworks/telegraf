@@ -752,6 +752,13 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				}
 				t.last_ut_data[ii].rx_obss_util_avg = (t.last_ut_data[ii].rx_obss_util_avg + atrStat.atr_info[atrStat.count - 1].rxf_obss)/2
 
+				if (t.last_ut_data[ii].wifi_i_util_min == 0) || (t.last_ut_data[ii].wifi_i_util_min >= atrStat.atr_info[atrStat.count-1].wifi_interference) {
+					t.last_ut_data[ii].wifi_i_util_min = atrStat.atr_info[atrStat.count-1].wifi_interference
+				}
+				if (t.last_ut_data[ii].wifi_i_util_max == 0) || (t.last_ut_data[ii].wifi_i_util_max <= atrStat.atr_info[atrStat.count-1].wifi_interference) {
+					t.last_ut_data[ii].wifi_i_util_max = atrStat.atr_info[atrStat.count-1].wifi_interference
+				}
+				t.last_ut_data[ii].wifi_i_util_avg = (t.last_ut_data[ii].wifi_i_util_avg + atrStat.atr_info[atrStat.count-1].wifi_interference) / 2
 				/* Calculate Utilization */
 
 
@@ -779,6 +786,11 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				fields["rxObssUtilization_min"]				= t.last_ut_data[ii].rx_obss_util_min
 				fields["rxObssUtilization_max"]				= t.last_ut_data[ii].rx_obss_util_max
 				fields["rxObssUtilization_avg"]				= t.last_ut_data[ii].rx_obss_util_avg
+
+				fields["wifinterferenceUtilization_min"]			= t.last_ut_data[ii].wifi_i_util_min
+				fields["wifinterferenceUtilization_max"]			= t.last_ut_data[ii].wifi_i_util_max
+				fields["wifinterferenceUtilization_avg"]			= t.last_ut_data[ii].wifi_i_util_avg
+
 			} else {
 				fields["channelUtilization_min"]			= 0
 				fields["channelUtilization_max"]			= 0
@@ -799,6 +811,11 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				fields["rxObssUtilization_min"]				= 0
 				fields["rxObssUtilization_max"]				= 0
 				fields["rxObssUtilization_avg"]				= 0
+
+				fields["wifinterferenceUtilization_min"]			= 0
+				fields["wifinterferenceUtilization_max"]			= 0
+				fields["wifinterferenceUtilization_avg"]			= 0
+
 			}
 
 			fields["wifinterferenceUtilization_min"]			= t.last_ut_data[ii].wifi_i_util_min
