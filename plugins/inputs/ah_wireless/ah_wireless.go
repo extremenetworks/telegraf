@@ -939,7 +939,8 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 		var numassoc int
 		var stainfo *ah_ieee80211_sta_info
 
-		var tot_rx_tx, tot_rate_frame uint32
+		var tot_rx_tx uint32
+		var tot_rate_frame uint32
 		var tot_pcnt int64
 		var conn_score int64
 		var tx_total		int64
