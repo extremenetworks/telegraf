@@ -447,12 +447,14 @@ type ah_dcd_dev_stats struct{
         tx_fifo_errors uint32
         tx_heartbeat_errors uint32
         tx_window_errors uint32
+	pad            [4]byte
 }
 
 type ieee80211_node_rate_stats struct {
 	ns_unicasts			uint32				/* tx/rx total unicasts */
 	ns_retries			uint32				/* tx/rx total retries */
 	ns_rateKbps			uint32				/* rate in Kpbs */
+	pad1				[4]byte
 }
 
 type utilization_data struct {
@@ -487,6 +489,7 @@ type utilization_data struct {
 	noise_min			int16
 	noise_max			int16
 	noise_avg			int16
+	pad         [2]byte
 
 	crc_err_rate_min	uint64
 	crc_err_rate_max	uint64
@@ -540,6 +543,7 @@ type awestats struct {
 	ast_rx_airtime			uint64				/* rx airtime (us) */
 	ast_crcerr_airtime		uint64				/* crc eror airtime (us) */
 	ast_noise_floor			int16
+	pad				[6]byte
 	ast_rx_mcast_bytes		uint64
 	ast_rx_bcast_bytes		uint64
 	ast_rx_retry			uint32
@@ -604,6 +608,7 @@ type wl_stats struct {
 	ast_11n_stats			wl_11n_stats		/* 11n statistics */
 
 	ast_rx_rssi			int8				/* last rx rssi */
+	pad				[3]byte
 	ast_chan_switch			uint32				/* no. of channel switch */
 	ast_be_nobuf			uint32				/* no skbuff available for beacon */
 }
@@ -623,6 +628,7 @@ type wl_11n_stats struct {
 	rx_aggr					uint32
 	tx_retries				uint32				/* tx retries of sub frames */
 	tx_xretries				uint32
+	pad				[4]byte
 }
 
 /*
@@ -657,6 +663,7 @@ type ah_signal_quality_range struct
 type ah_signal_quality_stats struct
 {
 		asqrange ah_signal_quality_range
+		pad	[2]byte
 		count uint32
 }
 
@@ -694,6 +701,7 @@ type  ah_ieee80211_sta_stats_item struct {
 type  ah_ieee80211_get_wifi_sta_stats struct {
 		pointer		unsafe.Pointer
 		count		uint16   /* air-time ring buffer count */
+		_         [6]byte
 }
 
 type ieee80211req_cfg_sta struct {
@@ -721,11 +729,13 @@ type ah_ieee80211_sta_info struct {
 	rssi			int32
 	tx_ratekbps		int32
 	tx_pkts			uint32
+	pad			[4]byte
 	tx_bytes		uint64
 	rx_ratekbps		int32
 	rx_pkts			uint32
 	rx_bytes		uint64
 	bw				uint32
+	pad1			[4]byte
 }
 
 type ieee80211req_cfg_one_sta struct{
@@ -757,6 +767,7 @@ type ah_fe_ioctl_hdr struct {
 
 type ah_flow_get_sta_net_health_msg struct {
 	mac			[MACADDR_LEN]uint8
+	pad                [2]byte
 	net_health_score	int32
 }
 
@@ -873,6 +884,7 @@ type ah_dcd_stats_report_rate_stats struct  {
 	kbps				uint32     /* TX/RX rate Kbps */
 	rate_dtn			uint8      /* TX/RX bit rate distribution */
 	rate_suc_dtn		uint8     /* TX/RX bit rate sucess distribution */
+	pad			[2]byte
 }
 
 
