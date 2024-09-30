@@ -701,7 +701,7 @@ type  ah_ieee80211_sta_stats_item struct {
 type  ah_ieee80211_get_wifi_sta_stats struct {
 		pointer		unsafe.Pointer
 		count		uint16   /* air-time ring buffer count */
-		_         [6]byte
+		pad         [6]byte
 }
 
 type ieee80211req_cfg_sta struct {
