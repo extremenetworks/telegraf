@@ -447,14 +447,12 @@ type ah_dcd_dev_stats struct{
         tx_fifo_errors uint32
         tx_heartbeat_errors uint32
         tx_window_errors uint32
-	pad            [4]byte
 }
 
 type ieee80211_node_rate_stats struct {
 	ns_unicasts			uint32				/* tx/rx total unicasts */
 	ns_retries			uint32				/* tx/rx total retries */
 	ns_rateKbps			uint32				/* rate in Kpbs */
-	pad1				[4]byte
 }
 
 type utilization_data struct {
@@ -489,7 +487,6 @@ type utilization_data struct {
 	noise_min			int16
 	noise_max			int16
 	noise_avg			int16
-	pad         [2]byte
 
 	crc_err_rate_min	uint64
 	crc_err_rate_max	uint64
@@ -663,7 +660,6 @@ type ah_signal_quality_range struct
 type ah_signal_quality_stats struct
 {
 		asqrange ah_signal_quality_range
-		pad	[2]byte
 		count uint32
 }
 
@@ -702,7 +698,6 @@ type  ah_ieee80211_sta_stats_item struct {
 type  ah_ieee80211_get_wifi_sta_stats struct {
 		pointer		unsafe.Pointer
 		count		uint16   /* air-time ring buffer count */
-		pad         [6]byte
 }
 
 type ieee80211req_cfg_sta struct {
@@ -885,7 +880,6 @@ type ah_dcd_stats_report_rate_stats struct  {
 	kbps				uint32     /* TX/RX rate Kbps */
 	rate_dtn			uint8      /* TX/RX bit rate distribution */
 	rate_suc_dtn		uint8     /* TX/RX bit rate sucess distribution */
-	pad			[2]byte
 }
 
 
