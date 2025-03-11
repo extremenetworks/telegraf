@@ -39,9 +39,9 @@ type Ah_wireless struct {
 	Crc_error_int           int             `toml:"crc_error_int"`
 	Airtime_int             int             `toml:"airtime_int"`
 	Tx_drop_clt             int             `toml:"tx_drop_clt"`
-       Rx_drop_clt             int             `toml:"rx_drop_clt"`
-       Tx_retry_clt            int             `toml:"tx_retry_clt"`
-       Airtime_clt             int             `toml:"airtime_clt"`
+        Rx_drop_clt             int             `toml:"rx_drop_clt"`
+        Tx_retry_clt            int             `toml:"tx_retry_clt"`
+        Airtime_clt             int             `toml:"airtime_clt"`
 	closed			chan		struct{}
 	numclient		[4]int
 	timer_count		uint8
@@ -1362,7 +1362,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 		// AH_TRAP_CRC_ERROR_RATE IMPLEMENTATION as per DCD
 		trap_type = AH_DCD_STATS_REPORT_TRAP_BUTT
 
-		tmp_count5 := reportGetDiff2(rfstat.ast_crcerr_airtime, t.last_rf_stat[ii].ast_crcerr_airtime)
+		tmp_count5 := reportGetDiff64(rfstat.ast_crcerr_airtime, t.last_rf_stat[ii].ast_crcerr_airtime)
 
 		shouldTriggerCrcTrap := false
                 shouldClearCrcTrap := false

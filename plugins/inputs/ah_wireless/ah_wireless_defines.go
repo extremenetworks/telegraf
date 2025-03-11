@@ -1201,15 +1201,6 @@ func reportGetDiff(curr uint32, last uint32) uint32 {
 	}
 }
 
-func reportGetDiff2(curr uint64, last uint64) uint64 {
-	if curr >= last {
-		return (curr - last)
-	} else {
-		return curr
-	}
-}
-
-
 func reportGetDiff64(curr uint64, last uint64) uint64 {
 	if curr >= last {
 		return (curr - last)
