@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 #
 # Dockerfile to build telegraf in a container.
 #
