@@ -1,0 +1,100 @@
+diff --git a/b.sh b/b.sh
+index a37053f63..70d88b10c 100755
+--- a/b.sh
++++ b/b.sh
+@@ -80,18 +80,22 @@ do_build()
+     fi
+ 
+     local _dockerfile_stage="binary"
++for _dockerfile_stage in golang source build binary
++do
+     local _target_image="telegraf/${_dockerfile_stage}/${_target_arch}:$(git describe --dirty)"
+-    docker buildx build --progress plain \
++    docker-buildx build --progress plain \
+         --build-arg BUILD_GO_FIPS="${_go_fips}" \
+         --build-arg BUILD_GO_OPTS="${_go_opts}" \
+         --platform "linux/${_container_arch}" \
+         --tag "${_target_image}" \
+         --target "${_dockerfile_stage}" \
+         .
++done
+ 
+     local _copy_container="$(docker container create --quiet "${_target_image}")"
+     docker container cp "${_copy_container}:/usr/bin/telegraf" telegraf
+     docker container rm "${_copy_container}"
++cat telegraf > "arts/telegraf.${_extr_arch}"
+ 
+     if [[ ${_go_fips} -eq 1 ]]; then
+         # verify the executable has "openssl" strings
+@@ -101,7 +105,7 @@ do_build()
+         fi
+     fi
+ 
+-    docker image rm "${_target_image}"
++#   docker image rm "${_target_image}"
+ 
+     tar -cf "${_target_tarball}" telegraf MIT generic_MIT
+     rm -f telegraf
+diff --git a/z.sh b/z.sh
+new file mode 100755
+index 000000000..aa66ad89a
+--- /dev/null
++++ b/z.sh
+@@ -0,0 +1,57 @@
++#!/usr/bin/env bash
++
++function docker_prune()
++{
++    colima delete --force
++    rm -rf ~/.colima ~/.docker
++
++    colima start --dns 1.1.1.1  --dns 8.8.8.8 --runtime docker --cpu 6 --vm-type vz --vz-rosetta
++    docker run --privileged --rm tonistiigi/binfmt --install linux/arm
++    docker run --privileged --rm tonistiigi/binfmt --install linux/mips64le
++    docker image rm tonistiigi/binfmt
++
++    exit
++}
++
++function pre()
++{
++    rm -rf arts/*
++}
++
++function main()
++{
++    rm -f result?.log
++    tmux send-keys -t "build_1" \
++    '
++        ./b.sh mips   build |& tee -a result3.log ;
++        ./b.sh arm64  build |& tee -a result3.log ;
++    '
++    tmux send-keys -t "build_2" \
++    '
++        ./b.sh x86_64 build |& tee -a result4.log ;
++        ./b.sh arm    build |& tee -a result4.log ;
++    '
++}
++
++function post()
++{
++    local _i _q
++    for (( _i = 0 ; _i < 10 ; _i++ )); do
++        docker image ls | sort
++        if [[ "$(docker image ls | grep "^telegraf" | wc -l)" -ge 100 ]]; then
++            break
++        fi
++        tmux select-window -t 3 ; sleep 25
++        tmux select-window -t 4 ; sleep 25
++        tmux select-window -t 2
++        read -e -t 10 -p "Stop [y/N]: " _q
++        if [[ "${_q}" == "y" ]]; then
++            break
++        fi
++    done
++}
++
++pre
++[[ ${#} -eq 0 ]] || docker_prune
++main
++post
