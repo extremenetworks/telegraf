@@ -33,7 +33,7 @@ type Ah_wireless struct {
 	arp_m			map[string]string
 	Ifname			[]string	`toml:"ifname"`
 	Eth_ioctl		int			`toml:"eth_ioctl"`
-	Tx_drop_int             int	        `toml:"tx_drop_int"`
+/*	Tx_drop_int             int	        `toml:"tx_drop_int"`
 	Rx_drop_int             int             `toml:"rx_drop_int"`
 	Tx_retry_int            int             `toml:"tx_retry_int"`
 	Crc_error_int           int             `toml:"crc_error_int"`
@@ -41,7 +41,7 @@ type Ah_wireless struct {
 	Tx_drop_clt             int             `toml:"tx_drop_clt"`
         Rx_drop_clt             int             `toml:"rx_drop_clt"`
         Tx_retry_clt            int             `toml:"tx_retry_clt"`
-        Airtime_clt             int             `toml:"airtime_clt"`
+        Airtime_clt             int             `toml:"airtime_clt"` */
 	closed			chan		struct{}
 	numclient		[4]int
 	timer_count		uint8
@@ -74,15 +74,6 @@ func ah_ioctl(fd uintptr, op, argp uintptr) error {
 const sampleConfig = `
 [[inputs.ah_wireless_v2]]
   interval = "5s"
-  tx_drop_int = 0
-  rx_drop_int = 1
-  tx_retry_int = 0
-  crc_error_int = 0
-  airtime_int = 1
-  tx_drop_clt = 1
-  rx_drop_clt = 1
-  tx_retry_clt = 1
-  airtime_clt = 1
   ifname = ["wifi0","wifi1","wifi2"]
   eth_ioctl = -6767123671
 `
@@ -1230,12 +1221,12 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				shouldTriggerTxDropTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmTxDrop(t.last_alarm_int[ii].alarm) && t.Tx_drop_int != 1{
+                        if isSetStatsReportAlarmTxDrop(t.last_alarm_int[ii].alarm) {
 			       shouldClearTxDropTrap = true
                         }
                 }
 
-		if t.Tx_drop_int == 1 {
+		/* if t.Tx_drop_int == 1 {
 			if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
 				shouldTriggerTxDropTrap = true
 			}
@@ -1246,7 +1237,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 					shouldClearTxDropTrap = true
 				 }
 			}
-		}
+		} */
 
 
 
@@ -1286,13 +1277,13 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				shouldTriggerRxDropTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmRxDrop(t.last_alarm_int[ii].alarm) && t.Rx_drop_int != 1 {
+                        if isSetStatsReportAlarmRxDrop(t.last_alarm_int[ii].alarm)  {
 				shouldClearRxDropTrap = true
                         }
                 }
 
 
-		if t.Rx_drop_int == 1 {
+/*		if t.Rx_drop_int == 1 {
                         if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                 shouldTriggerRxDropTrap = true
                         }
@@ -1305,7 +1296,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                         }
                 }
 
-
+*/
 
                 if shouldTriggerRxDropTrap {
                    trap_type = AH_TRAP_RX_DROP_RATE
@@ -1344,13 +1335,13 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 			}
 		} else {
-			if isSetStatsReportAlarmCRCERR(t.last_alarm_int[ii].alarm) && t.Crc_error_int != 1{
+			if isSetStatsReportAlarmCRCERR(t.last_alarm_int[ii].alarm) {
 				shouldClearCrcTrap =  true
 			}
 		}
 
 
-		if t.Crc_error_int == 1 {
+		/*if t.Crc_error_int == 1 {
                         if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                 shouldTriggerCrcTrap = true
                         }
@@ -1361,7 +1352,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                                         shouldClearCrcTrap = true
                                  }
                         }
-                }
+                }*/
 
 
 
@@ -1419,13 +1410,13 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			       shouldTriggerTxRetryTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmTxRetry(t.last_alarm_int[ii].alarm)  && t.Tx_retry_int != 1{
+                        if isSetStatsReportAlarmTxRetry(t.last_alarm_int[ii].alarm)  {
 				shouldClearTxRetryTrap = true
                         }
                 }
 
 
-	       if t.Tx_retry_int == 1 {
+/*	       if t.Tx_retry_int == 1 {
                         if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                 shouldTriggerTxRetryTrap = true
                         }
@@ -1438,7 +1429,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                         }
                 }
 
-
+*/
 
                 if shouldTriggerTxRetryTrap {
                    trap_type = AH_TRAP_TX_RETRY_RATE
@@ -1486,13 +1477,13 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				shouldTriggerAirConTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmAirCon(t.last_alarm_int[ii].alarm)  && t.Airtime_int != 1{
+                        if isSetStatsReportAlarmAirCon(t.last_alarm_int[ii].alarm)  {
 			       shouldClearAirConTrap = true
                         }
                 }
 
 
-		if t.Airtime_int == 1 {
+/*		if t.Airtime_int == 1 {
                         if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                 shouldTriggerAirConTrap = true
                         }
@@ -1506,7 +1497,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                         }
                 }
 
-
+*/
 
                 if shouldTriggerAirConTrap {
                    trap_type = AH_TRAP_AIRTIME_PERCENTAGE
@@ -1683,7 +1674,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 			}
 
-			fields["alarmFlag"] =  t.last_alarm_int[ii].alarm
+//			fields["alarmFlag"] =  t.last_alarm_int[ii].alarm
 
 			fields["wifinterferenceUtilization_min"]			= t.last_ut_data[ii].wifi_i_util_min
 			fields["wifinterferenceUtilization_max"]			= t.last_ut_data[ii].wifi_i_util_max
@@ -2189,12 +2180,12 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 					shouldTriggerTxDropTrap = true
 				}
 			} else {
-				if isSetStatsReportAlarmTxDrop(t.last_alarm[ii].alarm) && t.Tx_drop_clt != 1{
+				if isSetStatsReportAlarmTxDrop(t.last_alarm[ii].alarm) {
 					shouldClearTxDropTrap = true
 				}
 			}
 
-			if t.Tx_drop_clt == 1 {
+		/*	if t.Tx_drop_clt == 1 {
                                 if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                       shouldTriggerTxDropTrap = true
                                  }
@@ -2209,7 +2200,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                         }
 
 
-
+*/
                         if shouldTriggerTxDropTrap {
 				trap_type = AH_TRAP_TX_DROP_RATE
                                 opt_type = AH_DCD_STATS_REPORT_ALARM_STATE_TYPE_SET
@@ -2255,13 +2246,13 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 					shouldTriggerRxDropTrap = true
 				}
 			} else {
-				if isSetStatsReportAlarmRxDrop(t.last_alarm[ii].alarm) && t.Rx_drop_clt != 1{
+				if isSetStatsReportAlarmRxDrop(t.last_alarm[ii].alarm) {
 				        shouldClearRxDropTrap = true
 				}
 			}
 
 
-			if t.Rx_drop_clt == 1 {
+/*			if t.Rx_drop_clt == 1 {
                                 if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                       shouldTriggerRxDropTrap = true
                                  }
@@ -2274,7 +2265,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                                 }
                         }
 
-
+*/
 
                         if shouldTriggerRxDropTrap {
                                 trap_type = AH_TRAP_RX_DROP_RATE
@@ -2310,14 +2301,14 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                                         shouldTriggerTxRetryTrap  = true
 			        }
 			} else {
-				if isSetStatsReportAlarmTxRetry(t.last_alarm[ii].alarm) && t.Tx_retry_clt != 1{
+				if isSetStatsReportAlarmTxRetry(t.last_alarm[ii].alarm) {
 					shouldClearTxRetryTrap = true
 				}
 			}
 
 
 
-			if t.Tx_retry_clt == 1 {
+/*			if t.Tx_retry_clt == 1 {
                                 if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                       shouldTriggerTxRetryTrap = true
                                  }
@@ -2331,7 +2322,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                                 }
                         }
 
-
+*/
 
                         if shouldTriggerTxRetryTrap {
                                 trap_type = AH_TRAP_TX_RETRY_RATE
@@ -2416,13 +2407,13 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 					shouldTriggerAirConTrap = true
                                 }
                         } else {
-                                if isSetStatsReportAlarmAirCon(t.last_alarm[ii].alarm) && t.Airtime_clt != 1 {
+                                if isSetStatsReportAlarmAirCon(t.last_alarm[ii].alarm) {
 				        shouldClearAirConTrap = true
                                 }
                         }
 
 
-			if t.Airtime_clt == 1 {
+/*			if t.Airtime_clt == 1 {
                                 if trap_type == AH_DCD_STATS_REPORT_TRAP_BUTT {
                                       shouldTriggerAirConTrap = true
                                  }
@@ -2436,7 +2427,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                         }
 
 
-
+*/
                         if shouldTriggerAirConTrap {
                                 trap_type = AH_TRAP_AIRTIME_PERCENTAGE
                                 opt_type = AH_DCD_STATS_REPORT_ALARM_STATE_TYPE_SET
@@ -2459,7 +2450,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields2["ifIndex"]              = ifindex2
 
 			fields2["mac_keys"]		= client_mac
-			fields2["alarmFlag"]		= t.last_alarm[ii].alarm
+//			fields2["alarmFlag"]		= t.last_alarm[ii].alarm
 			fields2["number"]		= cltstat.count
 			fields2["ssid"]			= client_ssid
                         fields2["txPackets"]		= stainfo.tx_pkts
