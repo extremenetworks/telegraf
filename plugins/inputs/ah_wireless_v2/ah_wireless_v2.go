@@ -1219,7 +1219,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				shouldTriggerTxDropTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmTxDrop(t.last_alarm_int[ii].alarm) && t.Tx_drop_int == 1{
+                        if isSetStatsReportAlarmTxDrop(t.last_alarm_int[ii].alarm) && t.Tx_drop_int != 1{
 			       shouldClearTxDropTrap = true
                         }
                 }
@@ -1275,7 +1275,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				shouldTriggerRxDropTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmRxDrop(t.last_alarm_int[ii].alarm)  && t.Rx_drop_int == 1{
+                        if isSetStatsReportAlarmRxDrop(t.last_alarm_int[ii].alarm) && t.Rx_drop_int != 1{
 				shouldClearRxDropTrap = true
                         }
                 }
@@ -1333,7 +1333,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 			}
 		} else {
-			if isSetStatsReportAlarmCRCERR(t.last_alarm_int[ii].alarm) && t.Crc_error_int == 1{
+			if isSetStatsReportAlarmCRCERR(t.last_alarm_int[ii].alarm) && t.Crc_error_int != 1{
 				shouldClearCrcTrap =  true
 			}
 		}
@@ -1408,7 +1408,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			       shouldTriggerTxRetryTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmTxRetry(t.last_alarm_int[ii].alarm) && t.Tx_retry_int == 1{
+                        if isSetStatsReportAlarmTxRetry(t.last_alarm_int[ii].alarm)  && t.Tx_retry_int != 1{
 				shouldClearTxRetryTrap = true
                         }
                 }
@@ -1475,7 +1475,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				shouldTriggerAirConTrap = true
                         }
                 } else {
-                        if isSetStatsReportAlarmAirCon(t.last_alarm_int[ii].alarm) && t.Airtime_int == 1{
+                        if isSetStatsReportAlarmAirCon(t.last_alarm_int[ii].alarm)  && t.Airtime_int != 1{
 			       shouldClearAirConTrap = true
                         }
                 }
@@ -2180,7 +2180,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 					shouldTriggerTxDropTrap = true
 				}
 			} else {
-				if isSetStatsReportAlarmTxDrop(t.last_alarm[ii].alarm) && t.Tx_drop_clt == 1{
+				if isSetStatsReportAlarmTxDrop(t.last_alarm[ii].alarm) && t.Tx_drop_clt != 1{
 					shouldClearTxDropTrap = true
 				}
 			}
@@ -2246,7 +2246,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 					shouldTriggerRxDropTrap = true
 				}
 			} else {
-				if isSetStatsReportAlarmRxDrop(t.last_alarm[ii].alarm) && t.Rx_drop_clt == 1 {
+				if isSetStatsReportAlarmRxDrop(t.last_alarm[ii].alarm) && t.Rx_drop_clt != 1 {
 				        shouldClearRxDropTrap = true
 				}
 			}
@@ -2301,7 +2301,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
                                         shouldTriggerTxRetryTrap  = true
 			        }
 			} else {
-				if isSetStatsReportAlarmTxRetry(t.last_alarm[ii].alarm) && t.Tx_retry_clt == 1 {
+				if isSetStatsReportAlarmTxRetry(t.last_alarm[ii].alarm) && t.Tx_retry_clt != 1 {
 					shouldClearTxRetryTrap = true
 				}
 			}
@@ -2407,7 +2407,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 					shouldTriggerAirConTrap = true
                                 }
                         } else {
-                                if isSetStatsReportAlarmAirCon(t.last_alarm[ii].alarm) && t.Airtime_clt == 1 {
+                                if isSetStatsReportAlarmAirCon(t.last_alarm[ii].alarm) && t.Airtime_clt != 1 {
 				        shouldClearAirConTrap = true
                                 }
                         }
