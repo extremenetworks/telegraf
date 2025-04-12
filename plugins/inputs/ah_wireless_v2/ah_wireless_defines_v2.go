@@ -1081,8 +1081,8 @@ type network_service_data struct {
 
 type stats_ethx_data struct {
 	ifname				string
-	duplex				uint8
-	speed				uint8
+	duplex				string
+	speed				string
 }
 
 const (

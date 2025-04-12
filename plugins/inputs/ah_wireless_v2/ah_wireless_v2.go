@@ -2743,30 +2743,30 @@ func Gather_EthernetInterfaceStats(t *Ah_wireless) error {
 		t.ethx_stats[i].ifname = ethName
 
 		if (link_status == ETH_SET_MII_LINK_DOWN) {
-			t.ethx_stats[i].duplex = 0
-			t.ethx_stats[i].speed = 0
+			t.ethx_stats[i].duplex = "LINK_DOWN"
+			t.ethx_stats[i].speed = "LINK_DOWN"
 		} else {
 			duplex := eth_status
 			speed := eth_status
 
 			if((duplex & ETH_MII_DUPLEX_FULL) > 0) {
-				t.ethx_stats[i].duplex = 2
+				t.ethx_stats[i].duplex = "FULL"
 			} else {
-				t.ethx_stats[i].duplex = 1
+				t.ethx_stats[i].duplex = "HALF"
 			}
 
 			if((speed & ETH_MII_SPEED_10000M) > 0) {
-				t.ethx_stats[i].speed = 6
+				t.ethx_stats[i].speed = "10000M"
 			} else if ((speed & ETH_MII_SPEED_5000M) > 0) {
-				t.ethx_stats[i].speed = 5
+				t.ethx_stats[i].speed = "5000M"
 			} else if ((speed & ETH_MII_SPEED_2500M) > 0) {
-				t.ethx_stats[i].speed = 4
+				t.ethx_stats[i].speed = "2500M"
 			} else if ((speed & ETH_MII_SPEED_1000M) > 0) {
-				t.ethx_stats[i].speed = 3
+				t.ethx_stats[i].speed = "1000M"
 			} else if ((speed & ETH_MII_SPEED_100M) > 0) {
-				t.ethx_stats[i].speed = 2
+				t.ethx_stats[i].speed = "100M"
 			} else {
-				t.ethx_stats[i].speed = 1
+				t.ethx_stats[i].speed = "10M"
 			}
 		}
 
@@ -2813,8 +2813,12 @@ func Send_NetworkStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 		fields["txMulticastPackets"]	= t.if_stats[i].tx_multicast
 		fields["txBcastPackets"]		= t.if_stats[i].tx_broadcast
 
-		fields["duplex"]				= t.ethx_stats[i].duplex
-		fields["speed"]					= t.ethx_stats[i].speed
+		if len(strings.TrimSpace(t.ethx_stats[i].duplex)) > 0 {
+			fields["duplex"]				= t.ethx_stats[i].duplex
+		}
+		if len(strings.TrimSpace(t.ethx_stats[i].speed)) > 0 {
+			fields["speed"]					= t.ethx_stats[i].speed
+		}
 
 		acc.AddGauge("NetworkStats", fields, nil)
 		log.Printf("network status is processed")
