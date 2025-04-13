@@ -2841,9 +2841,9 @@ func Send_DeviceStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 		}
 
-		fields["trackIp"]		= intToIp(t.nw_health[i].track_ip)
+		fields["trackIp"]		= intToIp(uint32(t.nw_health[i].track_ip))
 		fields["trackLatency"]	= t.nw_health[i].track_latency
-		fields["gwIp"]			= intToIp(t.nw_health[i].gw_ip)
+		fields["gwIp"]			= intToIp(uint32(t.nw_health[i].gw_ip))
 		fields["gwMac"]			= t.nw_health[i].gw_mac
 		fields["gwLatency"]		= t.nw_health[i].gw_latency
 		fields["gwTtl"]			= t.nw_health[i].gw_ttl
@@ -2926,7 +2926,7 @@ func Gather_Network_Health(t *Ah_wireless) error {
 		}
 
         fmt.Sscanf(string(curLine),
-        "%d %d %d %s %d %d %d %llu %llu %llu %llu %llu %llu %llu %llu",
+        "%d %d %d %s %d %d %d %d %d %d %d %d %d %d %d",
 
                            &stats.track_ip,
                            &stats.track_latency,
