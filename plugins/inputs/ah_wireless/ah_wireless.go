@@ -3111,45 +3111,8 @@ func get_syslog_server_data(t *Ah_wireless) error {
 	return nil
 }
 
-func get_network_service_data(t *Ah_wireless) error {
-
-	var ii uint8
-
-	table, err := os.ReadFile("/tmp/dcd_stat_network_service")
-	if err != nil {
-		return nil;
-	}
-
-	lines := bytes.Split([]byte(table), newLineByte)
-
-	num_lines := len(lines)
-
-	ii = 0
-
-	for  _, curLine := range lines {
-		words := strings.Fields(string(curLine))
-
-		if((words == nil) || (uint8(num_lines - 1) == ii) || (ii >= NETWORK_MAX_COUNT)) {
-			return nil
-		}
-
-		nlen, _ :=  strconv.Atoi(words[50])
-		nlat, _ :=  strconv.Atoi(words[52])
-
-		t.nw_service[ii].ntp_sev_len = uint8(nlen)
-		t.nw_service[ii].ntp_server = strings.Trim(words[51], "[]")
-		t.nw_service[ii].ntp_latency = int32(nlat)
-
-		ii++
-	}
-	if(t.nw_count < ii) {
-		t.nw_count = ii
-	}
-	return nil
-}
 
 func get_network_dhcp_dns_data(t *Ah_wireless) error {
-
 	var ii uint8
 
 	table, err := os.ReadFile("/tmp/dcd_stat_dhcp_dns")
@@ -3164,6 +3127,7 @@ func get_network_dhcp_dns_data(t *Ah_wireless) error {
 	ii = 0
 
 	for  _, curLine := range lines {
+
 		words := strings.Fields(string(curLine))
 
 		if((words == nil) || (uint8(num_lines - 1) == ii) || (ii >= NETWORK_MAX_COUNT)) {
@@ -3174,8 +3138,11 @@ func get_network_dhcp_dns_data(t *Ah_wireless) error {
 		dhtime, _	:= strconv.Atoi(words[1])
 		dns_count,_	:= strconv.Atoi(words[2])
 
+		ntps		:= strings.Trim(words[3], "[]")
+		ntpl, _		:= strconv.Atoi(words[4])
+
 		var j int
-		j = 3
+		j = 5
 		for i := 0; i < dns_count ; i++ {
 			dip, _ := strconv.Atoi(words[j])
 			dtime, _ := strconv.Atoi(words[j+1])
@@ -3189,6 +3156,9 @@ func get_network_dhcp_dns_data(t *Ah_wireless) error {
 		t.nw_service[ii].dhcp_ip = uint32(dhip)
 		t.nw_service[ii].dhcp_time = int32(dhtime)
 
+		t.nw_service[ii].ntp_server = string(ntps)
+		t.nw_service[ii].ntp_latency = int32(ntpl)
+
 		ii++
 	}
 	if(t.nw_count < ii) {
@@ -3200,7 +3170,6 @@ func get_network_dhcp_dns_data(t *Ah_wireless) error {
 
 func Gather_Network_Service(t *Ah_wireless) error {
 	get_network_dhcp_dns_data(t)
-	get_network_service_data(t)
 	get_radius_server_data(t)
 	get_cwp_server_data(t)
 	get_syslog_server_data(t)
