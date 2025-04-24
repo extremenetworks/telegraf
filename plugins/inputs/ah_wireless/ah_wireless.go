@@ -44,6 +44,7 @@ type Ah_wireless struct {
         Airtime_clt             int             `toml:"airtime_clt"` */
 	closed			chan		struct{}
 	numclient		[4]int
+	txtotal                 [4]int64
 	timer_count		uint8
 	entity			map[string]map[string]unsafe.Pointer
 	Log			telegraf.Logger `toml:"-"`
@@ -874,6 +875,7 @@ func Gather_Rf_Avg(t *Ah_wireless, acc telegraf.Accumulator) error {
  		* prcentage, if the bit rate equal in radio interface or client reporting.
  		*/
 
+
 		for i := 0; i < NS_HW_RATE_SIZE; i++{
 
 			if ((rfstat.ast_rx_rate_stats[i].ns_rateKbps == 0) && (rfstat.ast_tx_rate_stats[i].ns_rateKbps == 0)) {
@@ -918,6 +920,11 @@ func Gather_Rf_Avg(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 	}
 
+        if t.timer_count == 0 {
+                t.txtotal[ii] = 0
+        }
+
+	t.txtotal[ii] += int64(tx_total)
 
 	for idx = 0; idx < NS_HW_RATE_SIZE; idx++ {
 
@@ -1158,6 +1165,9 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			t.last_rf_stat[ii].ast_rx_rate_stats[idx].ns_retries)
 
 	}
+
+
+	t.txtotal[ii] += int64(tx_total)
 
 	for idx = 0; idx < NS_HW_RATE_SIZE; idx++ {
 
@@ -1628,7 +1638,6 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				t.last_ut_data[ii].wifi_i_util_avg = (t.last_ut_data[ii].wifi_i_util_avg + atrStat.atr_info[atrStat.count-1].wifi_interference) / 2
 				/* Calculate Utilization */
 
-
 				fields["interferenceUtilization_min"]		= t.last_ut_data[ii].intfer_util_min
 				fields["interferenceUtilization_max"]		= t.last_ut_data[ii].intfer_util_max
 				fields["interferenceUtilization_avg"]		= t.last_ut_data[ii].intfer_util_avg
@@ -1712,7 +1721,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields["txRate_max"]						= rfstat.ast_tx_rate_stats[0].ns_rateKbps
 			fields["txRate_avg"]						= rfstat.ast_tx_rate_stats[0].ns_rateKbps
 
-			fields["txUnicastPackets"]					= rfstat.ast_tx_rate_stats[0].ns_unicasts
+			fields["txUnicastPackets"]					= t.txtotal[ii]
 			fields["txMulticastPackets"]					= rfstat.ast_as.ast_tx_mcast
 			fields["txMulticastBytes"]					= rfstat.ast_as.ast_tx_mcast_bytes
 			fields["txBcastBytes"]						= rfstat.ast_as.ast_tx_bcast_bytes
@@ -1732,7 +1741,6 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields["rxMulticastPackets"]					= rfstat.ast_rx_mcast
 			fields["rxBcastPackets"]					= rfstat.ast_rx_bcast
 			fields["rxBcastBytes"]						= rfstat.ast_rx_bcast_bytes
-
 			fields["bsSpCnt"]						= hddStat.bs_sp_cnt
 			fields["snrSpCnt"]						= hddStat.snr_sp_cnt
 			fields["snAnswerCnt"]						= reportGetDiff(hddStat.sn_answer_cnt, hddStat.sn_answer_cnt)
@@ -1765,7 +1773,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields["lbSpCnt"]							= hddStat.lb_sp_cnt
 			fields["rxProbeSup"]						= rfstat.is_rx_hdd_probe_sup
 			fields["rxSwDropped"]						= devstats.rx_dropped
-			fields["rxUnicastPackets"]					= rfstat.ast_rx_rate_stats[0].ns_unicasts
+			fields["rxUnicastPackets"]					= (t.last_rf_stat[ii].ast_as.ast_rx_num_data - t.last_rf_stat[ii].ast_rx_bcast - t.last_rf_stat[ii].ast_rx_mcast)
 
 
 			acc.AddGauge("RfStats", fields, nil)
