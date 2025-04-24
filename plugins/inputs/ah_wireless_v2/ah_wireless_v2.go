@@ -2144,7 +2144,6 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			var radio_link_score int64
 			rssi = int(stainfo.rssi) + int(stainfo.noise_floor)
 
-			/* Disabling Since in AP5020 radio link score is hardcoded to 100%
 			var tmp_count1 int64
 			if tot_rate_frame > (600 * 20) {
 				if clt_item[cn].ns_sla_bm_score > 0 {
@@ -2166,8 +2165,9 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				} else {
 					radio_link_score = AH_DCD_CLT_SCORE_GOOD
 				}
-			} */
+			}
 
+			// radio link score is hard coded for AP5020
 			radio_link_score = AH_DCD_CLT_SCORE_GOOD
 
 			/*  Disabling all the trap changes for client stats, uncomment when required
