@@ -843,6 +843,34 @@ func dumpOutput(outfile string , outline string, append int) error {
 
 }
 
+func prepareAndDumpOutput(outfile string ,fields map[string]interface{}) error {
+
+	var s string
+
+	for k, v := range fields {
+		if  fmt.Sprint(v) == "0" { // Check if the value is zero
+			delete(fields, k)
+		}
+	}
+
+	keys := make([]string, 0, len(fields))
+
+	for k := range fields{
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		s = s + k + " : " + fmt.Sprint(fields[k]) + "\n"
+	}
+
+	s = s + "---------------------------------------------------------------------------------------------\n"
+
+	dumpOutput(outfile, s, 1)
+	return nil
+}
+
 func Gather_Rf_Avg(t *Ah_wireless, acc telegraf.Accumulator) error {
 	var ii int
 	ii = 0
@@ -1767,30 +1795,10 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			var s string
 
 			s = "Stats of interface " + intfName + "\n\n"
-
-			for k, v := range fields {
-				if  fmt.Sprint(v) == "0" { // Check if the value is zero
-					delete(fields, k)
-				}
-			}
-
-			keys := make([]string, 0, len(fields))
-
-			for k := range fields{
-				keys = append(keys, k)
-            }
-
-			sort.Strings(keys)
-
-			for _, k := range keys {
-				s = s + k + " : " + fmt.Sprint(fields[k]) + "\n"
-			}
-
-			s = s + "---------------------------------------------------------------------------------------------\n"
-
-			log.Printf("ah_wireless_v2: radio status is processed")
-
 			dumpOutput(RF_STAT_OUT_FILE, s, 1)
+			prepareAndDumpOutput(RF_STAT_OUT_FILE, fields)
+
+			log.Printf("ah_wireless: radio status is processed")
 
 			t.last_rf_stat[ii] = rfstat
 			ii++
@@ -2571,31 +2579,9 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 
 			var s string
-
 			s = "Stats of client [" + client_mac + "]\n\n"
-
-			for k, v := range fields2 {
-				if  fmt.Sprint(v) == "0" { // Check if the value is zero
-					delete(fields2, k)
-				}
-			}
-
-			keys := make([]string, 0, len(fields2))
-
-			for k := range fields2{
-				keys = append(keys, k)
-			}
-
-			sort.Strings(keys)
-
-			for _, k := range keys {
-				s = s + k + " : " + fmt.Sprint(fields2[k]) + "\n"
-			}
-
-			s = s + "---------------------------------------------------------------------------------------------\n"
-
-
 			dumpOutput(CLT_STAT_OUT_FILE, s, 1)
+			prepareAndDumpOutput(CLT_STAT_OUT_FILE, fields2)
 
 		}
 		ii++
@@ -2828,38 +2814,16 @@ func Send_NetworkStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 		acc.AddGauge("NetworkStats", fields, nil)
 
 		var s string
-
 		s = "Stats of interface " + t.if_stats[i].ifname + "\n\n"
-
-		for k, v := range fields {
-			if  fmt.Sprint(v) == "0" { // Check if the value is zero
-				delete(fields, k)
-			}
-		}
-
-		keys := make([]string, 0, len(fields))
-
-		for k := range fields{
-			keys = append(keys, k)
-		}
-
-		sort.Strings(keys)
-
-		for _, k := range keys {
-			s = s + k + " : " + fmt.Sprint(fields[k]) + "\n"
-		}
-
-		s = s + "---------------------------------------------------------------------------------------------\n"
-
+		dumpOutput(NW_STAT_OUT_FILE, s, 1)
+		prepareAndDumpOutput(NW_STAT_OUT_FILE, fields)
 		log.Printf("network status is processed")
 
-		dumpOutput(NW_STAT_OUT_FILE, s, 1)
 	}
 	return nil
 }
 
 func Send_DeviceStats(t *Ah_wireless, acc telegraf.Accumulator) error {
-
 
 		fields := map[string]interface{}{
 
@@ -2927,33 +2891,11 @@ func Send_DeviceStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 		acc.AddGauge("DeviceStats", fields, nil)
 
 		var s string
-
 		s = "-----------------------------------------------\n\n"
-
-		for k, v := range fields {
-			if  fmt.Sprint(v) == "0" { // Check if the value is zero
-				delete(fields, k)
-			}
-		}
-
-		keys := make([]string, 0, len(fields))
-
-		for k := range fields{
-			keys = append(keys, k)
-		}
-
-		sort.Strings(keys)
-
-		for _, k := range keys {
-			s = s + k + " : " + fmt.Sprint(fields[k]) + "\n"
-		}
-
-		s = s + "---------------------------------------------------------------------------------------------\n"
-
-		log.Printf("device status is processed")
 		dumpOutput(DEV_STAT_OUT_FILE, s, 1)
-
-	return nil
+		prepareAndDumpOutput(DEV_STAT_OUT_FILE, fields)
+		log.Printf("device status is processed")
+		return nil
 }
 
 func Gather_Network_Health(t *Ah_wireless) error {
@@ -3204,132 +3146,6 @@ func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
 	return nil
 }
 
-
-func on_client_disconnect(evt *wireless_event, t *Ah_wireless, acc telegraf.Accumulator, level int) {
-	cltMacStr := fmt.Sprintf("%02x:%02x:%02x:%02x:%02x:%02x", evt.macaddr[0], evt.macaddr[1], evt.macaddr[2], evt.macaddr[3], evt.macaddr[4], evt.macaddr[5])
-
-	var ii int
-        ii = 0
-	var ifindex int
-	var trap_type int 
-	var opt_type int
-	ssidStr := string(evt.ssid[:])
-
-	var tmp_count1 uint32 =0
-	var tmp_count2 uint32 =0
-	ifindex2 := int(evt.ifindex)
-	for _, intfName2 := range t.Ifname {
-             ifindex = getIfIndex(t.fd, intfName2)
-             if (ifindex <= 0) {
-                        continue
-             }
-	     if(ifindex2 == ifindex){
-		     switch (level) {
-		        case AH_DCD_STATS_REPORT_TYPE_INT:
-				/* no need support */
-				break
-			case AH_DCD_STATS_REPORT_TYPE_CLT:
-				//Clearing TX drop
-				if isSetStatsReportAlarmTxDrop(t.last_alarm[ii].alarm) {
-					trap_type = AH_TRAP_TX_DROP_RATE
-					opt_type = AH_DCD_STATS_REPORT_ALARM_STATE_TYPE_CLR
-
-					ahDcdStatsReportAlarmTrapSnd(t,acc,level, trap_type, opt_type ,AH_DCD_STATS_TX_DROP_RATE_THRESHOLD, tmp_count1, tmp_count2, ifindex, cltMacStr, ssidStr, intfName2, &t.last_alarm[ii].alarm )
-
-				}
-
-				//Clearing RX drop
-                                if isSetStatsReportAlarmRxDrop(t.last_alarm[ii].alarm) {
-                                        trap_type = AH_TRAP_RX_DROP_RATE
-                                        opt_type = AH_DCD_STATS_REPORT_ALARM_STATE_TYPE_CLR
-
-                                        ahDcdStatsReportAlarmTrapSnd(t,acc,level, trap_type, opt_type ,AH_DCD_STATS_RX_DROP_RATE_THRESHOLD, tmp_count1, tmp_count2, ifindex, cltMacStr, ssidStr, intfName2, &t.last_alarm[ii].alarm )
-
-                                }
-
-				//Clearing TX Retry Rate
-                                if isSetStatsReportAlarmTxRetry(t.last_alarm[ii].alarm) {
-                                        trap_type = AH_TRAP_TX_RETRY_RATE
-                                        opt_type = AH_DCD_STATS_REPORT_ALARM_STATE_TYPE_CLR
-
-                                        ahDcdStatsReportAlarmTrapSnd(t,acc,level, trap_type, opt_type ,AH_DCD_STATS_RX_DROP_RATE_THRESHOLD, tmp_count1, tmp_count2, ifindex, cltMacStr, ssidStr, intfName2, &t.last_alarm[ii].alarm )
-
-                                }
-
-
-				//Clearing Airtime Consumption trap
-                                if isSetStatsReportAlarmAirCon(t.last_alarm[ii].alarm) {
-                                        trap_type = AH_TRAP_AIRTIME_PERCENTAGE
-                                        opt_type = AH_DCD_STATS_REPORT_ALARM_STATE_TYPE_CLR
-
-                                        ahDcdStatsReportAlarmTrapSnd(t,acc,level, trap_type, opt_type ,AH_DCD_STATS_AIRTIME_THRESHOLD, tmp_count1, tmp_count2, ifindex, cltMacStr, ssidStr, intfName2, &t.last_alarm[ii].alarm )
-
-                                }
-
-				break
-			default:
-		                log.Printf("Invalid report level")
-
-			}
-	     }
-	     ii ++
-	}
-}
-
-
-func ah_wireless_evt_handle(c net.PacketConn,t *Ah_wireless,acc telegraf.Accumulator ) {
-
-	buf := make([]byte, 64*1024)
-	for {
-		n, _, err := c.ReadFrom(buf)
-		if err != nil {
-			if !strings.HasSuffix(err.Error(), ": use of closed network connection") {
-				log.Printf(err.Error())
-			}
-			break
-		}
-
-		data := buf[:n]
-
-		var evt *wireless_event
-
-		evt = (*wireless_event)(unsafe.Pointer(&data[0]))
-
-		switch evt.cmd {
-			case TELEGRAF_EVT_CMD_STA_LEAVE:
-				level := AH_DCD_STATS_REPORT_TYPE_CLT
-				on_client_disconnect(evt,t,acc,level)
-			default:
-				log.Printf("Invalid event")
-
-		}
-
-	}
-
-}
-
-func init_evt_handle(t *Ah_wireless,acc telegraf.Accumulator) error {
-
-	if err := os.RemoveAll(EVT_SOCK); err != nil {
-		log.Fatal(err)
-	}
-
-	l, err := net.ListenPacket("unixgram", EVT_SOCK)
-	if err != nil {
-		log.Fatal("listen error:", err)
-	}
-	t.wg = sync.WaitGroup{}
-	t.wg.Add(1)
-
-	go func() {
-		defer t.wg.Done()
-		ah_wireless_evt_handle(l,t,acc)
-	}()
-
-
-	return nil
-}
-
 func (t *Ah_wireless) Start(acc telegraf.Accumulator) error {
 	t.intf_m	=	make(map[string]map[string]string)
 	t.entity	=	make(map[string]map[string]unsafe.Pointer)
@@ -3337,7 +3153,6 @@ func (t *Ah_wireless) Start(acc telegraf.Accumulator) error {
 
 	for _, intfName := range t.Ifname {
 		t.entity[intfName] = make(map[string]unsafe.Pointer)
-//		load_ssid(t, intfName)
 	}
 
 	t.if_stats	=	[AH_MAX_ETH]stats_interface_data{}
@@ -3346,7 +3161,6 @@ func (t *Ah_wireless) Start(acc telegraf.Accumulator) error {
 	t.nw_health =	network_health_data{}
 	t.nw_service =  network_service_data{}
 
-	init_evt_handle(t,acc)
 	return nil
 }
 
@@ -3387,7 +3201,6 @@ func init_ethf() *os.File {
 
 	return file
 }
-
 
 func (t *Ah_wireless) Stop() {
 	unix.Close(t.fd)
