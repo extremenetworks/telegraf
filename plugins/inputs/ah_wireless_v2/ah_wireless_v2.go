@@ -54,8 +54,8 @@ type Ah_wireless struct {
 	last_clt_stat		[4][50]ah_ieee80211_sta_stats_item
 	last_sq			map[string]map[int]map[int]ah_signal_quality_stats
 	wg			sync.WaitGroup
-	if_stats		[AH_MAX_ETH + AH_MAX_WLAN]stats_interface_data
-	ethx_stats		[AH_MAX_ETH + AH_MAX_WLAN]stats_ethx_data
+	if_stats		[AH_MAX_ETH]stats_interface_data
+	ethx_stats		[AH_MAX_ETH]stats_ethx_data
 	nw_health		network_health_data
 	nw_service		network_service_data
 }
@@ -1764,15 +1764,6 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 			acc.AddGauge("RfStats", fields, nil)
 
-
-			t.if_stats[AH_MAX_ETH + ii].ifname 			= intfName
-			t.if_stats[AH_MAX_ETH + ii].rx_unicast		= uint64(devstats.rx_unicast)
-			t.if_stats[AH_MAX_ETH + ii].rx_broadcast	= uint64(rfstat.ast_rx_bcast)
-			t.if_stats[AH_MAX_ETH + ii].rx_multicast	= uint64(rfstat.ast_rx_mcast)
-			t.if_stats[AH_MAX_ETH + ii].tx_unicast		= uint64(rfstat.ast_tx_rate_stats[0].ns_unicasts)
-			t.if_stats[AH_MAX_ETH + ii].tx_broadcast	= uint64(rfstat.ast_as.ast_tx_bcast)
-			t.if_stats[AH_MAX_ETH + ii].tx_multicast	= uint64(rfstat.ast_as.ast_tx_mcast)
-
 			var s string
 
 			s = "Stats of interface " + intfName + "\n\n"
@@ -2795,7 +2786,7 @@ func Send_NetworkStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 	id = 0
 
-	for i := 0; i < (AH_MAX_ETH + AH_MAX_WLAN); i++{
+	for i := 0; i < (AH_MAX_ETH); i++{
 
 		if ( i >= NETWORK_MAX_COUNT ) {
 			return nil
@@ -3349,8 +3340,8 @@ func (t *Ah_wireless) Start(acc telegraf.Accumulator) error {
 //		load_ssid(t, intfName)
 	}
 
-	t.if_stats	=	[AH_MAX_ETH + AH_MAX_WLAN]stats_interface_data{}
-	t.ethx_stats =	[AH_MAX_ETH + AH_MAX_WLAN]stats_ethx_data{}
+	t.if_stats	=	[AH_MAX_ETH]stats_interface_data{}
+	t.ethx_stats =	[AH_MAX_ETH]stats_ethx_data{}
 
 	t.nw_health =	network_health_data{}
 	t.nw_service =  network_service_data{}
