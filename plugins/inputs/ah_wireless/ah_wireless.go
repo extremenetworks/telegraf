@@ -33,6 +33,7 @@ type Ah_wireless struct {
 	arp_m			map[string]string
 	Ifname			[]string	`toml:"ifname"`
 	Eth_ioctl		uint64		`toml:"eth_ioctl"`
+	Scount			uint8		`toml:"scount"`
 /*	Tx_drop_int             int	        `toml:"tx_drop_int"`
 	Rx_drop_int             int             `toml:"rx_drop_int"`
 	Tx_retry_int            int             `toml:"tx_retry_int"`
@@ -72,6 +73,7 @@ func ah_ioctl(fd uintptr, op, argp uintptr) error {
 const sampleConfig = `
 [[inputs.ah_wireless]]
   interval = "5s"
+  scount = 10
   ifname = ["wifi0","wifi1"]
   eth_ioctl = -6767123671
 `
@@ -92,6 +94,7 @@ func NewAh_wireless(id int) *Ah_wireless {
                 fd:       fd,
 				timer_count: 0,
 				Eth_ioctl: 0,
+				Scount: 10,
         }
 
 }
@@ -3129,7 +3132,7 @@ func Gather_Network_Service(t *Ah_wireless) error {
 }
 
 func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
-	if t.timer_count == 9 {
+	if t.timer_count == (t.Scount - 1) {
 		dumpOutput(RF_STAT_OUT_FILE, "RF Stat Input Plugin Output", 0)
 		dumpOutput(CLT_STAT_OUT_FILE, "Client Stat Input Plugin Output", 0)
 		dumpOutput(NW_STAT_OUT_FILE, "Network Stat Input Plugin Output",0)
