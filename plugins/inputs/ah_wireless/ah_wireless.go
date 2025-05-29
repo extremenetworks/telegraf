@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"sort"
 	"unsafe"
+	"runtime/debug"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/inputs"
 	"golang.org/x/sys/unix"
@@ -3132,6 +3133,18 @@ func Gather_Network_Service(t *Ah_wireless) error {
 }
 
 func (t *Ah_wireless) Gather(acc telegraf.Accumulator) error {
+
+	defer func() {
+		if r := recover(); r != nil {
+			currentTime := time.Now()
+			crash_file := fmt.Sprintf("/tmp/telegraf_crash_%s.txt", currentTime.Format("2006_01_02_15_04_05"))
+			ss := string(debug.Stack())
+			log.Printf("telegraf crash: %s\n",ss)
+			os.WriteFile(crash_file, debug.Stack(), 0644)
+			os.Exit(128)
+		}
+	}()
+
 	if t.timer_count == (t.Scount - 1) {
 		dumpOutput(RF_STAT_OUT_FILE, "RF Stat Input Plugin Output", 0)
 		dumpOutput(CLT_STAT_OUT_FILE, "Client Stat Input Plugin Output", 0)
