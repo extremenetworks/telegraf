@@ -433,12 +433,13 @@ func getAlarmStatus(optType int) string {
 	return "returned below the alarm"
 }
 
-func get_rt_sta_info(t *Ah_wireless, mac_adrs string, data rt_sta_data) rt_sta_data {
+func get_rt_sta_info(t *Ah_wireless, mac_adrs string, upid int, data rt_sta_data) rt_sta_data {
 	app := "telegraf_helper"
 
 	arg0 := mac_adrs
+	arg1 := strconv.Itoa(upid)
 
-	cmd := exec.Command(app, arg0)
+	cmd := exec.Command(app, arg0, arg1)
 	output, err := cmd.Output()
 
 	if err != nil {
@@ -449,7 +450,7 @@ func get_rt_sta_info(t *Ah_wireless, mac_adrs string, data rt_sta_data) rt_sta_d
 
 	lines := strings.Split(string(output),"\n")
 
-	var os_line, host_line, user_line  string
+	var os_line, host_line, user_line, prof_line  string
 
 	// Loop over the line to find and extract OS and HostName ans UserName
 	for _, line := range lines {
@@ -457,15 +458,17 @@ func get_rt_sta_info(t *Ah_wireless, mac_adrs string, data rt_sta_data) rt_sta_d
 			os_line = strings.TrimSpace(strings.TrimPrefix(line, "OS:"))
 		} else if strings.HasPrefix(line, "HostName:") {
 			host_line = strings.TrimSpace(strings.TrimPrefix(line, "HostName:"))
-		}else if strings.HasPrefix(line, "UserName:") {
+		} else if strings.HasPrefix(line, "UserName:") {
 			user_line = strings.TrimSpace(strings.TrimPrefix(line, "UserName:"))
+		} else if strings.HasPrefix(line, "UserProfile:") {
+			prof_line = strings.TrimSpace(strings.TrimPrefix(line, "UserProfile:"))
 		}
 	}
 
 	data.os =   string(os_line)
 	data.hostname = string(host_line)
 	data.user = string(user_line)
-
+	data.userprofile = string(prof_line)
 
 	return data
 }
@@ -2589,7 +2592,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			t.last_clt_stat[ii][cn] = clt_item[cn]
 
 			var rt_sta rt_sta_data
-			rt_sta = get_rt_sta_info(t, client_mac, rt_sta)
+			rt_sta = get_rt_sta_info(t, client_mac, int(onesta.isi_upid), rt_sta)
 
 			fields2["ifName"]			= intfName2
 			fields2["ifIndex"]			= ifindex2
@@ -2623,7 +2626,7 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields2["os"]				= rt_sta.os
 			fields2["name"]				= strings.ReplaceAll(string(onesta.isi_name[:]), "\u0000", "")
 			fields2["host"]				= rt_sta.hostname
-//			fields2["profName"]			= "default-profile"			/* TBD (Needs shared memory of dcd)	*/
+			fields2["profName"]			= rt_sta.userprofile
 			fields2["dhcpIp"]			= intToIp(sta_ip.dhcp_server)
 			fields2["gwIp"]				= intToIp(sta_ip.gateway)
 			fields2["dnsIp"]			= intToIp(sta_ip.dns[0].dns_ip)

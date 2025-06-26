@@ -1050,6 +1050,7 @@ type rt_sta_data struct {
     hostname string
     os  string
     user    string
+    userprofile string
 }
 
 type stats_interface_data struct {
