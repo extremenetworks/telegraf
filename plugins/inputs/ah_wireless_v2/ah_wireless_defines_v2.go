@@ -1057,9 +1057,15 @@ type stats_interface_data struct {
 	rx_unicast			uint64
 	rx_broadcast		uint64
 	rx_multicast		uint64
+	rx_bytes                uint64
+	rx_errors               uint64
+	rx_dropped              uint64
 	tx_unicast			uint64
 	tx_broadcast		uint64
 	tx_multicast		uint64
+	tx_bytes                uint64
+	tx_errors               uint64
+	tx_dropped              uint64
 }
 
 

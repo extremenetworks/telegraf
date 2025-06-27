@@ -2902,9 +2902,16 @@ func Gather_EthernetInterfaceStats(t *Ah_wireless) error {
 		t.if_stats[i].rx_unicast		= reportGetDiff64(uint64(ethdevstats.rx_unicast), t.if_stats[i].rx_unicast)
 		t.if_stats[i].rx_broadcast		= reportGetDiff64(uint64(ethdevstats.rx_broadcast), t.if_stats[i].rx_broadcast)
 		t.if_stats[i].rx_multicast		= reportGetDiff64(uint64(ethdevstats.rx_multicast), t.if_stats[i].rx_multicast)
+		t.if_stats[i].rx_bytes                  = reportGetDiff64(uint64(ethdevstats.rx_bytes), t.if_stats[i].rx_bytes)
+		t.if_stats[i].rx_errors                 = reportGetDiff64(uint64(ethdevstats.rx_errors), t.if_stats[i].rx_errors)
+		t.if_stats[i].rx_dropped                = reportGetDiff64(uint64(ethdevstats.rx_dropped), t.if_stats[i].rx_dropped)
 		t.if_stats[i].tx_unicast		= reportGetDiff64(uint64(ethdevstats.tx_unicast), t.if_stats[i].tx_unicast)
 		t.if_stats[i].tx_broadcast		= reportGetDiff64(uint64(ethdevstats.tx_broadcast), t.if_stats[i].tx_broadcast)
 		t.if_stats[i].tx_multicast		= reportGetDiff64(uint64(ethdevstats.tx_multicast), t.if_stats[i].tx_multicast)
+		t.if_stats[i].tx_bytes                  = reportGetDiff64(uint64(ethdevstats.tx_bytes), t.if_stats[i].tx_bytes)
+		t.if_stats[i].tx_errors                 = reportGetDiff64(uint64(ethdevstats.tx_errors), t.if_stats[i].tx_errors)
+		t.if_stats[i].tx_dropped                = reportGetDiff64(uint64(ethdevstats.tx_dropped), t.if_stats[i].tx_dropped)
+
 
 		f := init_ethf()
 		link_status := getEthLink(t, f.Fd(), ethName)
