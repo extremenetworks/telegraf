@@ -2696,27 +2696,33 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				rangeMin	:=	fmt.Sprintf("rangeMin_@%d_sqRssi",i)
 				rangeMax	:=	fmt.Sprintf("rangeMax_@%d_sqRssi",i)
 				countt		:=	fmt.Sprintf("count_@%d_sqRssi",i)
+				bucket		:=	fmt.Sprintf("bucketNum_@%d_sqRssi",i)
 				fields2[rangeMin]		= clt_sq[0][i].asqrange.min
 				fields2[rangeMax]		= clt_sq[0][i].asqrange.max
 				fields2[countt]			= clt_sq[0][i].count
+				fields2[bucket]			= i
 			}
 
 			for i := 0; i < AH_SQ_GROUP_MAX; i++{
 				rangeMin	:=	fmt.Sprintf("rangeMin_@%d_sqNoise",i)
 				rangeMax	:=	fmt.Sprintf("rangeMax_@%d_sqNoise",i)
 				countt		:=	fmt.Sprintf("count_@%d_sqNoise",i)
+				bucket		:=	fmt.Sprintf("bucketNum_@%d_sqNoise",i)
 				fields2[rangeMin]		= clt_sq[1][i].asqrange.min
 				fields2[rangeMax]		= clt_sq[1][i].asqrange.max
 				fields2[countt]			= clt_sq[1][i].count
+				fields2[bucket]			= i
 			}
 
 			for i := 0; i < AH_SQ_GROUP_MAX; i++{
 				rangeMin	:=	fmt.Sprintf("rangeMin_@%d_sqSnr",i)
 				rangeMax	:=	fmt.Sprintf("rangeMax_@%d_sqSnr",i)
 				countt		:=	fmt.Sprintf("count_@%d_sqSnr",i)
+				bucket		:=	fmt.Sprintf("bucketNum_@%d_sqSnr",i)
 				fields2[rangeMin]			= clt_sq[2][i].asqrange.min
 				fields2[rangeMax]			= clt_sq[2][i].asqrange.max
 				fields2[countt]				= clt_sq[2][i].count
+				fields2[bucket]				= i
 			}
 
 			acc.AddFields("ClientStats", fields2, tags, time.Now())
