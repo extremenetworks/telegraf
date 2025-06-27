@@ -2987,9 +2987,15 @@ func Send_NetworkStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 		fields["rxUnicastPackets"]		= t.if_stats[i].rx_unicast
 		fields["rxMulticastPackets"]	= t.if_stats[i].rx_multicast
 		fields["rxBcastPackets"]		= t.if_stats[i].rx_broadcast
+		fields["rxBytes"]	                = t.if_stats[i].rx_bytes
+		fields["rxErrors"]                      = t.if_stats[i].rx_errors
+		fields["rxDropped"]                     = t.if_stats[i].rx_dropped
 		fields["txUnicastPackets"]		= t.if_stats[i].tx_unicast
 		fields["txMulticastPackets"]	= t.if_stats[i].tx_multicast
 		fields["txBcastPackets"]		= t.if_stats[i].tx_broadcast
+		fields["txBytes"]	                = t.if_stats[i].tx_bytes
+		fields["txErrors"]                      = t.if_stats[i].tx_errors
+		fields["txDropped"]                     = t.if_stats[i].tx_dropped
 
 		if len(strings.TrimSpace(t.ethx_stats[i].duplex)) > 0 {
 			fields["duplex"]				= t.ethx_stats[i].duplex
