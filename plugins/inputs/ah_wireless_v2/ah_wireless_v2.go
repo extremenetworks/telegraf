@@ -90,6 +90,28 @@ func freqToChan(freq uint16) uint16 {
 		return (freq -5950)/5
 }
 
+func ah_pow_10(exponent int) int64 {
+    var result int64 = 1
+    var factor float64
+
+    if 0 == exponent {
+        return 1
+    }
+
+    if exponent > 0 {
+        factor = 10
+    } else {
+        factor = 0.1
+        exponent = (0 - exponent)
+    }
+
+    for (exponent > 0) {
+        result = int64((float64(result) * factor))
+        exponent = exponent - 1
+    }
+    return result
+}
+
 /*
  * Retrieve Channel Width from Phymode
  */
@@ -471,6 +493,34 @@ func get_rt_sta_info(t *Ah_wireless, mac_adrs string, upid int, data rt_sta_data
 	data.userprofile = string(prof_line)
 
 	return data
+}
+
+func getChannel(fd int, ifname string) int32 {
+
+	var freq uint16 = 0
+	var channel int32 = 0
+    request := iwreq_freq{}
+    copy(request.ifr_name[:], ah_ifname_radio2vap(ifname))
+
+	offsetsMutex.Lock()
+
+        if err := ah_ioctl(uintptr(fd), SIOCGIWFREQ, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("getHDDStat ioctl data error %s",err)
+				offsetsMutex.Unlock()
+                return channel
+        }
+		offsetsMutex.Unlock()
+
+		if (request.u.m == 0) {
+			channel = 0
+		} else if (request.u.e == 0) { /* BCM XXX return in channel format */
+			channel = request.u.m
+		} else {
+			freq = uint16((int64(request.u.m)) * ah_pow_10(int(request.u.e - 6)))
+			channel = int32(freqToChan(freq))
+		}		
+
+        return channel
 }
 
 func getHDDStat(fd int, ifname string, cfg ieee80211req_cfg_hdd) ah_ieee80211_hdd_stats {
@@ -1243,6 +1293,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 		var rfstat awestats
 		var devstats ah_dcd_dev_stats
 		var ifindex int
+		var chann int32
 		var atrSt ieee80211req_cfg_atr
 		var atrStat ah_ieee80211_atr_user
 		var hddStat ah_ieee80211_hdd_stats
@@ -1271,6 +1322,9 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 		atrStat = getAtrTbl(t.fd, intfName, atrSt)
 
 		hddStat = getHDDStat(t.fd, intfName, hdd)
+
+		chann = 0
+		chann = getChannel(t.fd, intfName);
 
 		/* We need check and aggregation Tx/Rx bit rate distribution
  		* prcentage, if the bit rate equal in radio interface or client reporting.
@@ -1941,6 +1995,7 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields["rxProbeSup"]						= rfstat.is_rx_hdd_probe_sup
 			fields["rxSwDropped"]						= devstats.rx_dropped
 			fields["rxUnicastPackets"]					= rfstat.ast_rx_rate_stats[0].ns_unicasts
+			fields["channel"]							= chann
 
 			acc.AddGauge("RfStats", fields, nil)
 

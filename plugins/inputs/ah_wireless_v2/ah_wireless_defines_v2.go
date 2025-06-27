@@ -9,6 +9,7 @@ import (
 const (
 	AH_FE_DEV_NAME =		"/dev/fe"
 	SIOCIWFIRSTPRIV =		0x8BE0
+	SIOCGIWFREQ =			0x8B05
         SIOCGRADIOSTATS =		unix.SIOCDEVPRIVATE + 1
 	IEEE80211_IOCTL_GETPARAM =	SIOCIWFIRSTPRIV + 1
 	IEEE80211_RATE_MAXSIZE =	36
@@ -863,6 +864,20 @@ type iwreq_clt struct
 {
 		ifr_name	[unix.IFNAMSIZ]byte    /* if name, e.g. "eth0" */
 		u	iwreq_data
+}
+
+type iw_freq struct
+{
+		m int32
+		e int16
+		i uint8
+		flags	uint8
+}
+
+type iwreq_freq struct
+{
+		ifr_name	[unix.IFNAMSIZ]byte    /* if name, e.g. "eth0" */
+		u	iw_freq
 }
 
 type ah_ieee80211_sta_info struct {
