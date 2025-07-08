@@ -56,8 +56,8 @@ type Ah_wireless struct {
 	last_clt_stat		[4][50]ah_ieee80211_sta_stats_item
 	last_sq			map[string]map[int]map[int]ah_signal_quality_stats
 	wg			sync.WaitGroup
-	if_stats		[AH_MAX_ETH]stats_interface_data
-	ethx_stats		[AH_MAX_ETH]stats_ethx_data
+	if_stats		[AH_MAX_WIRED]stats_interface_data
+	ethx_stats		[AH_MAX_WIRED]stats_ethx_data
 	nw_health		network_health_data
 	nw_service		network_service_data
 }
@@ -2892,9 +2892,10 @@ func Gather_EthernetInterfaceStats(t *Ah_wireless) error {
 
 	var ethdevstats ah_dcd_dev_stats
 
-    for i := 0; i < (AH_MAX_ETH); i++{
 
-		ethName := fmt.Sprintf("%s%d", "eth", i)
+        interfaces := []string{"eth0", "eth1", "agg0", "red0"}
+
+        for i, ethName := range interfaces{
 		ethdevstats = getProcNetDev(ethName)
 
 		t.if_stats[i].ifname 			= ethName
@@ -2912,11 +2913,19 @@ func Gather_EthernetInterfaceStats(t *Ah_wireless) error {
 		t.if_stats[i].tx_errors                 = reportGetDiff64(uint64(ethdevstats.tx_errors), t.if_stats[i].tx_errors)
 		t.if_stats[i].tx_dropped                = reportGetDiff64(uint64(ethdevstats.tx_dropped), t.if_stats[i].tx_dropped)
 
+               var link_status, eth_status int32
 
-		f := init_ethf()
-		link_status := getEthLink(t, f.Fd(), ethName)
-		eth_status := getEthStatus(t, f.Fd(), ethName)
-		f.Close();
+                if ethName == "agg0" || ethName == "red0" {
+                    // Skip ioctl for agg0 and red0
+                    t.ethx_stats[i].duplex = ""
+                    t.ethx_stats[i].speed = ""
+                    continue
+                } else {
+                    f := init_ethf()
+                    link_status = getEthLink(t, f.Fd(), ethName)
+                    eth_status = getEthStatus(t, f.Fd(), ethName)
+                    f.Close()
+                }
 
 		t.ethx_stats[i].ifname = ethName
 
@@ -2959,7 +2968,7 @@ func Send_NetworkStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 	id = 0
 
-	for i := 0; i < (AH_MAX_ETH); i++{
+	for i := 0; i < (AH_MAX_WIRED); i++{
 
 		if ( i >= NETWORK_MAX_COUNT ) {
 			return nil
@@ -3360,8 +3369,8 @@ func (t *Ah_wireless) Start(acc telegraf.Accumulator) error {
 		t.entity[intfName] = make(map[string]unsafe.Pointer)
 	}
 
-	t.if_stats	=	[AH_MAX_ETH]stats_interface_data{}
-	t.ethx_stats =	[AH_MAX_ETH]stats_ethx_data{}
+	t.if_stats	=	[AH_MAX_WIRED]stats_interface_data{}
+	t.ethx_stats =	[AH_MAX_WIRED]stats_ethx_data{}
 
 	t.nw_health =	network_health_data{}
 	t.nw_service =  network_service_data{}

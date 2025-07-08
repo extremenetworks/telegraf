@@ -33,7 +33,7 @@ const (
 	NW_STAT_OUT_FILE =		"/tmp/NetworkStatOut"
 	DEV_STAT_OUT_FILE =		"/tmp/DeviceStatOut"
 	EVT_SOCK =			"/tmp/ah_telegraf.sock"
-	AH_MAX_ETH =			2
+	AH_MAX_WIRED =			4
 	AH_MAX_WLAN =			4
 	ETH_IOCTL_FILE = 		"/dev/ah_ethif_ctl"
 	AH_ETHIF_IOCTL_MAGIC =	'E'
