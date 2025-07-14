@@ -682,6 +682,24 @@ func getProcNetDev(ifname string) ah_dcd_dev_stats {
 	return stats
 }
 
+func getIfStatus(fd int, ifname string) int {
+        ifr, err := unix.NewIfreq(ifname)
+        if err != nil {
+                log.Printf("failed to create ifreq for flags: %v", err)
+                return -1
+        }
+
+        offsetsMutex.Lock()
+        defer offsetsMutex.Unlock()
+
+        if err := unix.IoctlIfreq(fd, unix.SIOCGIFFLAGS, ifr); err != nil {
+                log.Printf("getIfStatus ioctl error: %s", err)
+                return -1
+        }
+
+        return int(ifr.Uint16())
+}
+
 func getIfIndex(fd int, ifname string) int {
         ifr, err := unix.NewIfreq(ifname)
 
@@ -2889,13 +2907,20 @@ func Gather_EthernetInterfaceStats(t *Ah_wireless) error {
 
 	var ethdevstats ah_dcd_dev_stats
 
-	interfaces := []string{"eth0", "eth1", "agg0", "red0"}
+	interfaces := []string{}
 
-        for i, ethName := range interfaces{
+        for i := 0; i < AH_MAX_ETH; i++ {
+                interfaces = append(interfaces, fmt.Sprintf("eth%d", i))
+        }
 
-		ethdevstats = getProcNetDev(ethName)
+        interfaces = append(interfaces, "agg0", "red0")
 
-		t.if_stats[i].ifname 			= ethName
+
+        for i, ifName := range interfaces{
+
+		ethdevstats = getProcNetDev(ifName)
+
+		t.if_stats[i].ifname 			= ifName
 
 		t.if_stats[i].rx_unicast		= reportGetDiff64(uint64(ethdevstats.rx_unicast), t.if_stats[i].rx_unicast)
 		t.if_stats[i].rx_broadcast		= reportGetDiff64(uint64(ethdevstats.rx_broadcast), t.if_stats[i].rx_broadcast)
@@ -2909,50 +2934,81 @@ func Gather_EthernetInterfaceStats(t *Ah_wireless) error {
 		t.if_stats[i].tx_bytes                  = reportGetDiff64(uint64(ethdevstats.tx_bytes), t.if_stats[i].tx_bytes)
 		t.if_stats[i].tx_errors                 = reportGetDiff64(uint64(ethdevstats.tx_errors), t.if_stats[i].tx_errors)
 		t.if_stats[i].tx_dropped                = reportGetDiff64(uint64(ethdevstats.tx_dropped), t.if_stats[i].tx_dropped)
+		t.ethx_stats[i].ifname                  = ifName
 
 
-                var link_status, eth_status int32
+                var link_status, eth_status, speed, duplex int32
 
-                if ethName == "agg0" || ethName == "red0" {
-                    // Skip ioctl for agg0 and red0
-		    t.ethx_stats[i].duplex = ""
-		    t.ethx_stats[i].speed = ""
-		    continue
-	        } else {
-		    f := init_ethf()
-                    link_status = getEthLink(t, f.Fd(), ethName)
-                    eth_status = getEthStatus(t, f.Fd(), ethName)
-                    f.Close()
+                if ifName == "agg0" || ifName == "red0" {
+                        var memberIfstatus int32
+                        var maxMemberSpeed int32  = ETH_MII_LINK_DOWN
+                        var maxMemberDuplex int32 = ETH_MII_LINK_DOWN
+
+                        ifStatus := getIfStatus(t.fd, ifName)
+
+                        if (ifStatus & IFF_UP) != 0 && (ifStatus & IFF_RUNNING) != 0 {
+                                link_status = ETH_SET_MII_LINK_UP
+				memberIfstatus = AH_IF_STATUS
+                        } else {
+                                link_status = ETH_SET_MII_LINK_DOWN
+				memberIfstatus = ETH_MII_LINK_DOWN
+                        }
+
+                        if ( link_status == ETH_SET_MII_LINK_DOWN){
+                            t.ethx_stats[i].duplex = "LINK_DOWN"
+                            t.ethx_stats[i].speed = "LINK_DOWN"
+                            continue
+                        }
+
+                        if memberIfstatus != ETH_MII_LINK_DOWN {
+                            speed := memberIfstatus & ETH_MII_SPEED_MASK
+                            duplex := memberIfstatus & ETH_MII_DUPLEX_MASK
+
+                            if maxMemberSpeed < speed {
+                                maxMemberSpeed = speed
+                            }
+                            if maxMemberDuplex < duplex {
+                                maxMemberDuplex = duplex
+                            }
+                        }
+                        speed = maxMemberSpeed | maxMemberDuplex
+                        duplex = speed
+
+	        } else{
+			f := init_ethf()
+                        link_status = getEthLink(t, f.Fd(), ifName)
+                        eth_status = getEthStatus(t, f.Fd(), ifName)
+                        f.Close()
+                        if link_status == ETH_SET_MII_LINK_DOWN {
+                                t.ethx_stats[i].duplex = "LINK_DOWN"
+                                t.ethx_stats[i].speed = "LINK_DOWN"
+                                continue
+                        }
+
+                        speed = eth_status
+                        duplex = eth_status
                 }
-		t.ethx_stats[i].ifname = ethName
 
-		if (link_status == ETH_SET_MII_LINK_DOWN) {
-			t.ethx_stats[i].duplex = "LINK_DOWN"
-			t.ethx_stats[i].speed = "LINK_DOWN"
+		if((duplex & ETH_MII_DUPLEX_FULL) > 0) {
+			t.ethx_stats[i].duplex = "FULL"
 		} else {
-			duplex := eth_status
-			speed := eth_status
-
-			if((duplex & ETH_MII_DUPLEX_FULL) > 0) {
-				t.ethx_stats[i].duplex = "FULL"
-			} else {
-				t.ethx_stats[i].duplex = "HALF"
-			}
-
-			if((speed & ETH_MII_SPEED_10000M) > 0) {
-				t.ethx_stats[i].speed = "10000M"
-			} else if ((speed & ETH_MII_SPEED_5000M) > 0) {
-				t.ethx_stats[i].speed = "5000M"
-			} else if ((speed & ETH_MII_SPEED_2500M) > 0) {
-				t.ethx_stats[i].speed = "2500M"
-			} else if ((speed & ETH_MII_SPEED_1000M) > 0) {
-				t.ethx_stats[i].speed = "1000M"
-			} else if ((speed & ETH_MII_SPEED_100M) > 0) {
-				t.ethx_stats[i].speed = "100M"
-			} else {
-				t.ethx_stats[i].speed = "10M"
-			}
+			t.ethx_stats[i].duplex = "HALF"
 		}
+
+		if((speed & ETH_MII_SPEED_10000M) > 0) {
+			t.ethx_stats[i].speed = "10000M"
+		} else if ((speed & ETH_MII_SPEED_5000M) > 0) {
+			t.ethx_stats[i].speed = "5000M"
+		} else if ((speed & ETH_MII_SPEED_2500M) > 0) {
+			t.ethx_stats[i].speed = "2500M"
+		} else if ((speed & ETH_MII_SPEED_1000M) > 0) {
+			t.ethx_stats[i].speed = "1000M"
+		} else if ((speed & ETH_MII_SPEED_100M) > 0) {
+			t.ethx_stats[i].speed = "100M"
+		} else {
+			t.ethx_stats[i].speed = "10M"
+		}
+
 
 	}
 
