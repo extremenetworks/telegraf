@@ -11,6 +11,7 @@ import (
 const (
 	AH_FE_DEV_NAME =		"/dev/fe"
 	SIOCIWFIRSTPRIV =		0x8BE0
+	SIOCGIWFREQ =			0x8B05
         SIOCGRADIOSTATS =		unix.SIOCDEVPRIVATE + 1
 	IEEE80211_IOCTL_GETPARAM =	SIOCIWFIRSTPRIV + 1
 	IEEE80211_RATE_MAXSIZE =	36
@@ -35,7 +36,8 @@ const (
 	NW_STAT_OUT_FILE =		"/tmp/NetworkStatOut"
 	DEV_STAT_OUT_FILE =		"/tmp/DeviceStatOut"
 	EVT_SOCK =			"/tmp/ah_telegraf.sock"
-	AH_MAX_ETH =			2
+	AH_MAX_ETH =                    2
+	AH_MAX_WIRED =			AH_MAX_ETH + 2
 	AH_MAX_WLAN =			4
 	ETH_IOCTL_FILE = 		"/dev/ah_ethif_ctl"
 	AH_ETHIF_IOCTL_MAGIC =	'E'
@@ -45,6 +47,9 @@ const (
 	AH_MAX_RADIUS_NUM =		128
 	AH_MAX_ACCESS_VIF_PER_RADIO = 15
 	AH_MAX_LOG_SERVER =		4
+	IFF_UP =                0x1
+	IFF_RUNNING =		0x40
+	AH_IF_STATUS =		40
 )
 
 const (
@@ -60,6 +65,16 @@ const (
 	ETH_MII_SPEED_2500M =	0x40
 	ETH_MII_SPEED_5000M =	0x80
 	ETH_MII_SPEED_10000M =	0x100
+	ETH_MII_SPEED_MASK = ( ETH_MII_SPEED_10M | ETH_MII_SPEED_100M | ETH_MII_SPEED_1000M | ETH_MII_SPEED_2500M | ETH_MII_SPEED_5000M | ETH_MII_SPEED_10000M )
+	ETH_MII_DUPLEX_MASK = (ETH_MII_DUPLEX_HALF | ETH_MII_DUPLEX_FULL)
+)
+
+const (
+        IEEE80211_CWM_WIDTH20 =    20
+        IEEE80211_CWM_WIDTH40 =    40
+        IEEE80211_CWM_WIDTH80 =    80
+        IEEE80211_CWM_WIDTH160 =   160
+        IEEE80211_CWM_WIDTH320 =   320
 )
 
 const (
@@ -856,6 +871,20 @@ type iwreq_clt struct
 		u	iwreq_data
 }
 
+type iw_freq struct
+{
+		m int32
+		e int16
+		i uint8
+		flags	uint8
+}
+
+type iwreq_freq struct
+{
+		ifr_name	[unix.IFNAMSIZ]byte    /* if name, e.g. "eth0" */
+		u	iw_freq
+}
+
 type ah_ieee80211_sta_info struct {
 	mac				[MACADDR_LEN]uint8
 	noise_floor		int16
@@ -914,8 +943,8 @@ type wireless_event struct {
 }
 
 type  ieee80211req_sta_info struct{
-    isi_freq	uint16				/* MHz */
     isi_len		uint16			/* length (mult of 4) */
+    isi_freq	uint16				/* MHz */
     isi_flags		uint32		 /* channel flags */
 	isi_authmode	uint8			/* authentication algorithm */
     isi_rssi		int8
@@ -1040,6 +1069,7 @@ type rt_sta_data struct {
     hostname string
     os  string
     user    string
+    userprofile string
 }
 
 type stats_interface_data struct {
@@ -1047,9 +1077,15 @@ type stats_interface_data struct {
 	rx_unicast			uint64
 	rx_broadcast		uint64
 	rx_multicast		uint64
+	rx_bytes                uint64
+	rx_errors		uint64
+	rx_dropped		uint64
 	tx_unicast			uint64
 	tx_broadcast		uint64
 	tx_multicast		uint64
+	tx_bytes                uint64
+	tx_errors               uint64
+	tx_dropped              uint64
 }
 
 type network_health_data struct {

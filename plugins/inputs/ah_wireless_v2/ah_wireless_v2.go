@@ -56,10 +56,131 @@ type Ah_wireless struct {
 	last_clt_stat		[4][50]ah_ieee80211_sta_stats_item
 	last_sq			map[string]map[int]map[int]ah_signal_quality_stats
 	wg			sync.WaitGroup
-	if_stats		[AH_MAX_ETH]stats_interface_data
-	ethx_stats		[AH_MAX_ETH]stats_ethx_data
+	if_stats		[AH_MAX_WIRED]stats_interface_data
+	ethx_stats		[AH_MAX_WIRED]stats_ethx_data
 	nw_health		network_health_data
 	nw_service		network_service_data
+}
+
+/*
+ * Convert MHz frequency to IEEE channel number.
+ */
+func freqToChan(freq uint16) uint16 {
+		if freq < 2412 {
+			return 0
+		}
+		if freq > 7125 {
+			return 0
+		}
+		if freq == 2484 {
+			return 14
+		}
+		if freq < 2484 {
+			return (freq-2407)/5
+		}
+		if freq < 5000 {
+			return 15+((freq-2512)/20)
+		}
+		if freq < 5935 {
+			return (freq - 5000)/5
+		}
+		if freq == 5935 {
+			return 2
+		}
+		return (freq -5950)/5
+}
+
+func ah_pow_10(exponent int) int64 {
+    var result int64 = 1
+    var factor float64
+
+    if 0 == exponent {
+        return 1
+    }
+
+    if exponent > 0 {
+        factor = 10
+    } else {
+        factor = 0.1
+        exponent = (0 - exponent)
+    }
+
+    for (exponent > 0) {
+        result = int64((float64(result) * factor))
+        exponent = exponent - 1
+    }
+    return result
+}
+
+/*
+ * Retrieve Channel Width from Phymode
+ */
+func getChannelWidth(phymode uint32) uint32 {
+
+    switch phymode{
+		case 	IEEE80211_MODE_AUTO,
+				IEEE80211_MODE_11A,
+				IEEE80211_MODE_11B,
+				IEEE80211_MODE_11G,
+				IEEE80211_MODE_FH,
+				IEEE80211_MODE_TURBO_A,
+				IEEE80211_MODE_TURBO_G,
+				IEEE80211_MODE_11NA_HT20,
+				IEEE80211_MODE_11NG_HT20,
+				IEEE80211_MODE_11AC_VHT20,
+				IEEE80211_MODE_11AX_2G_HE20,
+				IEEE80211_MODE_11AX_5G_HE20,
+				IEEE80211_MODE_11AX_6G_HE20,
+				IEEE80211_MODE_11BE_2G_EHT20,
+				IEEE80211_MODE_11BE_5G_EHT20,
+				IEEE80211_MODE_11BE_6G_EHT20 :
+
+					return IEEE80211_CWM_WIDTH20
+
+		case	IEEE80211_MODE_11NA_HT40PLUS,
+				IEEE80211_MODE_11NA_HT40MINUS,
+				IEEE80211_MODE_11NG_HT40PLUS,
+				IEEE80211_MODE_11NG_HT40MINUS,
+				IEEE80211_MODE_11NG_HT40,
+				IEEE80211_MODE_11NA_HT40,
+				IEEE80211_MODE_11AC_VHT40PLUS,
+				IEEE80211_MODE_11AC_VHT40MINUS,
+				IEEE80211_MODE_11AC_VHT40,
+				IEEE80211_MODE_11AX_2G_HE40,
+				IEEE80211_MODE_11AX_5G_HE40,
+				IEEE80211_MODE_11AX_6G_HE40,
+				IEEE80211_MODE_11BE_2G_EHT40,
+				IEEE80211_MODE_11BE_5G_EHT40,
+				IEEE80211_MODE_11BE_6G_EHT40 :
+
+					return IEEE80211_CWM_WIDTH40
+
+		case
+				IEEE80211_MODE_11AC_VHT80,
+				IEEE80211_MODE_11AX_5G_HE80,
+				IEEE80211_MODE_11AX_6G_HE80,
+				IEEE80211_MODE_11BE_5G_EHT80,
+				IEEE80211_MODE_11BE_6G_EHT80 :
+
+					return IEEE80211_CWM_WIDTH80
+
+		case	IEEE80211_MODE_11AC_VHT160,
+				IEEE80211_MODE_11AX_5G_HE160,
+				IEEE80211_MODE_11AX_6G_HE160,
+				IEEE80211_MODE_11BE_5G_EHT160,
+				IEEE80211_MODE_11BE_6G_EHT160 :
+
+					return IEEE80211_CWM_WIDTH160
+
+		case	IEEE80211_MODE_11BE_6G_EHT320,
+				IEEE80211_MODE_11BE_6G_EHT320_1,
+				IEEE80211_MODE_11BE_6G_EHT320_2 :
+
+					return IEEE80211_CWM_WIDTH320
+
+		default :
+					return IEEE80211_CWM_WIDTH20
+    }
 }
 
 func ah_ioctl(fd uintptr, op, argp uintptr) error {
@@ -334,12 +455,13 @@ func getAlarmStatus(optType int) string {
 	return "returned below the alarm"
 }
 
-func get_rt_sta_info(t *Ah_wireless, mac_adrs string, data rt_sta_data) rt_sta_data {
+func get_rt_sta_info(t *Ah_wireless, mac_adrs string, upid int, data rt_sta_data) rt_sta_data {
 	app := "telegraf_helper"
 
 	arg0 := mac_adrs
+	arg1 := strconv.Itoa(upid)
 
-	cmd := exec.Command(app, arg0)
+	cmd := exec.Command(app, arg0, arg1)
 	output, err := cmd.Output()
 
 	if err != nil {
@@ -350,7 +472,7 @@ func get_rt_sta_info(t *Ah_wireless, mac_adrs string, data rt_sta_data) rt_sta_d
 
 	lines := strings.Split(string(output),"\n")
 
-	var os_line, host_line, user_line  string
+	var os_line, host_line, user_line, prof_line  string
 
 	// Loop over the line to find and extract OS and HostName ans UserName
 	for _, line := range lines {
@@ -358,17 +480,47 @@ func get_rt_sta_info(t *Ah_wireless, mac_adrs string, data rt_sta_data) rt_sta_d
 			os_line = strings.TrimSpace(strings.TrimPrefix(line, "OS:"))
 		} else if strings.HasPrefix(line, "HostName:") {
 			host_line = strings.TrimSpace(strings.TrimPrefix(line, "HostName:"))
-		}else if strings.HasPrefix(line, "UserName:") {
+		} else if strings.HasPrefix(line, "UserName:") {
 			user_line = strings.TrimSpace(strings.TrimPrefix(line, "UserName:"))
+		} else if strings.HasPrefix(line, "UserProfile:") {
+			prof_line = strings.TrimSpace(strings.TrimPrefix(line, "UserProfile:"))
 		}
 	}
 
 	data.os =   string(os_line)
 	data.hostname = string(host_line)
 	data.user = string(user_line)
-
+	data.userprofile = string(prof_line)
 
 	return data
+}
+
+func getChannel(fd int, ifname string) int32 {
+
+	var freq uint16 = 0
+	var channel int32 = 0
+    request := iwreq_freq{}
+    copy(request.ifr_name[:], ah_ifname_radio2vap(ifname))
+
+	offsetsMutex.Lock()
+
+        if err := ah_ioctl(uintptr(fd), SIOCGIWFREQ, uintptr(unsafe.Pointer(&request))); err != nil {
+                log.Printf("getHDDStat ioctl data error %s",err)
+				offsetsMutex.Unlock()
+                return channel
+        }
+		offsetsMutex.Unlock()
+
+		if (request.u.m == 0) {
+			channel = 0
+		} else if (request.u.e == 0) { /* BCM XXX return in channel format */
+			channel = request.u.m
+		} else {
+			freq = uint16((int64(request.u.m)) * ah_pow_10(int(request.u.e - 6)))
+			channel = int32(freqToChan(freq))
+		}		
+
+        return channel
 }
 
 func getHDDStat(fd int, ifname string, cfg ieee80211req_cfg_hdd) ah_ieee80211_hdd_stats {
@@ -583,6 +735,24 @@ func getProcNetDev(ifname string) ah_dcd_dev_stats {
 	return stats
 }
 
+func getIfStatus(fd int, ifname string) int {
+        ifr, err := unix.NewIfreq(ifname)
+        if err != nil {
+                log.Printf("failed to create ifreq for flags: %v", err)
+                return -1
+        }
+
+        offsetsMutex.Lock()
+        defer offsetsMutex.Unlock()
+
+        if err := unix.IoctlIfreq(fd, unix.SIOCGIFFLAGS, ifr); err != nil {
+                log.Printf("getIfStatus ioctl error: %s", err)
+                return -1
+        }
+
+        return int(ifr.Uint16())
+}
+
 func getIfIndex(fd int, ifname string) int {
         ifr, err := unix.NewIfreq(ifname)
 
@@ -657,6 +827,36 @@ func getEthStatus(t *Ah_wireless, fd uintptr, iName string) int32 {
 
 	return link
 
+}
+
+func get_radio_band(t *Ah_wireless, ifname string)  string {
+
+	app := "wl"
+
+	arg0 := "-i"
+	arg1 := ifname
+	arg2 := "band"
+
+	cmd := exec.Command(app, arg0, arg1, arg2)
+	output, err := cmd.Output()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return "INVALID"
+	}
+
+	lines := strings.Split(string(output),"\n")
+
+	switch lines[0] {
+		case "a":
+			return "5G"
+		case "b":
+			return "2.4G"
+		case "6g":
+			return "6G"
+		default:
+			return "INVALID"
+	}
 }
 
 func load_ssid(t *Ah_wireless, ifname string) {
@@ -1109,8 +1309,8 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 	for _, intfName := range t.Ifname {
 
 		var rfstat awestats
-		var devstats ah_dcd_dev_stats
 		var ifindex int
+		var chann int32
 		var atrSt ieee80211req_cfg_atr
 		var atrStat ah_ieee80211_atr_user
 		var hddStat ah_ieee80211_hdd_stats
@@ -1134,11 +1334,13 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 		if (ifindex <= 0) {
 			continue
 		}
-		devstats = getProcNetDev(intfName)
 
 		atrStat = getAtrTbl(t.fd, intfName, atrSt)
 
 		hddStat = getHDDStat(t.fd, intfName, hdd)
+
+		chann = 0
+		chann = getChannel(t.fd, intfName);
 
 		/* We need check and aggregation Tx/Rx bit rate distribution
  		* prcentage, if the bit rate equal in radio interface or client reporting.
@@ -1562,6 +1764,8 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 		}
 
+			fields["band"] = get_radio_band(t, intfName)
+
 			if (t.last_ut_data[ii].noise_min == 0) || (t.last_ut_data[ii].noise_min >= rfstat.ast_noise_floor) {
 				t.last_ut_data[ii].noise_min = rfstat.ast_noise_floor
 			}
@@ -1729,12 +1933,12 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields["crcErrorRate_avg"]					= t.last_ut_data[ii].crc_err_rate_avg
 
 
-			fields["txPackets"]						= devstats.tx_packets
-			fields["txErrors"]						= devstats.tx_errors
-			fields["txDropped"]						= devstats.tx_dropped
+			fields["txPackets"]						= rfstat.ast_as.ast_tx_packets
+			fields["txErrors"] 						= rfstat.ast_as.ast_tx_xretries + rfstat.ast_as.ast_tx_fifoerr
+			fields["txDropped"]						= rfstat.ast_as.ast_tx_nobuf +  rfstat.ast_as.ast_tx_nobufmgt
 			fields["txHwDropped"]						= rfstat.ast_as.ast_tx_shortpre + rfstat.ast_as.ast_tx_xretries + rfstat.ast_as.ast_tx_fifoerr
-			fields["txSwDropped"]						= devstats.tx_dropped
-			fields["txBytes"]						= devstats.tx_bytes
+			fields["txSwDropped"]						= rfstat.ast_tx_blckd_drops
+			fields["txBytes"]						 = rfstat.ast_as.ast_tx_bytes;
 			fields["txRetryCount"]						= rfstat.phy_stats.ast_tx_shortretry + rfstat.phy_stats.ast_tx_longretry
 
 			fields["txRate_min"]						= rfstat.ast_tx_rate_stats[0].ns_rateKbps
@@ -1747,10 +1951,10 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields["txBcastBytes"]						= rfstat.ast_as.ast_tx_bcast_bytes
 			fields["txBcastPackets"]					= rfstat.ast_as.ast_tx_bcast
 
-			fields["rxPackets"]						= devstats.rx_packets
-			fields["rxErrors"]						= devstats.rx_errors
-			fields["rxDropped"]						= devstats.rx_dropped
-			fields["rxBytes"]						= devstats.rx_bytes
+			fields["rxPackets"]						= rfstat.ast_as.ast_rx_num_data + rfstat.ast_as.ast_rx_num_mgmt + rfstat.ast_as.ast_rx_num_ctl
+			fields["rxErrors"]						= rfstat.phy_stats.ast_rx_phyerr + rfstat.phy_stats.ast_rx_fifoerr + uint64(rfstat.ast_as.ast_rx_badcrypt) + uint64(rfstat.ast_as.ast_rx_badmic)
+			fields["rxDropped"]						= rfstat.phy_stats.ast_rx_tooshort + uint64(rfstat.ast_as.ast_rx_nobuf) + rfstat.phy_stats.ast_rx_toobig
+			fields["rxBytes"]						= rfstat.ast_as.ast_rx_bytes
 			fields["rxRetryCount"]						= rfstat.ast_rx_retry
 
 			fields["rxRate_min"]						= rfstat.ast_rx_rate_stats[0].ns_rateKbps
@@ -1771,31 +1975,42 @@ func Gather_Rf_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			fields["txBitrateSuc"]						= rfstat.ast_tx_rix_invalids
 			fields["rxBitrateSuc"]						= rfstat.ast_rx_rix_invalids
 
-				for i := 0; i < NS_HW_RATE_SIZE; i++{
-					kbps := fmt.Sprintf("kbps_@%d_rxRateStats",i)
-					rateDtn := fmt.Sprintf("rateDtn_@%d_rxRateStats",i)
-					rateSucDtn := fmt.Sprintf("rateSucDtn_@%d_rxRateStats",i)
+			for i := 0; i < NS_HW_RATE_SIZE; i++{
+				kbps := fmt.Sprintf("kbps_@%d_rxRateStats",i)
+				rateDtn := fmt.Sprintf("rateDtn_@%d_rxRateStats",i)
+				rateSucDtn := fmt.Sprintf("rateSucDtn_@%d_rxRateStats",i)
+				if (rf_report.rx_bit_rate[i].kbps != 0) {
 					fields[kbps]					= rf_report.rx_bit_rate[i].kbps
+				}
+				if (rf_report.rx_bit_rate[i].rate_dtn != 0) {
 					fields[rateDtn]					= rf_report.rx_bit_rate[i].rate_dtn
+				}
+				if (rf_report.rx_bit_rate[i].rate_suc_dtn != 0) {
 					fields[rateSucDtn]				= rf_report.rx_bit_rate[i].rate_suc_dtn
 				}
+			}
 
 
-				for i := 0; i < NS_HW_RATE_SIZE; i++{
-					kbps := fmt.Sprintf("kbps_@%d_txRateStats",i)
-					rateDtn := fmt.Sprintf("rateDtn_@%d_txRateStats",i)
-					rateSucDtn := fmt.Sprintf("rateSucDtn_@%d_txRateStats",i)
+			for i := 0; i < NS_HW_RATE_SIZE; i++{
+				kbps := fmt.Sprintf("kbps_@%d_txRateStats",i)
+				rateDtn := fmt.Sprintf("rateDtn_@%d_txRateStats",i)
+				rateSucDtn := fmt.Sprintf("rateSucDtn_@%d_txRateStats",i)
+				if (rf_report.tx_bit_rate[i].kbps != 0) {
 					fields[kbps]					= rf_report.tx_bit_rate[i].kbps
+				}
+				if (rf_report.tx_bit_rate[i].rate_dtn != 0) {
 					fields[rateDtn]					= rf_report.tx_bit_rate[i].rate_dtn
+				}
+				if (rf_report.tx_bit_rate[i].rate_suc_dtn != 0) {
 					fields[rateSucDtn]				= rf_report.tx_bit_rate[i].rate_suc_dtn
 				}
+			}
 
 			fields["clientCount"]						= t.numclient[ii]
 			fields["lbSpCnt"]							= hddStat.lb_sp_cnt
 			fields["rxProbeSup"]						= rfstat.is_rx_hdd_probe_sup
-			fields["rxSwDropped"]						= devstats.rx_dropped
 			fields["rxUnicastPackets"]					= rfstat.ast_rx_rate_stats[0].ns_unicasts
-
+			fields["channel"]							= chann
 
 			acc.AddGauge("RfStats", fields, nil)
 
@@ -2450,47 +2665,49 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 			t.last_clt_stat[ii][cn] = clt_item[cn]
 
 			var rt_sta rt_sta_data
-			rt_sta = get_rt_sta_info(t, client_mac, rt_sta)
+			rt_sta = get_rt_sta_info(t, client_mac, int(onesta.isi_upid), rt_sta)
 
-			fields2["ifname"]               = intfName2
-			fields2["ifIndex"]              = ifindex2
+			fields2["ifName"]			= intfName2
+			fields2["ifIndex"]			= ifindex2
+			fields2["channel"]			= freqToChan(onesta.isi_freq)
+			fields2["channelWidth"]		= getChannelWidth(onesta.isi_phymode)
 
-			fields2["mac_keys"]		= client_mac
+			fields2["mac_keys"]			= client_mac
 //			fields2["alarmFlag"]		= t.last_alarm[ii].alarm
-			fields2["number"]		= cltstat.count
-			fields2["ssid"]			= client_ssid
-                        fields2["txPackets"]		= stainfo.tx_pkts
-                        fields2["txBytes"]		= stainfo.tx_bytes
-                        fields2["txDrop"]		= clt_item[cn].ns_tx_drops
-                        fields2["slaDrop"]		= clt_item[cn].ns_sla_traps
-                        fields2["rxPackets"]		= stainfo.rx_pkts
-                        fields2["rxBytes"]		= stainfo.rx_bytes
-                        fields2["rxDrop"]		= clt_item[cn].ns_tx_drops
-                        fields2["avgSnr"]		= clt_item[cn].ns_snr
-                        fields2["psTimes"]		= clt_item[cn].ns_ps_times
-                        fields2["radioScore"]		= radio_link_score
-                        fields2["ipNetScore"]		= ipnet_score
+			fields2["number"]			= cltstat.count
+			fields2["ssid"]				= client_ssid
+			fields2["txPackets"]		= stainfo.tx_pkts
+			fields2["txBytes"]			= stainfo.tx_bytes
+			fields2["txDrop"]			= clt_item[cn].ns_tx_drops
+			fields2["slaDrop"]			= clt_item[cn].ns_sla_traps
+			fields2["rxPackets"]		= stainfo.rx_pkts
+			fields2["rxBytes"]			= stainfo.rx_bytes
+			fields2["rxDrop"]			= clt_item[cn].ns_tx_drops
+			fields2["avgSnr"]			= clt_item[cn].ns_snr
+			fields2["psTimes"]			= clt_item[cn].ns_ps_times
+			fields2["radioScore"]		= radio_link_score
+			fields2["ipNetScore"]		= ipnet_score
 			if ipnet_score == 0 {
-				fields2["appScore"]	= ipnet_score
+				fields2["appScore"]		= ipnet_score
 			} else {
-				fields2["appScore"]	= clt_item[cn].ns_app_health_score
+				fields2["appScore"]		= clt_item[cn].ns_app_health_score
 			}
-                        fields2["phyMode"]		= getMacProtoMode(onesta.isi_phymode)
+			fields2["phyMode"]			= getMacProtoMode(onesta.isi_phymode)
 
-			fields2["rssi"]		= int(stainfo.rssi) + int(stainfo.noise_floor)
+			fields2["rssi"]				= int(stainfo.rssi) + int(stainfo.noise_floor)
 
-                        fields2["os"]			= rt_sta.os
-			fields2["name"]			= string(onesta.isi_name[:])
-                        fields2["host"]			= rt_sta.hostname
-                        fields2["profName"]		= "default-profile"			/* TBD (Needs shared memory of dcd)	*/
-                        fields2["dhcpIp"]		= intToIp(sta_ip.dhcp_server)
-			fields2["gwIp"]			= intToIp(sta_ip.gateway)
-                        fields2["dnsIp"]		= intToIp(sta_ip.dns[0].dns_ip)
-			fields2["clientIp"]		= intToIp(sta_ip.client_static_ip)
-                        fields2["dhcpTime"]		= sta_ip.dhcp_time
-                        fields2["gwTime"]		= 0					/* TBD (Needs shared memory of auth2)     */
-                        fields2["dnsTime"]		= sta_ip.dns[0].dns_response_time
-                        fields2["clientTime"]		= onesta.isi_assoc_time
+			fields2["os"]				= rt_sta.os
+			fields2["name"]				= strings.ReplaceAll(string(onesta.isi_name[:]), "\u0000", "")
+			fields2["host"]				= rt_sta.hostname
+			fields2["profName"]			= rt_sta.userprofile
+			fields2["dhcpIp"]			= intToIp(sta_ip.dhcp_server)
+			fields2["gwIp"]				= intToIp(sta_ip.gateway)
+			fields2["dnsIp"]			= intToIp(sta_ip.dns[0].dns_ip)
+			fields2["clientIp"]			= intToIp(sta_ip.client_static_ip)
+			fields2["dhcpTime"]			= sta_ip.dhcp_time
+//			fields2["gwTime"]			= 0							/* TBD (Needs shared memory of auth2)     */
+			fields2["dnsTime"]			= sta_ip.dns[0].dns_response_time
+			fields2["clientTime"]		= onesta.isi_assoc_time
 
 
 			for i := 0; i < AH_TX_NSS_MAX; i++{
@@ -2504,9 +2721,15 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				kbps := fmt.Sprintf("kbps_@%d_rxRateStats",i)
 				rateDtn := fmt.Sprintf("rateDtn_@%d_rxRateStats",i)
 				rateSucDtn := fmt.Sprintf("rateSucDtn_@%d_rxRateStats",i)
-				fields2[kbps]			= rf_report.rx_bit_rate[i].kbps
-				fields2[rateDtn]		= rf_report.rx_bit_rate[i].rate_dtn
-				fields2[rateSucDtn]		= rf_report.rx_bit_rate[i].rate_suc_dtn
+				if (rf_report.rx_bit_rate[i].kbps != 0) {
+					fields2[kbps]			= rf_report.rx_bit_rate[i].kbps
+				}
+				if (rf_report.rx_bit_rate[i].rate_dtn != 0) {
+					fields2[rateDtn]		= rf_report.rx_bit_rate[i].rate_dtn
+				}
+				if (rf_report.rx_bit_rate[i].rate_suc_dtn != 0) {
+					fields2[rateSucDtn]		= rf_report.rx_bit_rate[i].rate_suc_dtn
+				}
 			}
 
 
@@ -2514,9 +2737,15 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				kbps := fmt.Sprintf("kbps_@%d_txRateStats",i)
 				rateDtn := fmt.Sprintf("rateDtn_@%d_txRateStats",i)
 				rateSucDtn := fmt.Sprintf("rateSucDtn_@%d_txRateStats",i)
-				fields2[kbps]			= rf_report.tx_bit_rate[i].kbps
-				fields2[rateDtn]		= rf_report.tx_bit_rate[i].rate_dtn
-				fields2[rateSucDtn]		= rf_report.tx_bit_rate[i].rate_suc_dtn
+				if (rf_report.tx_bit_rate[i].kbps != 0) {
+					fields2[kbps]			= rf_report.tx_bit_rate[i].kbps
+				}
+				if (rf_report.tx_bit_rate[i].rate_dtn != 0) {
+					fields2[rateDtn]		= rf_report.tx_bit_rate[i].rate_dtn
+				}
+				if (rf_report.tx_bit_rate[i].rate_suc_dtn != 0) {
+					fields2[rateSucDtn]		= rf_report.tx_bit_rate[i].rate_suc_dtn
+				}
 			}
 
 			if (clt_last_stats != nil) {
@@ -2537,27 +2766,33 @@ func Gather_Client_Stat(t *Ah_wireless, acc telegraf.Accumulator) error {
 				rangeMin	:=	fmt.Sprintf("rangeMin_@%d_sqRssi",i)
 				rangeMax	:=	fmt.Sprintf("rangeMax_@%d_sqRssi",i)
 				countt		:=	fmt.Sprintf("count_@%d_sqRssi",i)
+				bucket		:=	fmt.Sprintf("bucketNum_@%d_sqRssi",i)
 				fields2[rangeMin]		= clt_sq[0][i].asqrange.min
 				fields2[rangeMax]		= clt_sq[0][i].asqrange.max
 				fields2[countt]			= clt_sq[0][i].count
+				fields2[bucket]			= i
 			}
 
 			for i := 0; i < AH_SQ_GROUP_MAX; i++{
 				rangeMin	:=	fmt.Sprintf("rangeMin_@%d_sqNoise",i)
 				rangeMax	:=	fmt.Sprintf("rangeMax_@%d_sqNoise",i)
 				countt		:=	fmt.Sprintf("count_@%d_sqNoise",i)
+				bucket		:=	fmt.Sprintf("bucketNum_@%d_sqNoise",i)
 				fields2[rangeMin]		= clt_sq[1][i].asqrange.min
 				fields2[rangeMax]		= clt_sq[1][i].asqrange.max
 				fields2[countt]			= clt_sq[1][i].count
+				fields2[bucket]			= i
 			}
 
 			for i := 0; i < AH_SQ_GROUP_MAX; i++{
 				rangeMin	:=	fmt.Sprintf("rangeMin_@%d_sqSnr",i)
 				rangeMax	:=	fmt.Sprintf("rangeMax_@%d_sqSnr",i)
 				countt		:=	fmt.Sprintf("count_@%d_sqSnr",i)
+				bucket		:=	fmt.Sprintf("bucketNum_@%d_sqSnr",i)
 				fields2[rangeMin]			= clt_sq[2][i].asqrange.min
 				fields2[rangeMax]			= clt_sq[2][i].asqrange.max
 				fields2[countt]				= clt_sq[2][i].count
+				fields2[bucket]				= i
 			}
 
 			acc.AddFields("ClientStats", fields2, tags, time.Now())
@@ -2736,54 +2971,109 @@ func Gather_EthernetInterfaceStats(t *Ah_wireless) error {
 
 	var ethdevstats ah_dcd_dev_stats
 
-    for i := 0; i < (AH_MAX_ETH); i++{
 
-		ethName := fmt.Sprintf("%s%d", "eth", i)
-		ethdevstats = getProcNetDev(ethName)
+        interfaces := []string{}
 
-		t.if_stats[i].ifname 			= ethName
+        for i := 0; i < AH_MAX_ETH; i++ {
+                interfaces = append(interfaces, fmt.Sprintf("eth%d", i))
+        }
+
+        interfaces = append(interfaces, "agg0", "red0")
+
+
+        for i, ifName := range interfaces{
+		ethdevstats = getProcNetDev(ifName)
+
+		t.if_stats[i].ifname			= ifName
 
 		t.if_stats[i].rx_unicast		= reportGetDiff64(uint64(ethdevstats.rx_unicast), t.if_stats[i].rx_unicast)
 		t.if_stats[i].rx_broadcast		= reportGetDiff64(uint64(ethdevstats.rx_broadcast), t.if_stats[i].rx_broadcast)
 		t.if_stats[i].rx_multicast		= reportGetDiff64(uint64(ethdevstats.rx_multicast), t.if_stats[i].rx_multicast)
+		t.if_stats[i].rx_bytes                  = reportGetDiff64(uint64(ethdevstats.rx_bytes), t.if_stats[i].rx_bytes)
+		t.if_stats[i].rx_errors                 = reportGetDiff64(uint64(ethdevstats.rx_errors), t.if_stats[i].rx_errors)
+		t.if_stats[i].rx_dropped                = reportGetDiff64(uint64(ethdevstats.rx_dropped), t.if_stats[i].rx_dropped)
 		t.if_stats[i].tx_unicast		= reportGetDiff64(uint64(ethdevstats.tx_unicast), t.if_stats[i].tx_unicast)
 		t.if_stats[i].tx_broadcast		= reportGetDiff64(uint64(ethdevstats.tx_broadcast), t.if_stats[i].tx_broadcast)
 		t.if_stats[i].tx_multicast		= reportGetDiff64(uint64(ethdevstats.tx_multicast), t.if_stats[i].tx_multicast)
+		t.if_stats[i].tx_bytes                  = reportGetDiff64(uint64(ethdevstats.tx_bytes), t.if_stats[i].tx_bytes)
+		t.if_stats[i].tx_errors                 = reportGetDiff64(uint64(ethdevstats.tx_errors), t.if_stats[i].tx_errors)
+		t.if_stats[i].tx_dropped                = reportGetDiff64(uint64(ethdevstats.tx_dropped), t.if_stats[i].tx_dropped)
+		t.ethx_stats[i].ifname			= ifName
 
-		f := init_ethf()
-		link_status := getEthLink(t, f.Fd(), ethName)
-		eth_status := getEthStatus(t, f.Fd(), ethName)
-		f.Close();
+		var link_status, eth_status, speed, duplex int32
 
-		t.ethx_stats[i].ifname = ethName
+		if ifName == "agg0" || ifName == "red0" {
+			var memberIfstatus int32
+			var maxMemberSpeed int32  = ETH_MII_LINK_DOWN
+			var maxMemberDuplex int32 = ETH_MII_LINK_DOWN
 
-		if (link_status == ETH_SET_MII_LINK_DOWN) {
-			t.ethx_stats[i].duplex = "LINK_DOWN"
-			t.ethx_stats[i].speed = "LINK_DOWN"
+			ifStatus := getIfStatus(t.fd, ifName)
+
+                        if (ifStatus & IFF_UP) != 0 && (ifStatus & IFF_RUNNING) != 0 {
+				link_status = ETH_SET_MII_LINK_UP
+				memberIfstatus = AH_IF_STATUS
+			} else {
+				link_status = ETH_SET_MII_LINK_DOWN
+				memberIfstatus = ETH_MII_LINK_DOWN
+			}
+
+			if ( link_status == ETH_SET_MII_LINK_DOWN){
+                            t.ethx_stats[i].duplex = "LINK_DOWN"
+                            t.ethx_stats[i].speed = "LINK_DOWN"
+                            continue
+                        }
+
+                        if memberIfstatus != ETH_MII_LINK_DOWN {
+                            speed := memberIfstatus & ETH_MII_SPEED_MASK
+                            duplex := memberIfstatus & ETH_MII_DUPLEX_MASK
+
+                            if maxMemberSpeed < speed {
+                                maxMemberSpeed = speed
+                            }
+                            if maxMemberDuplex < duplex {
+                                maxMemberDuplex = duplex
+                            }
+                        }
+                        speed = maxMemberSpeed | maxMemberDuplex
+                        duplex = speed
+
+                } else {
+			f := init_ethf()
+                        link_status = getEthLink(t, f.Fd(), ifName)
+                        eth_status = getEthStatus(t, f.Fd(), ifName)
+                        f.Close()
+                        if link_status == ETH_SET_MII_LINK_DOWN {
+				t.ethx_stats[i].duplex = "LINK_DOWN"
+                                t.ethx_stats[i].speed = "LINK_DOWN"
+                                continue
+                        }
+
+                        speed = eth_status
+                        duplex = eth_status
+                }
+
+
+
+		if((duplex & ETH_MII_DUPLEX_FULL) > 0) {
+			t.ethx_stats[i].duplex = "FULL"
 		} else {
-			duplex := eth_status
-			speed := eth_status
-
-			if((duplex & ETH_MII_DUPLEX_FULL) > 0) {
-				t.ethx_stats[i].duplex = "FULL"
-			} else {
-				t.ethx_stats[i].duplex = "HALF"
-			}
-
-			if((speed & ETH_MII_SPEED_10000M) > 0) {
-				t.ethx_stats[i].speed = "10000M"
-			} else if ((speed & ETH_MII_SPEED_5000M) > 0) {
-				t.ethx_stats[i].speed = "5000M"
-			} else if ((speed & ETH_MII_SPEED_2500M) > 0) {
-				t.ethx_stats[i].speed = "2500M"
-			} else if ((speed & ETH_MII_SPEED_1000M) > 0) {
-				t.ethx_stats[i].speed = "1000M"
-			} else if ((speed & ETH_MII_SPEED_100M) > 0) {
-				t.ethx_stats[i].speed = "100M"
-			} else {
-				t.ethx_stats[i].speed = "10M"
-			}
+			t.ethx_stats[i].duplex = "HALF"
 		}
+
+		if((speed & ETH_MII_SPEED_10000M) > 0) {
+			t.ethx_stats[i].speed = "10000M"
+		} else if ((speed & ETH_MII_SPEED_5000M) > 0) {
+			t.ethx_stats[i].speed = "5000M"
+		} else if ((speed & ETH_MII_SPEED_2500M) > 0) {
+			t.ethx_stats[i].speed = "2500M"
+		} else if ((speed & ETH_MII_SPEED_1000M) > 0) {
+			t.ethx_stats[i].speed = "1000M"
+		} else if ((speed & ETH_MII_SPEED_100M) > 0) {
+			t.ethx_stats[i].speed = "100M"
+		} else {
+			t.ethx_stats[i].speed = "10M"
+		}
+
 
 	}
 
@@ -2796,7 +3086,7 @@ func Send_NetworkStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 
 	id = 0
 
-	for i := 0; i < (AH_MAX_ETH); i++{
+	for i := 0; i < (AH_MAX_WIRED); i++{
 
 		if ( i >= NETWORK_MAX_COUNT ) {
 			return nil
@@ -2824,9 +3114,15 @@ func Send_NetworkStats(t *Ah_wireless, acc telegraf.Accumulator) error {
 		fields["rxUnicastPackets"]		= t.if_stats[i].rx_unicast
 		fields["rxMulticastPackets"]	= t.if_stats[i].rx_multicast
 		fields["rxBcastPackets"]		= t.if_stats[i].rx_broadcast
+		fields["rxBytes"]	                = t.if_stats[i].rx_bytes
+		fields["rxErrors"]                      = t.if_stats[i].rx_errors
+		fields["rxDropped"]                     = t.if_stats[i].rx_dropped
 		fields["txUnicastPackets"]		= t.if_stats[i].tx_unicast
 		fields["txMulticastPackets"]	= t.if_stats[i].tx_multicast
 		fields["txBcastPackets"]		= t.if_stats[i].tx_broadcast
+		fields["txBytes"]	                = t.if_stats[i].tx_bytes
+		fields["txErrors"]                      = t.if_stats[i].tx_errors
+		fields["txDropped"]                     = t.if_stats[i].tx_dropped
 
 		if len(strings.TrimSpace(t.ethx_stats[i].duplex)) > 0 {
 			fields["duplex"]				= t.ethx_stats[i].duplex
@@ -3191,8 +3487,8 @@ func (t *Ah_wireless) Start(acc telegraf.Accumulator) error {
 		t.entity[intfName] = make(map[string]unsafe.Pointer)
 	}
 
-	t.if_stats	=	[AH_MAX_ETH]stats_interface_data{}
-	t.ethx_stats =	[AH_MAX_ETH]stats_ethx_data{}
+	t.if_stats	=	[AH_MAX_WIRED]stats_interface_data{}
+	t.ethx_stats =	[AH_MAX_WIRED]stats_ethx_data{}
 
 	t.nw_health =	network_health_data{}
 	t.nw_service =  network_service_data{}
