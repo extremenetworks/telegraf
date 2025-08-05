@@ -21,6 +21,7 @@ var (
 
 type Ah_airrm struct {
 	fd			int
+	apn		string
 	Ifname		[]string	`toml:"ifname"`
 	Log			telegraf.Logger `toml:"-"`
 	wg			sync.WaitGroup
@@ -33,6 +34,8 @@ const sampleConfig = `
 `
 func NewAh_airrm(id int) *Ah_airrm {
 	var err error
+
+	apn := ahutil.GetAPName()
 	// Create RAW  Socket.
 	fd, err := unix.Socket(unix.AF_INET, unix.SOCK_DGRAM, 0)
 	if err != nil {
@@ -44,17 +47,24 @@ func NewAh_airrm(id int) *Ah_airrm {
 
 	return &Ah_airrm{
         fd:	fd,
+	apn:	apn,
 	}
 
 }
 
 
-func getAirrmNbrTbl(fd int, ifname string, cfg ieee80211req_cfg_nbr) unsafe.Pointer {
+func getAirrmNbrTbl(ai *Ah_airrm, ifname string, cfg ieee80211req_cfg_nbr) unsafe.Pointer {
 
 	var size int
 
 	/* first 4 bytes is subcmd */
-	cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL
+	if ai.apn == "AP4020" {
+		cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL_AP4020
+	} else if ai.apn == "AP5020" {
+		cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL_AP5020
+	} else {
+		cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL
+	}
 
 	iwp := iw_point{pointer: unsafe.Pointer(&cfg)}
 	s := ah_ieee80211_airrm_nbr_tbl_t{}
@@ -74,7 +84,7 @@ func getAirrmNbrTbl(fd int, ifname string, cfg ieee80211req_cfg_nbr) unsafe.Poin
 
 	aiMutex.Lock()
 
-	if err := ahutil.Ah_ioctl(uintptr(fd), ahutil.IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
+	if err := ahutil.Ah_ioctl(uintptr(ai.fd), ahutil.IEEE80211_IOCTL_GENERIC_PARAM, uintptr(unsafe.Pointer(&request))); err != nil {
 		log.Printf("getAirrmNbrTbl ioctl data error %s",err)
 		aiMutex.Unlock()
 		return request.data.pointer
@@ -108,7 +118,7 @@ func Gather_acs_nbr(ai *Ah_airrm, acc telegraf.Accumulator) error {
 
 		var i uint32
 		var nbr ieee80211req_cfg_nbr
-		cfgptr := getAirrmNbrTbl(ai.fd, intfName, nbr)
+		cfgptr := getAirrmNbrTbl(ai, intfName, nbr)
 		if(cfgptr == nil) {
 			return nil
 		}
