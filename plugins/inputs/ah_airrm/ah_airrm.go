@@ -58,19 +58,20 @@ func getAirrmNbrTbl(ai *Ah_airrm, ifname string, cfg ieee80211req_cfg_nbr) unsaf
 	var size int
 
 	/* first 4 bytes is subcmd */
-	if ai.apn == "AP4020" {
-		cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL_AP4020
-	} else if ai.apn == "AP5020" {
-		cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL_AP5020
-	} else {
-		cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL
-	}
+        switch ai.apn {
+                case "AP4020":
+                        cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL_AP4020
+                case "AP5020":
+                        cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL_AP5020
+                default:
+                        cfg.cmd = AH_IEEE80211_GET_AIRRM_TBL
+        }
 
 	iwp := iw_point{pointer: unsafe.Pointer(&cfg)}
 	s := ah_ieee80211_airrm_nbr_tbl_t{}
 	size = int(unsafe.Sizeof(s))
 
-    request := iwreq{data: iwp}
+	request := iwreq{data: iwp}
 
 	if size > AH_USHORT_MAX {
 		request.data.length  = AH_USHORT_MAX
