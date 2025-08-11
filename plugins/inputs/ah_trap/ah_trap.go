@@ -395,7 +395,7 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"mgmtVlan_faMvlanTrapType":           mvlan.MgmtVlan,
 			"nativeVlan_faMvlanTrapType":         mvlan.NativeVlan,
 			"nativeTagged_faMvlanTrapType":       mvlan.NativeTagged,
-			"systemId_faMvlanTrapType":           mvlan.SystemID[:],
+			"systemId_faMvlanTrapType":           fmt.Sprintf("%X", mvlan.SystemID),
 		}, nil)
 
 	case AH_MSG_TRAP_DFS_BANG:
