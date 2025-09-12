@@ -401,6 +401,12 @@ func GetRrmId() int {
 
 // Utility function to get tx power using 'wl -i ifname txpwr' command
 func GetTxPower(ifname string) int8 {
+
+	// Validation: check if ifname is not blank and contains "wifi"
+	if ifname == "" || !strings.Contains(ifname, "wifi") {
+		return -1
+	}
+
 	app := "wl"
 
 	arg0 := "-i"
