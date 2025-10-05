@@ -191,6 +191,8 @@ func (h *HTTP) checkRetriesFailed() bool {
 
 	if h.MaxRetries == 0 {
 		// Drop, never retry
+//		h.Log.Errorf("%s  MaxRetries %d. Metrics are dropped.", 
+//					h.URL, h.MaxRetries )
 		return true
 	} else if (h.MaxRetries < 0) {
 		// Always retry	
@@ -200,7 +202,7 @@ func (h *HTTP) checkRetriesFailed() bool {
 		atomic.AddInt32(&h.FailCount, 1)
 
 		if atomic.LoadInt32(&h.FailCount) > h.MaxRetries {
-			h.Log.Errorf("%s  FailCount %d > MaxRetries %d. Metrics are lost.", 
+			h.Log.Errorf("%s  FailCount %d > MaxRetries %d. Metrics are dropped.", 
 					h.URL, h.FailCount, h.MaxRetries )
 			atomic.StoreInt32(&h.FailCount, 0)
 
@@ -212,7 +214,9 @@ func (h *HTTP) checkRetriesFailed() bool {
 		}
 	}
 }
-
+// Returning nil indicates success and flushes buffer.
+// Returning error will leave buffer intact and retry during next flush.
+// internal_write error counter increments if h.Log.Errorf() is called
 func (h *HTTP) writeMetric(reqBody []byte) error {
 	var reqBodyBuffer io.Reader = bytes.NewBuffer(reqBody)
 
@@ -229,6 +233,7 @@ func (h *HTTP) writeMetric(reqBody []byte) error {
 	
 	req, err := http.NewRequest(h.Method, h.URL, reqBodyBuffer)
 	if err != nil {
+		h.Log.Errorf("Failed http.NewRequest() return err:%v", err)
 		return err
 	}
 
@@ -250,9 +255,12 @@ func (h *HTTP) writeMetric(reqBody []byte) error {
 	
 	resp, err := h.client.Do(req)
 	if err != nil {
+		// This will fail if:
+		//   - endpoint not reachable or not listening on port
+		//   - server not responding withing timeout
+		//   - URL schema incorrect
 
 		if h.checkRetriesFailed() {
-			h.Log.Errorf("%s", err)
 			return nil
 		}
 		return err
@@ -263,13 +271,14 @@ func (h *HTTP) writeMetric(reqBody []byte) error {
 
 		if h.MaxRetries == 0 {
 			// Drop, never retry
+			h.Log.Errorf("%s HTTP Response:%v. MaxRetries:%v. Metrics are dropped.", h.URL, resp.StatusCode, h.MaxRetries)
 			return nil
 		}
 
 		// Port from v1.22.0
 		for _, nonRetryableStatusCode := range h.NonRetryableStatusCodes {
 			if resp.StatusCode == nonRetryableStatusCode {
-				h.Log.Errorf("%s Received non-retryable status %v. Metrics are lost.", h.URL, resp.StatusCode)
+				h.Log.Errorf("%s HTTP Response:%v. non-retryable status. Metrics are dropped.", h.URL, resp.StatusCode)
 
 				if h.MaxRetries > 0 {
 					atomic.StoreInt32(&h.FailCount, 0)
@@ -291,7 +300,7 @@ func (h *HTTP) writeMetric(reqBody []byte) error {
 			}
 
 			if retryableCodeFound == false {
-				h.Log.Errorf("%s Received status %v not found in retryable code list. Metrics are dropped", h.URL, resp.StatusCode)
+				h.Log.Errorf("%s HTTP Response:%v not found in retryable code list. Metrics are dropped", h.URL, resp.StatusCode)
 
 				if h.MaxRetries > 0 {
 					atomic.StoreInt32(&h.FailCount, 0)
@@ -313,12 +322,9 @@ func (h *HTTP) writeMetric(reqBody []byte) error {
 		return fmt.Errorf("when writing to [%s] received status code: %d. body: %s", h.URL, resp.StatusCode, errorLine)
 	}
 
+	// Don't really care about response. Just want read and drain the body so HTTP connection is reused
 	_, err = io.ReadAll(resp.Body)
 	if err != nil {
-		if h.checkRetriesFailed() {
-			h.Log.Errorf("%s", err)
-			return nil
-		}
 		return fmt.Errorf("when writing to [%s] received error: %v", h.URL, err)
 	}
 
