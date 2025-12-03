@@ -265,8 +265,6 @@ func intToIPv6(addrs [][16]byte, count int) string {
 	if count > 0 && count <= len(addrs) {
 		ip := net.IP(addrs[0][:])
 		ipStr := ip.String()
-		// Log raw bytes to debug alignment issues
-		fmt.Printf("[intToIPv6] count=%d, raw_bytes=%v, result='%s'\n", count, addrs[0][:], ipStr)
 		return ipStr
 	}
 	return ""
