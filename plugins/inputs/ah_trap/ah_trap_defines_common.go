@@ -28,6 +28,7 @@ const (
 	MAX_OBJ_NAME_LEN         = 4
 	AH_MSG_TRAP_SSID_BIND_UNBIND = 5
 	AH_MSG_TRAP_BSSID_SPOOFING = 7
+	AH_MSG_TRAP_STA_OS_INFO = 8
 	AH_MSG_TRAP_TB           = 2
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
@@ -314,6 +315,14 @@ type AhFaMvlanChangeTrap struct {
 	NativeTagged uint8
 	MgmtVlan      uint16
 	NativeVlan    uint16
+}
+
+type AhStaOsInfoTrap struct {
+        TrapId  uint8
+        DataLen uint16
+        StaMac  [MACADDR_LEN]byte
+        OsLen   uint8
+        Data    [AH_MAX_TRAP_HOST_NAME + 1]byte
 }
 
 type AhTgrafDfsTrap struct {

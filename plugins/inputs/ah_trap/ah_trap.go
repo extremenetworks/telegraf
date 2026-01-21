@@ -404,6 +404,18 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"isClear_trapMessage_dfsBangTrap": GetTrapClearStatus(uint32(dfs.TrapType), trapBuf[:]),
 		}, nil)
 
+	case AH_MSG_TRAP_STA_OS_INFO:
+		var staos AhStaOsInfoTrap
+		copy((*[unsafe.Sizeof(staos)]byte)(unsafe.Pointer(&staos))[:], trapBuf[:unsafe.Sizeof(staos)])
+
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_staOsInfoTrap":  staos.TrapId,
+			"stationMac_staOsInfoTrap":  ahutil.FormatMac(staos.StaMac),
+			"osName_staOsInfoTrap":   ahutil.CleanCString(staos.Data[:]),
+			"isClear_trapMessage_staOsInfoTrap": GetTrapClearStatus(uint32(staos.TrapId), trapBuf[:]),
+                }, nil)
+
+
 	case AH_MSG_TRAP_TB:
 		var tbTrap AhTgrafTbTrap
 		copy((*[unsafe.Sizeof(tbTrap)]byte)(unsafe.Pointer(&tbTrap))[:], trapBuf[:unsafe.Sizeof(tbTrap)])
@@ -778,6 +790,19 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Ah_send_ssid_bind_unbind_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering SSID Bind Unbind trap: %v", err)
+			}
+
+		case AH_MSG_TRAP_STA_OS_INFO:
+			var staOs AhStaOsInfoTrap
+			headerLen := int(unsafe.Sizeof(staOs))
+			if len(payload) < headerLen {
+				log.Printf("[ah_trap] Invalid STA OS size: got %d, need at least %d", len(payload), headerLen)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:len(payload)], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering STA OS trap: %v", err)
 			}
 
 		case AH_MSG_TRAP_TB:
