@@ -502,6 +502,16 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"isClear_trapMessage_capwapDelayTrap": GetTrapClearStatus(uint32(capwapDelayTrap.TrapId), trapBuf[:]),
 			"severityLevel_trapMessage_capwapDelayTrap":       ahutil.CleanCString(capwapDelayTrap.Severity[:]),
 		}, nil)
+       case AH_MSG_TRAP_POE:
+               var poe AhTgrafPoeTrap
+               copy((*[unsafe.Sizeof(poe)]byte)(unsafe.Pointer(&poe))[:], trapBuf[:unsafe.Sizeof(poe)])
+
+               acc.AddFields("TrapEvent", map[string]interface{}{
+		       "trapId_poeTrap":	poe.TrapID,
+		       "portName_poeTrap":      ahutil.CleanCString(poe.IfName[:]),
+		       "description_poeTrap":   ahutil.CleanCString(poe.Description[:]),
+		       "powerMode_poeTrap":     powerModeToString(poe.PowerMode),
+	       }, nil)
 	}
 
 	return nil
@@ -544,6 +554,22 @@ func formatDevIpChangeIpv6Data(ipv6Data []AhTgrafDevIpChangeIpv6Data, count int)
 		return "[]"
 	}
 	return string(jsonBytes)
+}
+
+/*
+Helper function to convert powerMode value to string
+*/
+func powerModeToString(powerMode uint8) string {
+       switch powerMode {
+       case 0:
+               return "AT"
+       case 1:
+               return "AF"
+       case 2:
+               return "BT_TYPE3"
+       default:
+               return fmt.Sprintf("UNKNOWN(%d)", powerMode)
+       }
 }
 
 /*
@@ -969,6 +995,17 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Ah_send_generic_alarm_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering Generic Alarm trap: %v", err)
+		case AH_MSG_TRAP_POE:
+			var poe AhTgrafPoeTrap
+			expected := int(unsafe.Sizeof(poe))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Poe size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [AH_TRAP_SIZE_256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering Poe trap: %v", err)
 			}
 		}
 	}

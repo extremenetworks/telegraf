@@ -31,6 +31,7 @@ const (
 	AH_MSG_TRAP_TB           = 2
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
+	AH_MSG_TRAP_POE          = 16
 	AH_MSG_TRAP_DEV_IP_CHANGE = 17
 	AH_MSG_TRAP_CLT_CAPS = 119
 	AH_MGT0_ADDR6_NUM_MAX    = 2
@@ -498,6 +499,13 @@ type AhTelegrafCltCapsTrap struct {
 	Mfp         [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
 	Mobile      [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
 	Uapsd       [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+}
+
+type AhTgrafPoeTrap struct {
+	TrapID          uint8
+	IfName          [MAX_OBJ_NAME_LEN]byte
+	Description     [TRAP_DCRPT_LEN]byte
+	PowerMode       uint8
 }
 
 type AhFailureTrap struct {
