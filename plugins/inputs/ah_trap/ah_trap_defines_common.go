@@ -32,6 +32,7 @@ const (
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
 	AH_MSG_TRAP_POE          = 16
+	AH_MSG_TRAP_BOOTOS       = 121
 	AH_MSG_TRAP_DEV_IP_CHANGE = 17
 	AH_MSG_TRAP_CLT_CAPS = 119
 	AH_MGT0_ADDR6_NUM_MAX    = 2
@@ -506,6 +507,13 @@ type AhTgrafPoeTrap struct {
 	IfName          [MAX_OBJ_NAME_LEN]byte
 	Description     [TRAP_DCRPT_LEN]byte
 	PowerMode       uint8
+}
+
+type AhTgrafBootOsTrap struct {
+	TrapID		uint8
+	OsType		uint8
+	Status		uint8
+	Description	[TRAP_DCRPT_LEN]byte
 }
 
 type AhFailureTrap struct {
