@@ -28,6 +28,7 @@ const (
 	MAX_OBJ_NAME_LEN         = 4
 	AH_MSG_TRAP_SSID_BIND_UNBIND = 5
 	AH_MSG_TRAP_BSSID_SPOOFING = 7
+	AH_MSG_TRAP_TB           = 2
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
 	AH_MSG_TRAP_DEV_IP_CHANGE = 17
@@ -184,6 +185,13 @@ type AhTgrafDfsTrap struct {
 	IfName    [AH_MAX_TRAP_IF_NAME + 1]byte
 	Desc      [TRAP_DCRPT_LEN]byte
 }
+
+type AhTgrafTbTrap struct {
+	TrapId      uint8
+	WarningLevel  uint8
+	Description   [MAX_DESCRIBLE_LEN]byte
+}
+
 type AhTgrafSsidBindUnbindTrap struct {
 	TrapType    uint8
 	TrapID      uint8

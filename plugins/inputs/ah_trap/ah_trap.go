@@ -403,6 +403,16 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"isClear_trapMessage_dfsBangTrap": GetTrapClearStatus(uint32(dfs.TrapType), trapBuf[:]),
 		}, nil)
 
+	case AH_MSG_TRAP_TB:
+		var tbTrap AhTgrafTbTrap
+		copy((*[unsafe.Sizeof(tbTrap)]byte)(unsafe.Pointer(&tbTrap))[:], trapBuf[:unsafe.Sizeof(tbTrap)])
+
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_timeBombTrap":       tbTrap.TrapId,
+			"warningLevel_timeBombTrap":   warningLevels[tbTrap.WarningLevel],
+			"description_timeBombTrap":    ahutil.CleanCString(tbTrap.Description[:]),
+		}, nil)
+
 	case AH_MSG_TRAP_DEV_IP_CHANGE:
 		var devIpChange AhTgrafDevIpChangeTrap
 		copy((*[unsafe.Sizeof(devIpChange)]byte)(unsafe.Pointer(&devIpChange))[:], trapBuf[:unsafe.Sizeof(devIpChange)])
@@ -503,6 +513,13 @@ func formatDevIpChangeIpv6Data(ipv6Data []AhTgrafDevIpChangeIpv6Data, count int)
 	}
 	return string(jsonBytes)
 }
+
+var warningLevels = map[uint8]string{
+       3: "MINOR",
+       4: "MAJOR",
+       5: "CRITICAL",
+}
+
 /*
 Helper function to convert state value to string for SSID bind/unbind
 */
@@ -647,6 +664,20 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			if err := t.Ah_send_ssid_bind_unbind_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering SSID Bind Unbind trap: %v", err)
 			}
+
+		case AH_MSG_TRAP_TB:
+			var tbTrap AhTgrafTbTrap
+			expected := int(unsafe.Sizeof(tbTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid TB trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering TB trap: %v", err)
+			}
+
 		case AH_MSG_TRAP_BSSID_SPOOFING:
 			var bssidSpoofing AhTgrafBSSIDSpoofingTrap
 			expected := int(unsafe.Sizeof(bssidSpoofing))
