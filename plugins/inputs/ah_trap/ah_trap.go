@@ -413,6 +413,16 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"description_timeBombTrap":    ahutil.CleanCString(tbTrap.Description[:]),
 		}, nil)
 
+	case AH_MSG_TRAP_VPN:
+		var vpnTrap AhTgrafVpnTrap
+		copy((*[unsafe.Sizeof(vpnTrap)]byte)(unsafe.Pointer(&vpnTrap))[:], trapBuf[:unsafe.Sizeof(vpnTrap)])
+
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_vpnTrap":    vpnTrap.TrapId,
+			"objectName_vpnTrap":     ahutil.CleanCString(vpnTrap.objectName[:]),
+			"description_vpnTrap":        ahutil.CleanCString(vpnTrap.Desc[:]),
+		}, nil)
+
 	case AH_MSG_TRAP_DEV_IP_CHANGE:
 		var devIpChange AhTgrafDevIpChangeTrap
 		copy((*[unsafe.Sizeof(devIpChange)]byte)(unsafe.Pointer(&devIpChange))[:], trapBuf[:unsafe.Sizeof(devIpChange)])
@@ -676,6 +686,19 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering TB trap: %v", err)
+			}
+
+		case AH_MSG_TRAP_VPN:
+			var vpnTrap AhTgrafVpnTrap
+			expected := int(unsafe.Sizeof(vpnTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid VPN trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering VPN trap: %v", err)
 			}
 
 		case AH_MSG_TRAP_BSSID_SPOOFING:

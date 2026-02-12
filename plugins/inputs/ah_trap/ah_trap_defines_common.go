@@ -42,6 +42,7 @@ const (
 	AH_MSG_TRAP_PORTAL_CHANGE  = 120
 	AH_TRAP_CLT_CAPS_MAX_STR_LEN  = 12
 	AH_TRAP_CLT_CAPS_MIN_STR_LEN  = 8
+	AH_MSG_TRAP_VPN          = 4
 )
 
 const (
@@ -190,6 +191,12 @@ type AhTgrafTbTrap struct {
 	TrapId      uint8
 	WarningLevel  uint8
 	Description   [MAX_DESCRIBLE_LEN]byte
+}
+
+type AhTgrafVpnTrap struct {
+       TrapId     uint8
+       objectName [AH_MAX_TRAP_IF_NAME]byte
+       Desc       [MAX_DESCRIBLE_LEN]byte
 }
 
 type AhTgrafSsidBindUnbindTrap struct {
