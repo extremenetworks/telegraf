@@ -1,6 +1,8 @@
 package ah_trap
 
 import (
+	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -8,8 +10,6 @@ import (
 	"runtime/debug"
 	"sync"
 	"unsafe"
-	"encoding/binary"
-	"encoding/json"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/inputs"
 	"github.com/influxdata/telegraf/plugins/common/ahutil"
@@ -480,6 +480,14 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"uapsd_clientCapabilitiesTrap":       ahutil.CleanCString(cltCaps.Uapsd[:]),
 			"isClear_trapMessage_clientCapabilitiesTrap": GetTrapClearStatus(uint32(cltCaps.TrapType), trapBuf[:]),
 		}, nil)
+	case AH_MSG_TRAP_CAPTURE_WARN:
+		var captureTrap AhTgrafCaptureWarnTrap
+		copy((*[unsafe.Sizeof(captureTrap)]byte)(unsafe.Pointer(&captureTrap))[:], trapBuf[:unsafe.Sizeof(captureTrap)])
+
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_captureTrap":    captureTrap.TrapId,
+			"description_captureTrap":        ahutil.CleanCString(captureTrap.Desc[:]),
+		}, nil)
 	}
 
 	return nil
@@ -760,6 +768,18 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering CLIENT CAPS trap: %v", err)
+			}
+		case AH_MSG_TRAP_CAPTURE_WARN:
+			var captureTrap AhTgrafCaptureWarnTrap
+			expected := int(unsafe.Sizeof(captureTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Capture warning trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering capture trap: %v", err)
 			}
 		}
 	}
