@@ -357,6 +357,22 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"systemId_faMvlanTrap":           fmt.Sprintf("%X", mvlan.SystemID),
 		}, nil)
 
+	case AH_MSG_TRAP_DHCP_OPTION55:
+		var dhcp AhDhcpOption55Trap
+		copy((*[unsafe.Sizeof(dhcp)]byte)(unsafe.Pointer(&dhcp))[:], trapBuf[:unsafe.Sizeof(dhcp)])
+		optLen := int(dhcp.Opt55Len)
+		if optLen < 0 {
+			optLen = 0
+		}
+		if optLen > len(dhcp.Data) {
+			optLen = len(dhcp.Data)
+		}
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapType_dhcpOption55Trap":  dhcp.TrapId,
+			"staMac_dhcpOption55Trap":    ahutil.FormatMac(dhcp.StaMac),
+			"option55_dhcpOption55Trap":  ahutil.CleanCString(dhcp.Data[:optLen]),
+		}, nil)
+
 	case AH_MSG_TRAP_DFS_BANG:
 		var dfs AhTgrafDfsTrap
 		copy((*[unsafe.Sizeof(dfs)]byte)(unsafe.Pointer(&dfs))[:], trapBuf[:unsafe.Sizeof(dfs)])
@@ -543,6 +559,20 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			if err := t.Ah_send_sta_leave_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering STA LEAVE STATS trap: %v", err)
 			}
+
+		case AH_MSG_TRAP_DHCP_OPTION55:
+			var dhcp AhDhcpOption55Trap
+			expected := int(unsafe.Sizeof(dhcp))
+			if len(payload) < expected {
+				log.Printf("[ah_trap] Invalid DHCP OPTION55 size: got %d, expected at least %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload[:expected])
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering DHCP OPTION55 trap: %v", err)
+			}
+
 		case AH_MSG_TRAP_SSID_BIND_UNBIND:
 			var  SsidBindUnbind AhTgrafSsidBindUnbindTrap
 			expected := int(unsafe.Sizeof(SsidBindUnbind))
