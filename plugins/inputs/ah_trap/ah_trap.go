@@ -369,7 +369,7 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"nativeVlan_faMvlanTrap":         mvlan.NativeVlan,
 			"nativeTagged_faMvlanTrap":       mvlan.NativeTagged,
 			"systemId_faMvlanTrap":           fmt.Sprintf("%X", mvlan.SystemID),
-			"clear_faMvlanTrap":  GetTrapClearStatus(uint32(mvlan.TrapType), trapBuf[:]),
+			"clear_trapMessage_faMvlanTrap":  GetTrapClearStatus(uint32(mvlan.TrapType), trapBuf[:]),
 		}, nil)
 
 	case AH_MSG_TRAP_DFS_BANG:
@@ -381,7 +381,7 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"trapId_dfsBangTrap":      dfs.TrapId,
 			"name_dfsBangTrap":        ahutil.CleanCString(dfs.IfName[:]),
 			"desc_dfsBangTrap":        ahutil.CleanCString(dfs.Desc[:]),
-			"clear_dfsBangTrap": GetTrapClearStatus(uint32(dfs.TrapType), trapBuf[:]),
+			"clear_trapMessage_dfsBangTrap": GetTrapClearStatus(uint32(dfs.TrapType), trapBuf[:]),
 		}, nil)
 
 	case AH_MSG_TRAP_DEV_IP_CHANGE:
@@ -401,7 +401,7 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"ipv4DefaultGateway_devIpChangeTrap": ahutil.IntToIpv4(devIpChange.Ipv4DefaultGateway),
 			"ipv6AddrNum_devIpChangeTrap":       devIpChange.Ipv6AddrNum,
 			"ipv6Data_devIpChangeTrap":          formatDevIpChangeIpv6Data(devIpChange.Ipv6Data[:], int(devIpChange.Ipv6AddrNum)),
-			"clear_devIpChangeTrap":             GetTrapClearStatus(uint32(devIpChange.TrapType), trapBuf[:]),
+			"clear_trapMessage_devIpChangeTrap": GetTrapClearStatus(uint32(devIpChange.TrapType), trapBuf[:]),
 		}, nil)
 	}
 
@@ -457,7 +457,7 @@ func (t *TrapPlugin) Ah_send_ssid_bind_unbind_trap(trapType uint32, trapBuf [600
         "bssidMac_ssidBindUnbindTrap":    ahutil.FormatMac(ssidBindUnbind.BssidMAC),
         "ssid_ssidBindUnbindTrap":        ahutil.CleanCString(ssidBindUnbind.SSID[:]),
 	"state_ssidBindUnbindTrap":       stateToString(ssidBindUnbind.State),
-	"clear_ssidBindUnbindTrap":       GetTrapClearStatus(uint32(ssidBindUnbind.TrapType), trapBuf[:]),
+	"clear_trapMessage_ssidBindUnbindTrap":       GetTrapClearStatus(uint32(ssidBindUnbind.TrapType), trapBuf[:]),
     }, nil)
     return nil
 }
@@ -478,7 +478,7 @@ func (t *TrapPlugin) Ah_send_bssid_spoofing_trap(trapType uint32, trapBuf [AH_TR
         "severity_bssidSpoofingTrap":     bssidSpoofing.Severity,
         "sourceIp_bssidSpoofingTrap":     ahutil.IntToIpv4(bssidSpoofing.SourceIP),
         "targetIp_bssidSpoofingTrap":     ahutil.IntToIpv4(bssidSpoofing.TargetIP),
-        "clear_bssidSpoofingTrap":        GetTrapClearStatus(trapType, trapBuf[:]),
+        "clear_trapMessage_bssidSpoofingTrap":        GetTrapClearStatus(trapType, trapBuf[:]),
     }, nil)
     return nil
 }
