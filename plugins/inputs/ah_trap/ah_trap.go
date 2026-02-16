@@ -368,7 +368,7 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			optLen = len(dhcp.Data)
 		}
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapType_dhcpOption55Trap":  dhcp.TrapId,
+			"trapId_dhcpOption55Trap":  dhcp.TrapId,
 			"staMac_dhcpOption55Trap":    ahutil.FormatMac(dhcp.StaMac),
 			"option55_dhcpOption55Trap":  ahutil.CleanCString(dhcp.Data[:optLen]),
 		}, nil)
