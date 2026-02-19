@@ -44,6 +44,7 @@ const (
 	AH_TRAP_CLT_CAPS_MIN_STR_LEN  = 8
 	AH_MSG_TRAP_VPN          = 4
 	AH_MSG_TRAP_CAPTURE_WARN = 127
+	AH_MSG_TRAP_CAPWAP_DELAY = 10
 )
 
 const (
@@ -203,6 +204,17 @@ type AhTgrafVpnTrap struct {
 type AhTgrafCaptureWarnTrap struct {
 	TrapId   uint8
 	Desc     [MAX_DESCRIBLE_LEN]byte
+}
+
+type AhTgrafCapwapDelayTrap struct {
+	AvgDelay       uint64
+	CurDelay       uint64
+	MinorThreshold uint64
+	MajorThreshold uint64
+	Severity       [AH_MAX_TRAP_IF_NAME]byte
+	Desc           [MAX_DESCRIBLE_LEN]byte
+	TrapId         uint8
+	_              [7]byte
 }
 
 type AhTgrafSsidBindUnbindTrap struct {

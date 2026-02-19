@@ -488,6 +488,18 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"trapId_captureTrap":    captureTrap.TrapId,
 			"description_captureTrap":        ahutil.CleanCString(captureTrap.Desc[:]),
 		}, nil)
+	case AH_MSG_TRAP_CAPWAP_DELAY:
+		var capwapDelayTrap AhTgrafCapwapDelayTrap
+		copy((*[unsafe.Sizeof(capwapDelayTrap)]byte)(unsafe.Pointer(&capwapDelayTrap))[:], trapBuf[:unsafe.Sizeof(capwapDelayTrap)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_capwapDelayTrap":          capwapDelayTrap.TrapId,
+			"severity_capwapDelayTrap":        ahutil.CleanCString(capwapDelayTrap.Severity[:]),
+			"averageDelay_capwapDelayTrap":        capwapDelayTrap.AvgDelay,
+			"currentDelay_capwapDelayTrap":        capwapDelayTrap.CurDelay,
+			"minorThreshold_capwapDelayTrap":  capwapDelayTrap.MinorThreshold,
+			"majorThreshold_capwapDelayTrap":  capwapDelayTrap.MajorThreshold,
+			"description_capwapDelayTrap":     ahutil.CleanCString(capwapDelayTrap.Desc[:]),
+		}, nil)
 	}
 
 	return nil
@@ -780,6 +792,18 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering capture trap: %v", err)
+			}
+		case AH_MSG_TRAP_CAPWAP_DELAY:
+			var capwapDelayTrap AhTgrafCapwapDelayTrap
+			expected := int(unsafe.Sizeof(capwapDelayTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid CAPWAP delay trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering CAPWAP delay trap: %v", err)
 			}
 		}
 	}
