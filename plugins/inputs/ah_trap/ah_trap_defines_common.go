@@ -22,6 +22,7 @@ const (
 	TRAP_DCRPT_LEN           = 96
 	AH_MSG_TRAP_DFS_BANG     = 12
 	AH_MSG_TRAP_STA_LEAVE_STATS = 6
+	AH_MSG_TRAP_PSE          = 13
 	MACADDR_LEN              = 6
 	MAX_DESCRIBLE_LEN        = 128
 	AH_CAPWAP_STAT_NAME_MAX_LEN = 32
@@ -87,6 +88,15 @@ type AhTgrafDfsTrap struct {
 	TrapId    uint8
 	IfName    [AH_MAX_TRAP_IF_NAME + 1]byte
 	Desc      [TRAP_DCRPT_LEN]byte
+}
+
+type AhTgrafPseTrap struct {
+	TrapType  uint8
+	TrapId    uint8
+	ObjName   [AH_MAX_TRAP_OBJ_NAME]byte
+	Desc      [TRAP_DCRPT_LEN]byte
+	Port      uint8
+	ErrorFlag uint8
 }
 type AhTgrafSsidBindUnbindTrap struct {
 	TrapType    uint8
