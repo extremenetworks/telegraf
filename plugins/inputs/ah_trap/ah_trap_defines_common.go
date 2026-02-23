@@ -74,6 +74,97 @@ func severityToString(level int32) string {
 	}
 }
 
+func clientAuthMethodToString(method int32) string {
+	switch method {
+	case 0:
+		return "CWP"
+	case 1:
+		return "OPEN"
+	case 2:
+		return "WEP_OPEN"
+	case 3:
+		return "WEP_SHARED"
+	case 4:
+		return "WPA_PSK"
+	case 5:
+		return "WPA2_PSK"
+	case 6:
+		return "WPA_802.1X"
+	case 7:
+		return "WPA2_802.1X"
+	case 8:
+		return "WPA_AUTO_PSK"
+	case 9:
+		return "WPA_AUTO_802.1X"
+	case 10:
+		return "DYNAMIC_WEP"
+	case 11:
+		return "802.1X"
+	case 12:
+		return "WPA3_SAE"
+	case 13:
+		return "WPA3_802.1X"
+	case 14:
+		return "WPA3_SAE_EXTENDED"
+	case 15:
+		return "OWE"
+	case 16:
+		return "WPA3_802.1X_SUITE_B_192"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func clientEncryptMethodToString(method int32) string {
+	switch method {
+	case 0:
+		return "AES"
+	case 1:
+		return "TKIP"
+	case 2:
+		return "WEP"
+	case 3:
+		return "NONE"
+	case 4:
+		return "AES_GCMP"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func clientMacProtoToString(proto int32) string {
+	switch proto {
+	case 0:
+		return "802.11A"
+	case 1:
+		return "802.11B"
+	case 2:
+		return "802.11G"
+	case 3:
+		return "802.11N_5GHZ"
+	case 4:
+		return "802.11N_2.4GHZ"
+	case 5:
+		return "802.11AC_WIFI5"
+	case 6:
+		return "802.11AX_2.4GHZ_WIFI6"
+	case 7:
+		return "802.11AX_5GHZ_WIFI6"
+	case 8:
+		return "ETHERNET"
+	case 9:
+		return "802.11AX_6GHZ_WIFI6E"
+	case 10:
+		return "802.11BE_2.4GHZ_WIFI7"
+	case 11:
+		return "802.11BE_5GHZ_WIFI7"
+	case 12:
+		return "802.11BE_6GHZ_WIFI7"
+	default:
+		return "UNKNOWN"
+	}
+}
+
 type AhFaMvlanChangeTrap struct {
 	TrapType      uint8
 	SystemID      [10]uint8
