@@ -436,6 +436,7 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"trapId_portalChangeTrap":      portalChange.TrapType,
 			"macAddr_portalChangeTrap":    ahutil.FormatMac(portalChange.Macaddr),
 			"isClear_trapMessage_portalChangeTrap": GetTrapClearStatus(uint32(portalChange.TrapType), trapBuf[:]),
+		}, nil)
 	case AH_MSG_TRAP_CLT_CAPS:
 		var cltCaps AhTelegrafCltCapsTrap
 		copy((*[unsafe.Sizeof(cltCaps)]byte)(unsafe.Pointer(&cltCaps))[:], trapBuf[:unsafe.Sizeof(cltCaps)])
@@ -693,6 +694,7 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering Portal Change trap: %v", err)
+			}
 		case AH_MSG_TRAP_CLT_CAPS:
 			var cltCaps AhTelegrafCltCapsTrap
 			expected := int(unsafe.Sizeof(cltCaps))
