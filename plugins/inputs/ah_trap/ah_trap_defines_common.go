@@ -37,6 +37,8 @@ const (
 	AH_SNMP_FALSE            = 2
 	AH_MSG_TRAP_SET          = 0
 	AH_MSG_TRAP_CLEAR        = 1
+	AH_MSG_TRAP_VERIFY_OOB_SN  = 117
+	AH_MSG_TRAP_PORTAL_CHANGE  = 120
 	AH_TRAP_CLT_CAPS_MAX_STR_LEN  = 12
 	AH_TRAP_CLT_CAPS_MIN_STR_LEN  = 8
 )
@@ -135,6 +137,15 @@ type AhTgrafDevIpChangeTrap struct {
 	Ipv6Data           [AH_MGT0_ADDR6_NUM_MAX]AhTgrafDevIpChangeIpv6Data
 }
 
+type AhVerifyOobSnTrap struct {
+	TrapType	uint8;
+	SerialNumber [AH_MAX_NAME_LEN]byte;
+}
+
+type AhPortalChangeTrap struct {
+	TrapType	uint8;
+	Macaddr [MACADDR_LEN]byte;
+}
 type AhTelegrafCltCapsTrap struct {
 	TrapType    uint8
 	CltMac      [MACADDR_LEN]byte

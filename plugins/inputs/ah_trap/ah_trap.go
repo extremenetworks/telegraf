@@ -421,6 +421,21 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"ipv6Data_devIpChangeTrap":          formatDevIpChangeIpv6Data(devIpChange.Ipv6Data[:], int(devIpChange.Ipv6AddrNum)),
 			"isClear_trapMessage_devIpChangeTrap": GetTrapClearStatus(uint32(devIpChange.TrapType), trapBuf[:]),
 		}, nil)
+	case AH_MSG_TRAP_VERIFY_OOB_SN:
+		var oobSn  AhVerifyOobSnTrap
+		copy((*[unsafe.Sizeof(oobSn)]byte)(unsafe.Pointer(&oobSn))[:], trapBuf[:unsafe.Sizeof(oobSn)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_oobSerialNumberTrap":       oobSn.TrapType,
+			"serialNumber_oobSerialNumberTrap":   ahutil.CleanCString(oobSn.SerialNumber[:]),
+			"isClear_trapMessage_oobSerialNumberTrap": GetTrapClearStatus(uint32(oobSn.TrapType), trapBuf[:]),
+		}, nil)
+	case AH_MSG_TRAP_PORTAL_CHANGE:
+		var portalChange  AhPortalChangeTrap
+		copy((*[unsafe.Sizeof(portalChange)]byte)(unsafe.Pointer(&portalChange))[:], trapBuf[:unsafe.Sizeof(portalChange)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_portalChangeTrap":      portalChange.TrapType,
+			"macAddr_portalChangeTrap":    ahutil.FormatMac(portalChange.Macaddr),
+			"isClear_trapMessage_portalChangeTrap": GetTrapClearStatus(uint32(portalChange.TrapType), trapBuf[:]),
 	case AH_MSG_TRAP_CLT_CAPS:
 		var cltCaps AhTelegrafCltCapsTrap
 		copy((*[unsafe.Sizeof(cltCaps)]byte)(unsafe.Pointer(&cltCaps))[:], trapBuf[:unsafe.Sizeof(cltCaps)])
@@ -655,6 +670,29 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering DEV_IP_CHANGE trap: %v", err)
 			}
+		case AH_MSG_TRAP_VERIFY_OOB_SN:
+			var oobSn  AhVerifyOobSnTrap
+			expected := int(unsafe.Sizeof(oobSn))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid OutOfBox SerialNumbe size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [AH_TRAP_SIZE_256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering OutOfBox SerialNumber trap: %v", err)
+			}
+		case AH_MSG_TRAP_PORTAL_CHANGE:
+			var portalChange AhPortalChangeTrap
+			expected := int(unsafe.Sizeof(portalChange))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Portal Change size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [AH_TRAP_SIZE_256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering Portal Change trap: %v", err)
 		case AH_MSG_TRAP_CLT_CAPS:
 			var cltCaps AhTelegrafCltCapsTrap
 			expected := int(unsafe.Sizeof(cltCaps))
