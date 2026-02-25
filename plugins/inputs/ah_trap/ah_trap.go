@@ -408,9 +408,11 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 		copy((*[unsafe.Sizeof(tbTrap)]byte)(unsafe.Pointer(&tbTrap))[:], trapBuf[:unsafe.Sizeof(tbTrap)])
 
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapId_timeBombTrap":       tbTrap.TrapId,
-			"warningLevel_timeBombTrap":   warningLevels[tbTrap.WarningLevel],
-			"description_timeBombTrap":    ahutil.CleanCString(tbTrap.Description[:]),
+			"trapId_licenseExpiryTrap":       tbTrap.TrapId,
+			"warningLevel_licenseExpiryTrap": severityToString(int32(tbTrap.WarningLevel)),
+			"expiryPeriod_licenseExpiryTrap":     tbTrap.Validity,
+			"description_licenseExpiryTrap":  ahutil.CleanCString(tbTrap.Desc[:]),
+			"isClear_trapMessage_licenseExpiryTrap": GetTrapClearStatus(uint32(tbTrap.TrapId), trapBuf[:]),
 		}, nil)
 
 	case AH_MSG_TRAP_VPN:
@@ -418,9 +420,14 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 		copy((*[unsafe.Sizeof(vpnTrap)]byte)(unsafe.Pointer(&vpnTrap))[:], trapBuf[:unsafe.Sizeof(vpnTrap)])
 
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapId_vpnTrap":    vpnTrap.TrapId,
-			"objectName_vpnTrap":     ahutil.CleanCString(vpnTrap.objectName[:]),
-			"description_vpnTrap":        ahutil.CleanCString(vpnTrap.Desc[:]),
+			"trapId_vpnTrap":      vpnTrap.TrapId,
+			"phase_vpnTrap":       vpnPhaseToString(int32(vpnTrap.Phase)),
+			"status_vpnTrap":      vpnStatusToString(int32(vpnTrap.Status)),
+			"objectName_vpnTrap":  ahutil.CleanCString(vpnTrap.Objn[:]),
+			"localIp_vpnTrap":     ahutil.CleanCString(vpnTrap.LocalIp[:]),
+			"remoteIp_vpnTrap":    ahutil.CleanCString(vpnTrap.RemoteIp[:]),
+			"description_vpnTrap": ahutil.CleanCString(vpnTrap.Desc[:]),
+			"isClear_trapMessage_vpnTrap": GetTrapClearStatus(uint32(vpnTrap.TrapId), trapBuf[:]),
 		}, nil)
 
 	case AH_MSG_TRAP_DEV_IP_CHANGE:
@@ -480,25 +487,19 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"uapsd_clientCapabilitiesTrap":       ahutil.CleanCString(cltCaps.Uapsd[:]),
 			"isClear_trapMessage_clientCapabilitiesTrap": GetTrapClearStatus(uint32(cltCaps.TrapType), trapBuf[:]),
 		}, nil)
-	case AH_MSG_TRAP_CAPTURE_WARN:
-		var captureTrap AhTgrafCaptureWarnTrap
-		copy((*[unsafe.Sizeof(captureTrap)]byte)(unsafe.Pointer(&captureTrap))[:], trapBuf[:unsafe.Sizeof(captureTrap)])
-
-		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapId_captureTrap":    captureTrap.TrapId,
-			"description_captureTrap":        ahutil.CleanCString(captureTrap.Desc[:]),
-		}, nil)
 	case AH_MSG_TRAP_CAPWAP_DELAY:
 		var capwapDelayTrap AhTgrafCapwapDelayTrap
 		copy((*[unsafe.Sizeof(capwapDelayTrap)]byte)(unsafe.Pointer(&capwapDelayTrap))[:], trapBuf[:unsafe.Sizeof(capwapDelayTrap)])
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapId_capwapDelayTrap":          capwapDelayTrap.TrapId,
-			"severity_capwapDelayTrap":        ahutil.CleanCString(capwapDelayTrap.Severity[:]),
-			"averageDelay_capwapDelayTrap":        capwapDelayTrap.AvgDelay,
-			"currentDelay_capwapDelayTrap":        capwapDelayTrap.CurDelay,
-			"minorThreshold_capwapDelayTrap":  capwapDelayTrap.MinorThreshold,
-			"majorThreshold_capwapDelayTrap":  capwapDelayTrap.MajorThreshold,
-			"description_capwapDelayTrap":     ahutil.CleanCString(capwapDelayTrap.Desc[:]),
+			"trapType_capwapDelayTrap":       AH_MSG_TRAP_CAPWAP_DELAY,
+			"trapId_capwapDelayTrap":         capwapDelayTrap.TrapId,
+			"averageDelay_capwapDelayTrap":   capwapDelayTrap.AvgDelay,
+			"currentDelay_capwapDelayTrap":   capwapDelayTrap.CurDelay,
+			"minimumThreshold_capwapDelayTrap": capwapDelayTrap.MinorThreshold,
+			"maximumThreshold_capwapDelayTrap": capwapDelayTrap.MajorThreshold,
+			"description_capwapDelayTrap":    ahutil.CleanCString(capwapDelayTrap.Desc[:]),
+			"isClear_trapMessage_capwapDelayTrap": GetTrapClearStatus(uint32(capwapDelayTrap.TrapId), trapBuf[:]),
+			"severityLevel_trapMessage_capwapDelayTrap":       ahutil.CleanCString(capwapDelayTrap.Severity[:]),
 		}, nil)
 	}
 
@@ -542,12 +543,6 @@ func formatDevIpChangeIpv6Data(ipv6Data []AhTgrafDevIpChangeIpv6Data, count int)
 		return "[]"
 	}
 	return string(jsonBytes)
-}
-
-var warningLevels = map[uint8]string{
-       3: "MINOR",
-       4: "MAJOR",
-       5: "CRITICAL",
 }
 
 /*
@@ -603,6 +598,28 @@ func (t *TrapPlugin) Ah_send_bssid_spoofing_trap(trapType uint32, trapBuf [AH_TR
     return nil
 }
 
+func (t *TrapPlugin) Ah_send_capture_warn_trap(trapType uint32, trapBuf [600]byte, acc telegraf.Accumulator) error {
+	var captureTrap AhTgrafCaptureWarnTrap
+	copy((*[unsafe.Sizeof(captureTrap)]byte)(unsafe.Pointer(&captureTrap))[:], trapBuf[:unsafe.Sizeof(captureTrap)])
+	fields := map[string]interface{}{
+		"trapId_captureTrap":      captureTrap.TrapId,
+		"description_captureTrap": ahutil.CleanCString(captureTrap.Desc[:]),
+		"totalSize_captureTrap":   captureTrap.TotalSize,
+		"trapMessage_captureTrap": map[string]interface{}{
+			"isClear_captureTrap": GetTrapClearStatus(uint32(captureTrap.TrapId), trapBuf[:]),
+		},
+	}
+	if captureTrap.FileCount > 0 {
+		for i := 0; i < int(captureTrap.FileCount) && i < MAX_CAPTURE_FILES; i++ {
+			fileName := ahutil.CleanCString(captureTrap.Files[i].FileName[:])
+			fileSize := captureTrap.Files[i].FileSize
+			fields[fmt.Sprintf("name_@%d_capturedFiles_captureTrap", i)] = fileName
+			fields[fmt.Sprintf("size_@%d_capturedFiles_captureTrap", i)] = fileSize
+		}
+	}
+	acc.AddFields("TrapEvent", fields, nil)
+	return nil
+}
 /*
  trapListener listens for incoming trap messages on a UDP connection,
  extracts the trap type and payload, and processes supported trap types.
@@ -788,9 +805,9 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 				log.Printf("[ah_trap] Invalid Capture warning trap size: got %d, expected %d", len(payload), expected)
 				continue
 			}
-			var trapBuf [256]byte
+			var trapBuf [600]byte
 			copy(trapBuf[:expected], payload)
-			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+			if err := t.Ah_send_capture_warn_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering capture trap: %v", err)
 			}
 		case AH_MSG_TRAP_CAPWAP_DELAY:
