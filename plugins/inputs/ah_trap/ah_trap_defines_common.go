@@ -31,11 +31,14 @@ const (
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
 	AH_MSG_TRAP_DEV_IP_CHANGE = 17
+	AH_MSG_TRAP_CLT_CAPS = 119
 	AH_MGT0_ADDR6_NUM_MAX    = 2
 	AH_SNMP_TRUE             = 1
 	AH_SNMP_FALSE            = 2
 	AH_MSG_TRAP_SET          = 0
 	AH_MSG_TRAP_CLEAR        = 1
+	AH_TRAP_CLT_CAPS_MAX_STR_LEN  = 12
+	AH_TRAP_CLT_CAPS_MIN_STR_LEN  = 8
 )
 
 const (
@@ -130,6 +133,26 @@ type AhTgrafDevIpChangeTrap struct {
 	Ipv6AddrNum        uint8
 	_                  [3]byte
 	Ipv6Data           [AH_MGT0_ADDR6_NUM_MAX]AhTgrafDevIpChangeIpv6Data
+}
+
+type AhTelegrafCltCapsTrap struct {
+	TrapType    uint8
+	CltMac      [MACADDR_LEN]byte
+	BssidMac    [MACADDR_LEN]byte
+	Channel     uint8
+	Type        [AH_TRAP_CLT_CAPS_MAX_STR_LEN]byte
+	Bw          [AH_TRAP_CLT_CAPS_MAX_STR_LEN]byte
+	Nss         uint8
+	Mode        [AH_TRAP_CLT_CAPS_MAX_STR_LEN]byte
+	MinTxPower  int8
+	MaxTxPower  int8
+	MuMimo      [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Wmm         [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Cipher      [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Akm         [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Mfp         [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Mobile      [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Uapsd       [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
 }
 
 type AhFailureTrap struct {

@@ -421,6 +421,29 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"ipv6Data_devIpChangeTrap":          formatDevIpChangeIpv6Data(devIpChange.Ipv6Data[:], int(devIpChange.Ipv6AddrNum)),
 			"isClear_trapMessage_devIpChangeTrap": GetTrapClearStatus(uint32(devIpChange.TrapType), trapBuf[:]),
 		}, nil)
+	case AH_MSG_TRAP_CLT_CAPS:
+		var cltCaps AhTelegrafCltCapsTrap
+		copy((*[unsafe.Sizeof(cltCaps)]byte)(unsafe.Pointer(&cltCaps))[:], trapBuf[:unsafe.Sizeof(cltCaps)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapType_clientCapabilitiesTrap":    cltCaps.TrapType,
+			"clientMac_clientCapabilitiesTrap":   ahutil.FormatMac(cltCaps.CltMac),
+			"bssidMac_clientCapabilitiesTrap":    ahutil.FormatMac(cltCaps.BssidMac),
+			"channel_clientCapabilitiesTrap":     cltCaps.Channel,
+			"frameType_clientCapabilitiesTrap":   ahutil.CleanCString(cltCaps.Type[:]),
+			"bandWidth_clientCapabilitiesTrap":   ahutil.CleanCString(cltCaps.Bw[:]),
+			"nss_clientCapabilitiesTrap":         cltCaps.Nss,
+			"phyMode_clientCapabilitiesTrap":     ahutil.CleanCString(cltCaps.Mode[:]),
+			"minTxPower_clientCapabilitiesTrap":  cltCaps.MinTxPower,
+			"maxTxPower_clientCapabilitiesTrap":  cltCaps.MaxTxPower,
+			"muMimo_clientCapabilitiesTrap":      ahutil.CleanCString(cltCaps.MuMimo[:]),
+			"wmm_clientCapabilitiesTrap":         ahutil.CleanCString(cltCaps.Wmm[:]),
+			"cipher_clientCapabilitiesTrap":      ahutil.CleanCString(cltCaps.Cipher[:]),
+			"akm_clientCapabilitiesTrap":         ahutil.CleanCString(cltCaps.Akm[:]),
+			"mfp_clientCapabilitiesTrap":         ahutil.CleanCString(cltCaps.Mfp[:]),
+			"mobility_clientCapabilitiesTrap":    ahutil.CleanCString(cltCaps.Mobile[:]),
+			"uapsd_clientCapabilitiesTrap":       ahutil.CleanCString(cltCaps.Uapsd[:]),
+			"isClear_trapMessage_clientCapabilitiesTrap": GetTrapClearStatus(uint32(cltCaps.TrapType), trapBuf[:]),
+		}, nil)
 	}
 
 	return nil
@@ -631,6 +654,18 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering DEV_IP_CHANGE trap: %v", err)
+			}
+		case AH_MSG_TRAP_CLT_CAPS:
+			var cltCaps AhTelegrafCltCapsTrap
+			expected := int(unsafe.Sizeof(cltCaps))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid CLIENT CAPS size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering CLIENT CAPS trap: %v", err)
 			}
 		}
 	}
