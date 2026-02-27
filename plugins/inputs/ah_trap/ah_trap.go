@@ -465,7 +465,7 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 		copy((*[unsafe.Sizeof(ldapTrap)]byte)(unsafe.Pointer(&ldapTrap))[:], trapBuf[:unsafe.Sizeof(ldapTrap)])
 		isClear := ldapTrap.Clear == 1
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapType_ldapAlarmTrap":            ldapTrap.TrapType,
+			"trapId_ldapAlarmTrap":              ldapTrap.TrapType,
 			"alarmType_ldapAlarmTrap":           ldapTrap.AlarmType,
 			"desc_ldapAlarmTrap":                ahutil.CleanCString(ldapTrap.Desc[:]),
 			"isClear_trapMessage_ldapAlarmTrap": isClear,
