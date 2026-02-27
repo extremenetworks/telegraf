@@ -28,6 +28,7 @@ const (
 	MAX_OBJ_NAME_LEN         = 4
 	AH_MSG_TRAP_SSID_BIND_UNBIND = 5
 	AH_MSG_TRAP_BSSID_SPOOFING = 7
+	AH_MSG_TRAP_TB           = 2
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
 	AH_MSG_TRAP_DEV_IP_CHANGE = 17
@@ -41,6 +42,12 @@ const (
 	AH_MSG_TRAP_PORTAL_CHANGE  = 120
 	AH_TRAP_CLT_CAPS_MAX_STR_LEN  = 12
 	AH_TRAP_CLT_CAPS_MIN_STR_LEN  = 8
+	AH_MSG_TRAP_VPN          = 4
+	AH_MSG_TRAP_CAPTURE_WARN = 127
+	AH_MSG_TRAP_CAPWAP_DELAY = 10
+	AH_CAPWAP_DELAY_TRAP     = 108
+	MAX_CAPTURE_FILE_NAME_LEN = 16
+	MAX_CAPTURE_FILES         = 16
 )
 
 const (
@@ -61,6 +68,28 @@ const (
 	AH_MESH_STABLE_STAGE_TRAP_TYPE
 	AH_CHAIN_STREAM_TRAP_TYPE
 )
+
+func vpnPhaseToString(phase int32) string {
+	switch phase {
+	case 1:
+		return "PHASE1"
+	case 2:
+		return "PHASE 2"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func vpnStatusToString(status int32) string {
+	switch status {
+	case 1:
+		return "UP"
+	case 2:
+		return "DOWN"
+	default:
+		return "UNKNOWN"
+	}
+}
 
 func severityToString(level int32) string {
 	switch level {
@@ -184,6 +213,51 @@ type AhTgrafDfsTrap struct {
 	IfName    [AH_MAX_TRAP_IF_NAME + 1]byte
 	Desc      [TRAP_DCRPT_LEN]byte
 }
+
+type AhTgrafTbTrap struct {
+	TrapId       uint8
+	WarningLevel uint8
+	Validity     uint8
+	Desc         [MAX_DESCRIBLE_LEN]byte
+}
+
+type AhTgrafVpnTrap struct {
+	TrapId    uint8
+	Phase     uint8
+	Status    uint8
+	Objn      [AH_MAX_TRAP_IF_NAME]byte
+	LocalIp   [AH_MAX_TRAP_HOST_NAME + 1]byte
+	RemoteIp  [AH_MAX_TRAP_HOST_NAME + 1]byte
+	Desc      [MAX_DESCRIBLE_LEN]byte
+}
+
+type AhCaptureFileInfo struct {
+    FileName [MAX_CAPTURE_FILE_NAME_LEN]byte
+    FileSize uint64
+}
+
+type AhTgrafCaptureWarnTrap struct {
+    TrapId    uint8
+    Desc      [MAX_DESCRIBLE_LEN]byte
+    _         [7]byte
+    TotalSize uint64
+    FileCount uint8
+    _        [7]byte
+    Files     [MAX_CAPTURE_FILES]AhCaptureFileInfo
+}
+
+type AhTgrafCapwapDelayTrap struct {
+	AvgDelay       uint64
+	CurDelay       uint64
+	MinorThreshold uint64
+	MajorThreshold uint64
+	Severity       [AH_MAX_TRAP_IF_NAME]byte
+	Desc           [MAX_DESCRIBLE_LEN]byte
+	TrapId         uint8
+	Clear          uint8
+	_             [4]byte
+}
+
 type AhTgrafSsidBindUnbindTrap struct {
 	TrapType    uint8
 	TrapID      uint8
@@ -482,6 +556,17 @@ func GetTrapClearStatus(trapType uint32, unionData []byte) bool {
 				isClear = false // SET
 			} else {
 				isClear = true // CLEAR
+			}
+		}
+
+	case AH_CAPWAP_DELAY_TRAP:
+		var capwapDelay AhTgrafCapwapDelayTrap
+		if len(unionData) >= int(unsafe.Sizeof(capwapDelay)) {
+			copy((*[1 << 10]byte)(unsafe.Pointer(&capwapDelay))[:unsafe.Sizeof(capwapDelay)], unionData)
+			if capwapDelay.Clear != 0 {
+				isClear = true // CLEAR
+			} else {
+				isClear = false // SET
 			}
 		}
 
