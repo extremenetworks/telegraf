@@ -20,6 +20,7 @@ const (
 	AH_TRAP_MSG_TYPE         = 1
 	AH_FA_MVLAN_TRAP_TYPE    = 124
 	TRAP_DCRPT_LEN           = 96
+	AH_MSG_TRAP_RADIUSD_LDAP_ALARM = 9
 	AH_MSG_TRAP_DFS_BANG     = 12
 	AH_MSG_TRAP_STA_LEAVE_STATS = 6
 	MACADDR_LEN              = 6
@@ -226,6 +227,13 @@ type AhTgrafDevIpChangeTrap struct {
 	Ipv6AddrNum        uint8
 	_                  [3]byte
 	Ipv6Data           [AH_MGT0_ADDR6_NUM_MAX]AhTgrafDevIpChangeIpv6Data
+}
+
+type AhTgrafLdapAlarmTrap struct {
+	TrapType  uint8
+	AlarmType uint8
+	Clear     uint8
+	Desc      [TRAP_DCRPT_LEN]byte
 }
 
 type AhVerifyOobSnTrap struct {

@@ -460,6 +460,16 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"uapsd_clientCapabilitiesTrap":       ahutil.CleanCString(cltCaps.Uapsd[:]),
 			"isClear_trapMessage_clientCapabilitiesTrap": GetTrapClearStatus(uint32(cltCaps.TrapType), trapBuf[:]),
 		}, nil)
+	case AH_MSG_TRAP_RADIUSD_LDAP_ALARM:
+		var ldapTrap AhTgrafLdapAlarmTrap
+		copy((*[unsafe.Sizeof(ldapTrap)]byte)(unsafe.Pointer(&ldapTrap))[:], trapBuf[:unsafe.Sizeof(ldapTrap)])
+		isClear := ldapTrap.Clear == 1
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_ldapAlarmTrap":              ldapTrap.TrapType,
+			"alarmType_ldapAlarmTrap":           ldapTrap.AlarmType,
+			"desc_ldapAlarmTrap":                ahutil.CleanCString(ldapTrap.Desc[:]),
+			"isClear_trapMessage_ldapAlarmTrap": isClear,
+		}, nil)
 	}
 
 	return nil
@@ -706,6 +716,18 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering CLIENT CAPS trap: %v", err)
+			}
+		case AH_MSG_TRAP_RADIUSD_LDAP_ALARM:
+			var ldapTrap AhTgrafLdapAlarmTrap
+			expected := int(unsafe.Sizeof(ldapTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid LDAP ALARM size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [AH_TRAP_SIZE_256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering LDAP ALARM trap: %v", err)
 			}
 		}
 	}
