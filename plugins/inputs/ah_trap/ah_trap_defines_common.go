@@ -502,11 +502,13 @@ type AhTelegrafCltCapsTrap struct {
 	Uapsd       [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
 }
 
+
 type AhTgrafPoeTrap struct {
-	TrapID          uint8
-	IfName          [MAX_OBJ_NAME_LEN]byte
-	Description     [TRAP_DCRPT_LEN]byte
-	PowerMode       uint8
+       TrapID      uint8
+       IfIndex     uint8
+       PowerClass  uint8
+       IfName      [MAX_OBJ_NAME_LEN + 1]byte
+       Description [TRAP_DCRPT_LEN]byte
 }
 
 type AhTgrafBootOsTrap struct {
@@ -761,4 +763,38 @@ func GetTrapClearStatus(trapType uint32, unionData []byte) bool {
 	}
 
 	return isClear
+}
+
+/*
+Helper function to convert bootos status value to string
+*/
+func bootosStatusToString(status uint8) string {
+       switch status {
+       case 0:
+               return "SUCCESS"
+       case 1:
+               return "FAILURE"
+       case 2:
+               return "LEGACY_HW"
+	default:
+		return "UNKNOWN"
+       }
+}
+
+/*
+Helper function to convert osType value to string for bootos trap
+*/
+func osTypeToString(osType uint8) string {
+	switch osType{
+	case 0:
+		return "HOS"
+	case 1:
+		return "WiNG"
+	case 2:
+		return "WiNG_CAMP"
+	case 3:
+		return "WiNG_DIST"
+	default:
+		return "UNKNOWN"
+	}
 }

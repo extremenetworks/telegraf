@@ -505,22 +505,24 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 	case AH_MSG_TRAP_POE:
 		var poe AhTgrafPoeTrap
 		copy((*[unsafe.Sizeof(poe)]byte)(unsafe.Pointer(&poe))[:], trapBuf[:unsafe.Sizeof(poe)])
-
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapId_poeTrap":	poe.TrapID,
-			"portName_poeTrap":      ahutil.CleanCString(poe.IfName[:]),
-			"description_poeTrap":   ahutil.CleanCString(poe.Description[:]),
-			"powerMode_poeTrap":     powerModeToString(poe.PowerMode),
+			"trapId_poeStateChangeTrap": poe.TrapID,
+			"ifIndex_keys_poeStateChangeTrap": poe.IfIndex,
+			"name_keys_poeStateChangeTrap": ahutil.CleanCString(poe.IfName[:]),
+			"desc_trapMessage_poeStateChangeTrap": ahutil.CleanCString(poe.Description[:]),
+			"isClear_trapMessage_poeStateChangeTrap": GetTrapClearStatus(uint32(poe.TrapID), trapBuf[:]),
+			"new_powerClass_poeStateChangeTrap": poe.PowerClass,
 		}, nil)
 	case AH_MSG_TRAP_BOOTOS:
 		var bootos AhTgrafBootOsTrap
 		copy((*[unsafe.Sizeof(bootos)]byte)(unsafe.Pointer(&bootos))[:], trapBuf[:unsafe.Sizeof(bootos)])
 
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapId_bootosTrap":     bootos.TrapID,
-			"osType_bootosTrap":      osTypeToString(bootos.OsType),
-			"status_bootosTrap":      bootosStatusToString(bootos.Status),
-			"description_bootosTrap":   ahutil.CleanCString(bootos.Description[:]),
+			"trapId_bootosTrap": bootos.TrapID,
+			"osType_bootosTrap": osTypeToString(bootos.OsType),
+			"status_bootosTrap": bootosStatusToString(bootos.Status),
+			"desc_trapMessage_bootosTrap": ahutil.CleanCString(bootos.Description[:]),
+			"isClear_trapMessage_bootosTrap": GetTrapClearStatus(uint32(bootos.TrapID), trapBuf[:]),
 		}, nil)
 	}
 
@@ -564,56 +566,6 @@ func formatDevIpChangeIpv6Data(ipv6Data []AhTgrafDevIpChangeIpv6Data, count int)
 		return "[]"
 	}
 	return string(jsonBytes)
-}
-
-/*
-Helper function to convert osType value to string for bootos trap
-*/
-func osTypeToString(osType uint8) string {
-       switch osType {
-       case 0:
-               return "HOS"
-       case 1:
-               return "WiNG"
-       case 2:
-               return "WiNG-CAMP"
-       case 3:
-               return "WiNG-DIST"
-       default:
-               return fmt.Sprintf("UNKNOWN(%d)", osType)
-       }
-}
-
-/*
-Helper function to convert bootos status value to string
-*/
-func bootosStatusToString(status uint8) string {
-       switch status {
-       case 0:
-               return "Success"
-       case 1:
-               return "Failed"
-       case 2:
-               return "Legacy HW"
-       default:
-               return fmt.Sprintf("UNKNOWN(%d)", status)
-       }
-}
-
-/*
-Helper function to convert powerMode value to string
-*/
-func powerModeToString(powerMode uint8) string {
-       switch powerMode {
-       case 0:
-               return "AT"
-       case 1:
-               return "AF"
-       case 2:
-               return "BT_TYPE3"
-       default:
-               return fmt.Sprintf("UNKNOWN(%d)", powerMode)
-       }
 }
 
 /*
@@ -1039,6 +991,7 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Ah_send_generic_alarm_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering Generic Alarm trap: %v", err)
+			}
 		case AH_MSG_TRAP_POE:
 			var poe AhTgrafPoeTrap
 			expected := int(unsafe.Sizeof(poe))
