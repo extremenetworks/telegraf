@@ -5,6 +5,7 @@ package ah_trap
 import (
 	"unsafe"
 	"fmt"
+	"strings"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/common/ahutil"
 )
@@ -129,7 +130,7 @@ func (t *TrapPlugin) Ah_send_sta_leave_trap(trapType uint32, trapBuf [600]byte, 
 		"txairtime_staLeaveStatsTrap":		staLeave.TxAirTime,
 		"ts_staLeaveStatsTrap":				staLeave.Ts,
 		"staAddr6Num_staLeaveStatsTrap":	staLeave.StaAddr6Num,
-		"staAddr6_staLeaveStatsTrap":		IntToIPv6_1(staLeave.StaAddr6[:], int(staLeave.StaAddr6Num)),
+		"staAddr6_staLeaveStatsTrap":		strings.Join(IntToIPv6_1(staLeave.StaAddr6[:], int(staLeave.StaAddr6Num)), ","),
 		"isClear_trapMessage_staLeaveStatsTrap": GetTrapClearStatus(trapType, trapBuf[:]),
 	}, nil)
 	return nil
