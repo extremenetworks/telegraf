@@ -48,6 +48,8 @@ const (
 	AH_CAPWAP_DELAY_TRAP     = 108
 	MAX_CAPTURE_FILE_NAME_LEN = 16
 	MAX_CAPTURE_FILES         = 16
+	AH_MSG_TRAP_FA_ASSGN_MAP_CHANGE = 126
+	AH_TELEGRAF_FA_MAP_MAX_ENTRIES = 94
 )
 
 const (
@@ -198,6 +200,18 @@ func clientMacProtoToString(proto int32) string {
 		return "UNKNOWN"
 	}
 }
+func MapStateToString(state uint8) string {
+	switch state {
+	case 1:
+		return "PENDING"
+	case 2:
+		return "ACCEPT"
+	case 3:
+		return "REJECT"
+	default:
+		return "UNKNOWN"
+	}
+}
 
 type AhFaMvlanChangeTrap struct {
 	TrapType      uint8
@@ -244,6 +258,21 @@ type AhTgrafCaptureWarnTrap struct {
     FileCount uint8
     _        [7]byte
     Files     [MAX_CAPTURE_FILES]AhCaptureFileInfo
+}
+
+type AhTgrafFaAssignMapData struct {
+       Isid  uint32
+       Vlan  uint16
+       State uint8
+       _     [1]byte
+}
+
+type AhTgrafFaAssignMapChangeTrap struct {
+       Ifindex int32
+       TrapId  uint8
+       Count   uint8
+       _       [2]byte
+       Data    [AH_TELEGRAF_FA_MAP_MAX_ENTRIES]AhTgrafFaAssignMapData
 }
 
 type AhTgrafCapwapDelayTrap struct {
