@@ -22,6 +22,7 @@ const (
 	TRAP_DCRPT_LEN           = 96
 	AH_MSG_TRAP_DFS_BANG     = 12
 	AH_MSG_TRAP_STA_LEAVE_STATS = 6
+	AH_MSG_TRAP_DHCP_OPTION55   = 123
 	MACADDR_LEN              = 6
 	MAX_DESCRIBLE_LEN        = 128
 	AH_CAPWAP_STAT_NAME_MAX_LEN = 32
@@ -267,6 +268,14 @@ type AhTgrafSsidBindUnbindTrap struct {
 	BssidMAC    [MACADDR_LEN]byte
 	SSID        [AH_MAX_TRAP_SSID_NAME + 1]byte
 	State       uint8
+}
+
+type AhDhcpOption55Trap struct {
+	TrapId   uint8
+	DataLen  uint16
+    StaMac  [6]uint8
+	Opt55Len uint8
+    Data    [0]uint8
 }
 
 type AhTgrafBSSIDSpoofingTrap struct {
