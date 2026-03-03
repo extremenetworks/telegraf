@@ -77,7 +77,7 @@ func (t *TrapPlugin) Ah_send_sta_leave_trap(trapType uint32, trapBuf [600]byte, 
 		"trapId_staLeaveStatsTrap":				staLeave.TrapId,
 
 		"objectName_staLeaveStatsTrap":			ahutil.CleanCString(staLeave.ObjName[:]),
-		"reasonCode_staLeaveStatsTrap":			reasonCodeToString(staLeave.ReasonCode),
+		"reasonCode_staLeaveStatsTrap":			[]interface{}{staLeave.ReasonCode, reasonCodeToString(staLeave.ReasonCode)},
 		"description_staLeaveStatsTrap":		ahutil.CleanCString(staLeave.Describable[:]),
 		"disassocTime_staLeaveStatsTrap":		staLeave.DisassocTime,
 		"mac_staLeaveStatsTrap":				ahutil.FormatMac(staLeave.Mac),
@@ -121,6 +121,9 @@ func (t *TrapPlugin) Ah_send_sta_leave_trap(trapType uint32, trapBuf [600]byte, 
 		"eventreasoncode_staLeaveStatsTrap":   eventReasonCodeToString(staLeave.EventReasonCode),
 		"eventtype_staLeaveStatsTrap":		     eventTypeToString(staLeave.EventType),
 		"staAddr6_staLeaveStatsTrap":		strings.Join(IntToIPv6_1(staLeave.StaAddr6[:], int(staLeave.StaAddr6Num)), ","),
+		"staAddr6_staLeaveStatsTrap":		IntToIPv6_1(staLeave.StaAddr6[:], int(staLeave.StaAddr6Num)),
+		"eventreasoncode_staLeaveStatsTrap":   []interface{}{staLeave.EventReasonCode, eventReasonCodeToString(staLeave.EventReasonCode)},
+		"eventtype_staLeaveStatsTrap":		   []interface{}{staLeave.EventType, eventTypeToString(staLeave.EventType)},
 		"isClear_trapMessage_staLeaveStatsTrap": GetTrapClearStatus(trapType, trapBuf[:]),
 	}, nil)
 	return nil

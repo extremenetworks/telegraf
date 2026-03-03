@@ -199,103 +199,73 @@ func clientMacProtoToString(proto int32) string {
 	}
 }
 
+var eventReasonCodeNames = []string{
+	"IDLE_TIMEOUT",
+	"SESSION_TIMEOUT",
+	"ADMIN_DEAUTH",
+	"ASSOC_FAILED",
+	"AUTH_FAILED",
+	"AUTHZ_FAILED",
+	"ROAMING",
+	"SESSION_TIMEOUT_2",
+	"AP_INITIATED_DISCONNECT",
+	"CLIENT_INITIATED_DISCONNECT",
+}
+
 func eventReasonCodeToString(code uint32) string {
-	switch code {
-	case 0:
-		return "IDLE_TIMEOUT"
-	case 1:
-		return "SESSION_TIMEOUT"
-	case 2:
-		return "ADMIN_DEAUTH"
-	case 3:
-		return "ASSOC_FAILED"
-	case 4:
-		return "AUTH_FAILED"
-	case 5:
-		return "AUTHZ_FAILED"
-	case 6:
-		return "ROAMING"
-	case 7:
-		return "SESSION_TIMEOUT_2"
-	case 8:
-		return "AP_INITIATED_DISCONNECT"
-	case 9:
-		return "CLIENT_INITIATED_DISCONNECT"
-	default:
-		return "UNKNOWN"
+	if int(code) < len(eventReasonCodeNames) {
+		return eventReasonCodeNames[code]
 	}
+	return "UNKNOWN"
+}
+
+var eventTypeNames = []string{
+	"CLIENT_CONNECT",
+	"CLIENT_DISCONNECT",
+	"CLIENT_ROAM",
+	"CLIENT_FAILURE",
 }
 
 func eventTypeToString(eventType uint32) string {
-	switch eventType {
-	case 0:
-		return "CLIENT_CONNECT"
-	case 1:
-		return "CLIENT_DISCONNECT"
-	case 2:
-		return "CLIENT_ROAM"
-	case 3:
-		return "CLIENT_FAILURE"
-	default:
-		return "UNKNOWN"
+	if int(eventType) < len(eventTypeNames) {
+		return eventTypeNames[eventType]
 	}
+	return "UNKNOWN"
+}
+
+var reasonCodeNames = []string{
+	"RESERVED",
+	"UNSPECIFIED",
+	"PREV_AUTH_NOT_VALID",
+	"STA_LEAVING_IBSS_ESS",
+	"INACTIVITY",
+	"AP_UNABLE_TO_HANDLE",
+	"CLASS2_FRAME_FROM_NONAUTH_STA",
+	"CLASS3_FRAME_FROM_NONASSOC_STA",
+	"STA_LEAVING_BSS",
+	"STA_NOT_AUTHENTICATED",
+	"POWER_CAPABILITY_UNACCEPTABLE",
+	"SUPPORTED_CHANNELS_UNACCEPTABLE",
+	"RESERVED_12",
+	"INVALID_IE",
+	"MIC_FAILURE",
+	"FOURWAY_HANDSHAKE_TIMEOUT",
+	"GROUP_KEY_HANDSHAKE_TIMEOUT",
+	"IE_IN_FOURWAY_DIFFERENT",
+	"INVALID_GROUP_CIPHER",
+	"INVALID_PAIRWISE_CIPHER",
+	"INVALID_AKMP",
+	"UNSUPPORTED_RSN_IE_VERSION",
+	"INVALID_RSN_IE_CAPABILITIES",
+	"IEEE_802_1X_AUTH_FAILED",
+	"CIPHER_SUITE_REJECTED",
 }
 
 func reasonCodeToString(code uint32) string {
-	switch code {
-	case 0:
-		return "RESERVED"
-	case 1:
-		return "UNSPECIFIED"
-	case 2:
-		return "PREV_AUTH_NOT_VALID"
-	case 3:
-		return "STA_LEAVING_IBSS_ESS"
-	case 4:
-		return "INACTIVITY"
-	case 5:
-		return "AP_UNABLE_TO_HANDLE"
-	case 6:
-		return "CLASS2_FRAME_FROM_NONAUTH_STA"
-	case 7:
-		return "CLASS3_FRAME_FROM_NONASSOC_STA"
-	case 8:
-		return "STA_LEAVING_BSS"
-	case 9:
-		return "STA_NOT_AUTHENTICATED"
-	case 10:
-		return "POWER_CAPABILITY_UNACCEPTABLE"
-	case 11:
-		return "SUPPORTED_CHANNELS_UNACCEPTABLE"
-	case 12:
-		return "RESERVED_12"
-	case 13:
-		return "INVALID_IE"
-	case 14:
-		return "MIC_FAILURE"
-	case 15:
-		return "FOURWAY_HANDSHAKE_TIMEOUT"
-	case 16:
-		return "GROUP_KEY_HANDSHAKE_TIMEOUT"
-	case 17:
-		return "IE_IN_FOURWAY_DIFFERENT"
-	case 18:
-		return "INVALID_GROUP_CIPHER"
-	case 19:
-		return "INVALID_PAIRWISE_CIPHER"
-	case 20:
-		return "INVALID_AKMP"
-	case 21:
-		return "UNSUPPORTED_RSN_IE_VERSION"
-	case 22:
-		return "INVALID_RSN_IE_CAPABILITIES"
-	case 23:
-		return "IEEE_802_1X_AUTH_FAILED"
-	case 24:
-		return "CIPHER_SUITE_REJECTED"
-	default:
-		return "UNKNOWN"
+	if int(code) < len(reasonCodeNames) {
+		return reasonCodeNames[code]
 	}
+	return "UNKNOWN"
 }
 
 type AhFaMvlanChangeTrap struct {
