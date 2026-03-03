@@ -50,6 +50,9 @@ const (
 	MAX_CAPTURE_FILES         = 16
 	AH_MSG_TRAP_FA_ASSGN_MAP_CHANGE = 126
 	AH_TELEGRAF_FA_MAP_MAX_ENTRIES = 94
+	AH_TELEGRAF_SELF_REG_MAX_LEN  = 129
+	AH_TELEGRAF_SELF_REG_USER_LEN = 257
+	AH_MSG_TRAP_SELF_REG_INFO     = 11
 )
 
 const (
@@ -365,6 +368,16 @@ type AhTgrafSsidBindUnbindTrap struct {
 	BssidMAC    [MACADDR_LEN]byte
 	SSID        [AH_MAX_TRAP_SSID_NAME + 1]byte
 	State       uint8
+}
+
+type AhTgrafCwpSelfRegInfoTrap struct {
+        TrapType    uint8
+        StaMAC      [MACADDR_LEN]byte
+        ExpireTime  uint32
+        UserName    [AH_TELEGRAF_SELF_REG_USER_LEN]byte
+        Email       [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
+        CompanyName [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
+        CwpSsid     [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
 }
 
 type AhTgrafBSSIDSpoofingTrap struct {

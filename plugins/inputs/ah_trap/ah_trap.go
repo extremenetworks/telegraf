@@ -9,6 +9,7 @@ import (
 	"os"
 	"runtime/debug"
 	"sync"
+	"time"
 	"unsafe"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/inputs"
@@ -640,6 +641,24 @@ func (t *TrapPlugin) Ah_send_fa_assign_map_trap(trapType uint32, trapBuf [800]by
 	acc.AddFields("TrapEvent", fields, nil)
 	return nil
 }
+
+func (t *TrapPlugin) Ah_send_cwp_self_reg_info_send_trap(trapType uint32, trapBuf [800]byte, acc telegraf.Accumulator) error {
+    var CwpSelfRegInfoTrap AhTgrafCwpSelfRegInfoTrap
+    copy((*[unsafe.Sizeof(CwpSelfRegInfoTrap)]byte)(unsafe.Pointer(&CwpSelfRegInfoTrap))[:], trapBuf[:unsafe.Sizeof(CwpSelfRegInfoTrap)])
+
+    acc.AddFields("TrapEvent", map[string]interface{}{
+		"trapId_captivePortalSelfRegInfoTrap": CwpSelfRegInfoTrap.TrapType,
+		"stationMac_captivePortalSelfRegInfoTrap": ahutil.FormatMac(CwpSelfRegInfoTrap.StaMAC),
+		"expireTime_captivePortalSelfRegInfoTrap": time.Unix(int64(CwpSelfRegInfoTrap.ExpireTime), 0).UTC().Format(time.RFC3339),
+		"userName_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.UserName[:]),
+		"email_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.Email[:]),
+		"companyName_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.CompanyName[:]),
+		"ssid_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.CwpSsid[:]),
+		"isClear_trapMessage_captivePortalSelfRegInfoTrap": GetTrapClearStatus(trapType, trapBuf[:]),
+    }, nil)
+    return nil
+}
+
 /*
  trapListener listens for incoming trap messages on a UDP connection,
  extracts the trap type and payload, and processes supported trap types.
@@ -854,6 +873,19 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			if err := t.Ah_send_fa_assign_map_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error FA assign map change trap: %v", err)
 			}
+		case AH_MSG_TRAP_SELF_REG_INFO:
+			var CwpSelfRegInfoTrap AhTgrafCwpSelfRegInfoTrap
+			expected := int(unsafe.Sizeof(CwpSelfRegInfoTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Captive Portal self reg info trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [800]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Ah_send_cwp_self_reg_info_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering Captive Portal self reg info trap: %v", err)
+			}
+
 		}
 	}
 }
