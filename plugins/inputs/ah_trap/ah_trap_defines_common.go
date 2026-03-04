@@ -199,6 +199,75 @@ func clientMacProtoToString(proto int32) string {
 	}
 }
 
+var eventReasonCodeNames = []string{
+	"IDLE_TIMEOUT",
+	"SESSION_TIMEOUT",
+	"ADMIN_DEAUTH",
+	"ASSOC_FAILED",
+	"AUTH_FAILED",
+	"AUTHZ_FAILED",
+	"ROAMING",
+	"SESSION_TIMEOUT_2",
+	"AP_INITIATED_DISCONNECT",
+	"CLIENT_INITIATED_DISCONNECT",
+}
+
+func eventReasonCodeToString(code uint32) string {
+	if int(code) < len(eventReasonCodeNames) {
+		return eventReasonCodeNames[code]
+	}
+	return "UNKNOWN"
+}
+
+var eventTypeNames = []string{
+	"CLIENT_CONNECT",
+	"CLIENT_DISCONNECT",
+	"CLIENT_ROAM",
+	"CLIENT_FAILURE",
+}
+
+func eventTypeToString(eventType uint32) string {
+	if int(eventType) < len(eventTypeNames) {
+		return eventTypeNames[eventType]
+	}
+	return "UNKNOWN"
+}
+
+var reasonCodeNames = []string{
+	"RESERVED",
+	"UNSPECIFIED",
+	"PREV_AUTH_NOT_VALID",
+	"STA_LEAVING_IBSS_ESS",
+	"INACTIVITY",
+	"AP_UNABLE_TO_HANDLE",
+	"CLASS2_FRAME_FROM_NONAUTH_STA",
+	"CLASS3_FRAME_FROM_NONASSOC_STA",
+	"STA_LEAVING_BSS",
+	"STA_NOT_AUTHENTICATED",
+	"POWER_CAPABILITY_UNACCEPTABLE",
+	"SUPPORTED_CHANNELS_UNACCEPTABLE",
+	"RESERVED_12",
+	"INVALID_IE",
+	"MIC_FAILURE",
+	"FOURWAY_HANDSHAKE_TIMEOUT",
+	"GROUP_KEY_HANDSHAKE_TIMEOUT",
+	"IE_IN_FOURWAY_DIFFERENT",
+	"INVALID_GROUP_CIPHER",
+	"INVALID_PAIRWISE_CIPHER",
+	"INVALID_AKMP",
+	"UNSUPPORTED_RSN_IE_VERSION",
+	"INVALID_RSN_IE_CAPABILITIES",
+	"IEEE_802_1X_AUTH_FAILED",
+	"CIPHER_SUITE_REJECTED",
+}
+
+func reasonCodeToString(code uint32) string {
+	if int(code) < len(reasonCodeNames) {
+		return reasonCodeNames[code]
+	}
+	return "UNKNOWN"
+}
+
 type AhFaMvlanChangeTrap struct {
 	TrapType      uint8
 	SystemID      [10]uint8
