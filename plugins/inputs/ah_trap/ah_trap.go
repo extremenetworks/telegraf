@@ -605,9 +605,7 @@ func (t *TrapPlugin) Ah_send_capture_warn_trap(trapType uint32, trapBuf [600]byt
 		"trapId_captureTrap":      captureTrap.TrapId,
 		"description_captureTrap": ahutil.CleanCString(captureTrap.Desc[:]),
 		"totalSize_captureTrap":   captureTrap.TotalSize,
-		"trapMessage_captureTrap": map[string]interface{}{
-			"isClear_captureTrap": GetTrapClearStatus(uint32(captureTrap.TrapId), trapBuf[:]),
-		},
+		"isClear_trapMessage_captureTrap": GetTrapClearStatus(uint32(captureTrap.TrapId), trapBuf[:]),
 	}
 	if captureTrap.FileCount > 0 {
 		for i := 0; i < int(captureTrap.FileCount) && i < MAX_CAPTURE_FILES; i++ {
@@ -615,6 +613,28 @@ func (t *TrapPlugin) Ah_send_capture_warn_trap(trapType uint32, trapBuf [600]byt
 			fileSize := captureTrap.Files[i].FileSize
 			fields[fmt.Sprintf("name_@%d_capturedFiles_captureTrap", i)] = fileName
 			fields[fmt.Sprintf("size_@%d_capturedFiles_captureTrap", i)] = fileSize
+		}
+	}
+	acc.AddFields("TrapEvent", fields, nil)
+	return nil
+}
+
+func (t *TrapPlugin) Ah_send_fa_assign_map_trap(trapType uint32, trapBuf [800]byte, acc telegraf.Accumulator) error {
+	var faAssignTrap AhTgrafFaAssignMapChangeTrap
+	copy((*[unsafe.Sizeof(faAssignTrap)]byte)(unsafe.Pointer(&faAssignTrap))[:], trapBuf[:unsafe.Sizeof(faAssignTrap)])
+	fields := map[string]interface{}{
+		"trapId_faAssignTrap":      faAssignTrap.TrapId,
+		"ifIndex_faAssignTrap":     faAssignTrap.Ifindex,
+		"isClear_trapMessage_faAssignTrap": GetTrapClearStatus(uint32(faAssignTrap.TrapId), trapBuf[:]),
+	}
+	if faAssignTrap.Count > 0 && faAssignTrap.Count <= AH_TELEGRAF_FA_MAP_MAX_ENTRIES {
+		for i := 0; i < int(faAssignTrap.Count); i++ {
+			vlanId := faAssignTrap.Data[i].Vlan
+			isid := faAssignTrap.Data[i].Isid
+			state := MapStateToString(faAssignTrap.Data[i].State)
+			fields[fmt.Sprintf("vlanId_@%d_faMapData_faAssignTrap", i)] = vlanId
+			fields[fmt.Sprintf("isid_@%d_faMapData_faAssignTrap", i)] = isid
+			fields[fmt.Sprintf("state_@%d_faMapData_faAssignTrap", i)] = state
 		}
 	}
 	acc.AddFields("TrapEvent", fields, nil)
@@ -821,6 +841,18 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering CAPWAP delay trap: %v", err)
+			}
+		case AH_MSG_TRAP_FA_ASSGN_MAP_CHANGE:
+			var faAssignTrap AhTgrafFaAssignMapChangeTrap
+			expected := int(unsafe.Sizeof(faAssignTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid FA assign map change trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [800]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Ah_send_fa_assign_map_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error FA assign map change trap: %v", err)
 			}
 		}
 	}
