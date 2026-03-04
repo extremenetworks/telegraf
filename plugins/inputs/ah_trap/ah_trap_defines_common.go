@@ -285,6 +285,23 @@ func reasonCodeToString(code uint32) string {
 	return "UNKNOWN"
 }
 
+var channelPowerReasonNames = []string{
+	"AH_CHNL_PWR_TRAP_REASON_CAPWAP",
+	"AH_CHNL_PWR_TRAP_REASON_RADIO",
+	"AH_CHNL_PWR_TRAP_REASON_CHANNEL",
+	"AH_CHNL_PWR_TRAP_REASON_POWER",
+	"AH_CHNL_PWR_TRAP_REASON_RADAR",
+	"AH_CHNL_PWR_TRAP_REASON_BEACON_INTVL",
+	"AH_CHNL_PWR_TRAP_REASON_UNKNOWN",
+}
+
+func channelPowerReasonToString(code int32) string {
+	if int(code) < len(channelPowerReasonNames) && code >= 0 {
+		return channelPowerReasonNames[code]
+	}
+	return "AH_CHNL_PWR_TRAP_REASON_UNKNOWN"
+}
+
 type AhFaMvlanChangeTrap struct {
 	TrapType      uint8
 	SystemID      [10]uint8
