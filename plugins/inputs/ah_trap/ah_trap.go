@@ -659,6 +659,35 @@ func (t *TrapPlugin) Ah_send_cwp_self_reg_info_send_trap(trapType uint32, trapBu
     return nil
 }
 
+func (t *TrapPlugin) Ah_send_cwp_info_trap(trapType uint32, trapBuf [2046]byte, acc telegraf.Accumulator) error {
+    var CwpInfoTrap AhTgrafCwpInfoTrap
+    copy((*[unsafe.Sizeof(CwpInfoTrap)]byte)(unsafe.Pointer(&CwpInfoTrap))[:], trapBuf[:unsafe.Sizeof(CwpInfoTrap)])
+
+    fields := map[string]interface{}{
+        "trapId_captivePortalFieldInfoTrap": CwpInfoTrap.TrapType,
+        "stationMac_captivePortalFieldInfoTrap": ahutil.FormatMac(CwpInfoTrap.MacAddr),
+        "objectName_captivePortalFieldInfoTrap": ahutil.CleanCString(CwpInfoTrap.ObjName[:]),
+        "isClear_trapMessage_captivePortalFieldInfoTrap": GetTrapClearStatus(trapType, trapBuf[:]),
+    }
+
+    for i := uint8(0); i < CwpInfoTrap.FieldCount && i < AH_TELEGRAF_CWP_MAX_FIELDS; i++ {
+        fieldName := ahutil.CleanCString(CwpInfoTrap.Fields[i].Name[:])
+        fieldValue := ahutil.CleanCString(CwpInfoTrap.Fields[i].Value[:])
+        fields[fmt.Sprintf("name_@%d_mandatoryFields_captivePortalFieldInfoTrap", i)] = fieldName
+        fields[fmt.Sprintf("value_@%d_mandatoryFields_captivePortalFieldInfoTrap", i)] = fieldValue
+    }
+
+    for i := uint8(0); i < CwpInfoTrap.OptFieldCount && i < AH_TELEGRAF_CWP_MAX_OPT_FIELDS; i++ {
+        fieldName := ahutil.CleanCString(CwpInfoTrap.OptFields[i].Name[:])
+        fieldValue := ahutil.CleanCString(CwpInfoTrap.OptFields[i].Value[:])
+        fields[fmt.Sprintf("name_@%d_optionalFields_captivePortalFieldInfoTrap", i)] = fieldName
+        fields[fmt.Sprintf("value_@%d_optionalFields_captivePortalFieldInfoTrap", i)] = fieldValue
+    }
+
+    acc.AddFields("TrapEvent", fields, nil)
+    return nil
+}
+
 /*
  trapListener listens for incoming trap messages on a UDP connection,
  extracts the trap type and payload, and processes supported trap types.
@@ -885,7 +914,18 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			if err := t.Ah_send_cwp_self_reg_info_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering Captive Portal self reg info trap: %v", err)
 			}
-
+		case AH_MSG_TRAP_REPORT_CWP_INFO:
+			var CwpInfoTrap AhTgrafCwpInfoTrap
+			expected := int(unsafe.Sizeof(CwpInfoTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid CWP info trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [2046]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Ah_send_cwp_info_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering CWP info trap: %v", err)
+			}
 		}
 	}
 }
