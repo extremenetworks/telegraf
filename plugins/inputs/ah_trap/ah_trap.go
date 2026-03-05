@@ -208,7 +208,7 @@ func (t *TrapPlugin) Gather_Ah_Logen(trap AhTrapMsg, acc telegraf.Accumulator) e
                         "channelStrfmt_channelPowerTrap":     ahchannelpowerinfo.ChnlStrfmt,
                         "powerStrfmt_channelPowerTrap":       ahchannelpowerinfo.PwrStrfmt,
 			"radioEirp_channelPowerTrap":         ahutil.CleanCString(ahchannelpowerinfo.RadioEirp[:]),
-                        "reason_channelPowerTrap":            ahchannelpowerinfo.Reason,
+                        "reason_channelPowerTrap":            channelPowerReasonToString(ahchannelpowerinfo.Reason),
 						"severityLevel_trapMessage_channelPowerTrap":  severityToString(trap.Level),
                         "msgId_trapMessage_channelPowerTrap":  trap.MsgID,
                         "desc_trapMessage_channelPowerTrap":   ahutil.CleanCString(trap.Desc[:]),
