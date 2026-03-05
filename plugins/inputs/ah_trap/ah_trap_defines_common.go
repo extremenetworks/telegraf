@@ -29,14 +29,31 @@ const (
 	MAX_OBJ_NAME_LEN         = 4
 	AH_MSG_TRAP_SSID_BIND_UNBIND = 5
 	AH_MSG_TRAP_BSSID_SPOOFING = 7
+	AH_MSG_TRAP_TB           = 2
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
 	AH_MSG_TRAP_DEV_IP_CHANGE = 17
+	AH_MSG_TRAP_CLT_CAPS = 119
 	AH_MGT0_ADDR6_NUM_MAX    = 2
 	AH_SNMP_TRUE             = 1
 	AH_SNMP_FALSE            = 2
 	AH_MSG_TRAP_SET          = 0
 	AH_MSG_TRAP_CLEAR        = 1
+	AH_MSG_TRAP_VERIFY_OOB_SN  = 117
+	AH_MSG_TRAP_PORTAL_CHANGE  = 120
+	AH_TRAP_CLT_CAPS_MAX_STR_LEN  = 12
+	AH_TRAP_CLT_CAPS_MIN_STR_LEN  = 8
+	AH_MSG_TRAP_VPN          = 4
+	AH_MSG_TRAP_CAPTURE_WARN = 127
+	AH_MSG_TRAP_CAPWAP_DELAY = 10
+	AH_CAPWAP_DELAY_TRAP     = 108
+	MAX_CAPTURE_FILE_NAME_LEN = 16
+	MAX_CAPTURE_FILES         = 16
+	AH_MSG_TRAP_FA_ASSGN_MAP_CHANGE = 126
+	AH_TELEGRAF_FA_MAP_MAX_ENTRIES = 94
+	AH_TELEGRAF_SELF_REG_MAX_LEN  = 129
+	AH_TELEGRAF_SELF_REG_USER_LEN = 257
+	AH_MSG_TRAP_SELF_REG_INFO     = 11
 )
 
 const (
@@ -58,6 +75,28 @@ const (
 	AH_CHAIN_STREAM_TRAP_TYPE
 )
 
+func vpnPhaseToString(phase int32) string {
+	switch phase {
+	case 1:
+		return "PHASE1"
+	case 2:
+		return "PHASE 2"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func vpnStatusToString(status int32) string {
+	switch status {
+	case 1:
+		return "UP"
+	case 2:
+		return "DOWN"
+	default:
+		return "UNKNOWN"
+	}
+}
+
 func severityToString(level int32) string {
 	switch level {
 	case 1:
@@ -75,6 +114,215 @@ func severityToString(level int32) string {
 	}
 }
 
+func errorTypeToString(errorType int32) string {
+	switch errorType {
+	case 0:
+		return "NO_ERROR"
+	case 1:
+		return "TEST_ERROR"
+	case 2:
+		return "CLASS_ERROR"
+	case 3:
+		return "STARTUP_OVERLOAD"
+	case 4:
+		return "STARTUP_UNDERLOAD"
+	case 5:
+		return "STARTUP_SHORT"
+	case 6:
+		return "STARTUP_DVDT_FAIL"
+	case 7:
+		return "STARTUP_TEST_ERROR"
+	case 8:
+		return "OVERLOAD"
+	case 9:
+		return "UNDERLOADER"
+	case 10:
+		return "SHORT_CIRCUIT"
+	case 11:
+		return "SYSTEM_DISABLED"
+	case 12:
+		return "OTHER_ERROR"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func portToPseString(port int32) string {
+	return fmt.Sprintf("PSE%d", port)
+}
+
+func clientAuthMethodToString(method int32) string {
+	switch method {
+	case 0:
+		return "CWP"
+	case 1:
+		return "OPEN"
+	case 2:
+		return "WEP_OPEN"
+	case 3:
+		return "WEP_SHARED"
+	case 4:
+		return "WPA_PSK"
+	case 5:
+		return "WPA2_PSK"
+	case 6:
+		return "WPA_802.1X"
+	case 7:
+		return "WPA2_802.1X"
+	case 8:
+		return "WPA_AUTO_PSK"
+	case 9:
+		return "WPA_AUTO_802.1X"
+	case 10:
+		return "DYNAMIC_WEP"
+	case 11:
+		return "802.1X"
+	case 12:
+		return "WPA3_SAE"
+	case 13:
+		return "WPA3_802.1X"
+	case 14:
+		return "WPA3_SAE_EXTENDED"
+	case 15:
+		return "OWE"
+	case 16:
+		return "WPA3_802.1X_SUITE_B_192"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func clientEncryptMethodToString(method int32) string {
+	switch method {
+	case 0:
+		return "AES"
+	case 1:
+		return "TKIP"
+	case 2:
+		return "WEP"
+	case 3:
+		return "NONE"
+	case 4:
+		return "AES_GCMP"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func clientMacProtoToString(proto int32) string {
+	switch proto {
+	case 0:
+		return "802.11A"
+	case 1:
+		return "802.11B"
+	case 2:
+		return "802.11G"
+	case 3:
+		return "802.11N_5GHZ"
+	case 4:
+		return "802.11N_2.4GHZ"
+	case 5:
+		return "802.11AC_WIFI5"
+	case 6:
+		return "802.11AX_2.4GHZ_WIFI6"
+	case 7:
+		return "802.11AX_5GHZ_WIFI6"
+	case 8:
+		return "ETHERNET"
+	case 9:
+		return "802.11AX_6GHZ_WIFI6E"
+	case 10:
+		return "802.11BE_2.4GHZ_WIFI7"
+	case 11:
+		return "802.11BE_5GHZ_WIFI7"
+	case 12:
+		return "802.11BE_6GHZ_WIFI7"
+	default:
+		return "UNKNOWN"
+	}
+}
+func MapStateToString(state uint8) string {
+	switch state {
+	case 1:
+		return "PENDING"
+	case 2:
+		return "ACCEPT"
+	case 3:
+		return "REJECT"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+var eventReasonCodeNames = []string{
+	"IDLE_TIMEOUT",
+	"SESSION_TIMEOUT",
+	"ADMIN_DEAUTH",
+	"ASSOC_FAILED",
+	"AUTH_FAILED",
+	"AUTHZ_FAILED",
+	"ROAMING",
+	"SESSION_TIMEOUT_2",
+	"AP_INITIATED_DISCONNECT",
+	"CLIENT_INITIATED_DISCONNECT",
+}
+
+func eventReasonCodeToString(code uint32) string {
+	if int(code) < len(eventReasonCodeNames) {
+		return eventReasonCodeNames[code]
+	}
+	return "UNKNOWN"
+}
+
+var eventTypeNames = []string{
+	"CLIENT_CONNECT",
+	"CLIENT_DISCONNECT",
+	"CLIENT_ROAM",
+	"CLIENT_FAILURE",
+}
+
+func eventTypeToString(eventType uint32) string {
+	if int(eventType) < len(eventTypeNames) {
+		return eventTypeNames[eventType]
+	}
+	return "UNKNOWN"
+}
+
+var reasonCodeNames = []string{
+	"RESERVED",
+	"UNSPECIFIED",
+	"PREV_AUTH_NOT_VALID",
+	"STA_LEAVING_IBSS_ESS",
+	"INACTIVITY",
+	"AP_UNABLE_TO_HANDLE",
+	"CLASS2_FRAME_FROM_NONAUTH_STA",
+	"CLASS3_FRAME_FROM_NONASSOC_STA",
+	"STA_LEAVING_BSS",
+	"STA_NOT_AUTHENTICATED",
+	"POWER_CAPABILITY_UNACCEPTABLE",
+	"SUPPORTED_CHANNELS_UNACCEPTABLE",
+	"RESERVED_12",
+	"INVALID_IE",
+	"MIC_FAILURE",
+	"FOURWAY_HANDSHAKE_TIMEOUT",
+	"GROUP_KEY_HANDSHAKE_TIMEOUT",
+	"IE_IN_FOURWAY_DIFFERENT",
+	"INVALID_GROUP_CIPHER",
+	"INVALID_PAIRWISE_CIPHER",
+	"INVALID_AKMP",
+	"UNSUPPORTED_RSN_IE_VERSION",
+	"INVALID_RSN_IE_CAPABILITIES",
+	"IEEE_802_1X_AUTH_FAILED",
+	"CIPHER_SUITE_REJECTED",
+}
+
+func reasonCodeToString(code uint32) string {
+	if int(code) < len(reasonCodeNames) {
+		return reasonCodeNames[code]
+	}
+	return "UNKNOWN"
+}
+
 type AhFaMvlanChangeTrap struct {
 	TrapType      uint8
 	SystemID      [10]uint8
@@ -89,6 +337,66 @@ type AhTgrafDfsTrap struct {
 	IfName    [AH_MAX_TRAP_IF_NAME + 1]byte
 	Desc      [TRAP_DCRPT_LEN]byte
 }
+
+type AhTgrafTbTrap struct {
+	TrapId       uint8
+	WarningLevel uint8
+	Validity     uint8
+	Desc         [MAX_DESCRIBLE_LEN]byte
+}
+
+type AhTgrafVpnTrap struct {
+	TrapId    uint8
+	Phase     uint8
+	Status    uint8
+	Objn      [AH_MAX_TRAP_IF_NAME]byte
+	LocalIp   [AH_MAX_TRAP_HOST_NAME + 1]byte
+	RemoteIp  [AH_MAX_TRAP_HOST_NAME + 1]byte
+	Desc      [MAX_DESCRIBLE_LEN]byte
+}
+
+type AhCaptureFileInfo struct {
+    FileName [MAX_CAPTURE_FILE_NAME_LEN]byte
+    FileSize uint64
+}
+
+type AhTgrafCaptureWarnTrap struct {
+    TrapId    uint8
+    Desc      [MAX_DESCRIBLE_LEN]byte
+    _         [7]byte
+    TotalSize uint64
+    FileCount uint8
+    _        [7]byte
+    Files     [MAX_CAPTURE_FILES]AhCaptureFileInfo
+}
+
+type AhTgrafFaAssignMapData struct {
+       Isid  uint32
+       Vlan  uint16
+       State uint8
+       _     [1]byte
+}
+
+type AhTgrafFaAssignMapChangeTrap struct {
+       Ifindex int32
+       TrapId  uint8
+       Count   uint8
+       _       [2]byte
+       Data    [AH_TELEGRAF_FA_MAP_MAX_ENTRIES]AhTgrafFaAssignMapData
+}
+
+type AhTgrafCapwapDelayTrap struct {
+	AvgDelay       uint64
+	CurDelay       uint64
+	MinorThreshold uint64
+	MajorThreshold uint64
+	Severity       [AH_MAX_TRAP_IF_NAME]byte
+	Desc           [MAX_DESCRIBLE_LEN]byte
+	TrapId         uint8
+	Clear          uint8
+	_             [4]byte
+}
+
 
 type AhTgrafPseTrap struct {
 	TrapType  uint8
@@ -107,6 +415,16 @@ type AhTgrafSsidBindUnbindTrap struct {
 	BssidMAC    [MACADDR_LEN]byte
 	SSID        [AH_MAX_TRAP_SSID_NAME + 1]byte
 	State       uint8
+}
+
+type AhTgrafCwpSelfRegInfoTrap struct {
+        TrapType    uint8
+        StaMAC      [MACADDR_LEN]byte
+        ExpireTime  uint32
+        UserName    [AH_TELEGRAF_SELF_REG_USER_LEN]byte
+        Email       [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
+        CompanyName [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
+        CwpSsid     [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
 }
 
 type AhTgrafBSSIDSpoofingTrap struct {
@@ -140,6 +458,35 @@ type AhTgrafDevIpChangeTrap struct {
 	Ipv6AddrNum        uint8
 	_                  [3]byte
 	Ipv6Data           [AH_MGT0_ADDR6_NUM_MAX]AhTgrafDevIpChangeIpv6Data
+}
+
+type AhVerifyOobSnTrap struct {
+	TrapType	uint8;
+	SerialNumber [AH_MAX_NAME_LEN]byte;
+}
+
+type AhPortalChangeTrap struct {
+	TrapType	uint8;
+	Macaddr [MACADDR_LEN]byte;
+}
+type AhTelegrafCltCapsTrap struct {
+	TrapType    uint8
+	CltMac      [MACADDR_LEN]byte
+	BssidMac    [MACADDR_LEN]byte
+	Channel     uint8
+	Type        [AH_TRAP_CLT_CAPS_MAX_STR_LEN]byte
+	Bw          [AH_TRAP_CLT_CAPS_MAX_STR_LEN]byte
+	Nss         uint8
+	Mode        [AH_TRAP_CLT_CAPS_MAX_STR_LEN]byte
+	MinTxPower  int8
+	MaxTxPower  int8
+	MuMimo      [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Wmm         [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Cipher      [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Akm         [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Mfp         [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Mobile      [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
+	Uapsd       [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
 }
 
 type AhFailureTrap struct {
@@ -367,6 +714,17 @@ func GetTrapClearStatus(trapType uint32, unionData []byte) bool {
 				isClear = false // SET
 			} else {
 				isClear = true // CLEAR
+			}
+		}
+
+	case AH_CAPWAP_DELAY_TRAP:
+		var capwapDelay AhTgrafCapwapDelayTrap
+		if len(unionData) >= int(unsafe.Sizeof(capwapDelay)) {
+			copy((*[1 << 10]byte)(unsafe.Pointer(&capwapDelay))[:unsafe.Sizeof(capwapDelay)], unionData)
+			if capwapDelay.Clear != 0 {
+				isClear = true // CLEAR
+			} else {
+				isClear = false // SET
 			}
 		}
 

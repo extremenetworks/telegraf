@@ -1,15 +1,16 @@
 package ah_trap
 
 import (
+	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
 	"os"
 	"runtime/debug"
 	"sync"
+	"time"
 	"unsafe"
-	"encoding/binary"
-	"encoding/json"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/inputs"
 	"github.com/influxdata/telegraf/plugins/common/ahutil"
@@ -403,16 +404,42 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"isClear_trapMessage_dfsBangTrap": GetTrapClearStatus(uint32(dfs.TrapType), trapBuf[:]),
 		}, nil)
 
+	case AH_MSG_TRAP_TB:
+		var tbTrap AhTgrafTbTrap
+		copy((*[unsafe.Sizeof(tbTrap)]byte)(unsafe.Pointer(&tbTrap))[:], trapBuf[:unsafe.Sizeof(tbTrap)])
+
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_licenseExpiryTrap":       tbTrap.TrapId,
+			"warningLevel_licenseExpiryTrap": severityToString(int32(tbTrap.WarningLevel)),
+			"expiryPeriod_licenseExpiryTrap":     tbTrap.Validity,
+			"description_licenseExpiryTrap":  ahutil.CleanCString(tbTrap.Desc[:]),
+			"isClear_trapMessage_licenseExpiryTrap": GetTrapClearStatus(uint32(tbTrap.TrapId), trapBuf[:]),
+		}, nil)
+
+	case AH_MSG_TRAP_VPN:
+		var vpnTrap AhTgrafVpnTrap
+		copy((*[unsafe.Sizeof(vpnTrap)]byte)(unsafe.Pointer(&vpnTrap))[:], trapBuf[:unsafe.Sizeof(vpnTrap)])
+
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_vpnTrap":      vpnTrap.TrapId,
+			"phase_vpnTrap":       vpnPhaseToString(int32(vpnTrap.Phase)),
+			"status_vpnTrap":      vpnStatusToString(int32(vpnTrap.Status)),
+			"objectName_vpnTrap":  ahutil.CleanCString(vpnTrap.Objn[:]),
+			"localIp_vpnTrap":     ahutil.CleanCString(vpnTrap.LocalIp[:]),
+			"remoteIp_vpnTrap":    ahutil.CleanCString(vpnTrap.RemoteIp[:]),
+			"description_vpnTrap": ahutil.CleanCString(vpnTrap.Desc[:]),
+			"isClear_trapMessage_vpnTrap": GetTrapClearStatus(uint32(vpnTrap.TrapId), trapBuf[:]),
+		}, nil)
+
 	case AH_MSG_TRAP_PSE:
 		var pse AhTgrafPseTrap
 		copy((*[unsafe.Sizeof(pse)]byte)(unsafe.Pointer(&pse))[:], trapBuf[:unsafe.Sizeof(pse)])
 
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapType_pseTrap":          pse.TrapType,
 			"trapId_pseTrap":            pse.TrapId,
 			"objName_pseTrap":           ahutil.CleanCString(pse.ObjName[:]),
-			"port_pseTrap":              pse.Port,
-			"errorFlag_pseTrap":         pse.ErrorFlag,
+			"port_pseTrap":              portToPseString(pse.Port),
+			"errorType_pseTrap":         errorTypeToString(pse.ErrorFlag),
 			"desc_pseTrap":              ahutil.CleanCString(pse.Desc[:]),
 		}, nil)
 
@@ -427,21 +454,89 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 		unsafe.Sizeof(devIpChange.Ipv6Data[0]))
 
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapType_devIpChangeTrap":          devIpChange.TrapType,
-			"ipv4Addr_devIpChangeTrap":          ahutil.IntToIpv4(devIpChange.Ipv4Addr),
-			"ipv4Netmask_devIpChangeTrap":       ahutil.IntToIpv4(devIpChange.Ipv4Netmask),
+			"trapId_devIpChangeTrap":          devIpChange.TrapType,
+			"ipv4Address_devIpChangeTrap":          ahutil.IntToIpv4(devIpChange.Ipv4Addr),
+			"ipv4MaskLength_devIpChangeTrap":      ipv4MaskToLength(devIpChange.Ipv4Netmask),
 			"ipv4DefaultGateway_devIpChangeTrap": ahutil.IntToIpv4(devIpChange.Ipv4DefaultGateway),
-			"ipv6AddrNum_devIpChangeTrap":       devIpChange.Ipv6AddrNum,
 			"ipv6Data_devIpChangeTrap":          formatDevIpChangeIpv6Data(devIpChange.Ipv6Data[:], int(devIpChange.Ipv6AddrNum)),
 			"isClear_trapMessage_devIpChangeTrap": GetTrapClearStatus(uint32(devIpChange.TrapType), trapBuf[:]),
+		}, nil)
+	case AH_MSG_TRAP_VERIFY_OOB_SN:
+		var oobSn  AhVerifyOobSnTrap
+		copy((*[unsafe.Sizeof(oobSn)]byte)(unsafe.Pointer(&oobSn))[:], trapBuf[:unsafe.Sizeof(oobSn)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_oobSerialNumberTrap":       oobSn.TrapType,
+			"serialNumber_oobSerialNumberTrap":   ahutil.CleanCString(oobSn.SerialNumber[:]),
+			"isClear_trapMessage_oobSerialNumberTrap": GetTrapClearStatus(uint32(oobSn.TrapType), trapBuf[:]),
+		}, nil)
+	case AH_MSG_TRAP_PORTAL_CHANGE:
+		var portalChange  AhPortalChangeTrap
+		copy((*[unsafe.Sizeof(portalChange)]byte)(unsafe.Pointer(&portalChange))[:], trapBuf[:unsafe.Sizeof(portalChange)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_portalChangeTrap":      portalChange.TrapType,
+			"macAddr_portalChangeTrap":    ahutil.FormatMac(portalChange.Macaddr),
+			"isClear_trapMessage_portalChangeTrap": GetTrapClearStatus(uint32(portalChange.TrapType), trapBuf[:]),
+		}, nil)
+	case AH_MSG_TRAP_CLT_CAPS:
+		var cltCaps AhTelegrafCltCapsTrap
+		copy((*[unsafe.Sizeof(cltCaps)]byte)(unsafe.Pointer(&cltCaps))[:], trapBuf[:unsafe.Sizeof(cltCaps)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapType_clientCapabilitiesTrap":    cltCaps.TrapType,
+			"clientMac_clientCapabilitiesTrap":   ahutil.FormatMac(cltCaps.CltMac),
+			"bssidMac_clientCapabilitiesTrap":    ahutil.FormatMac(cltCaps.BssidMac),
+			"channel_clientCapabilitiesTrap":     cltCaps.Channel,
+			"frameType_clientCapabilitiesTrap":   ahutil.CleanCString(cltCaps.Type[:]),
+			"bandWidth_clientCapabilitiesTrap":   ahutil.CleanCString(cltCaps.Bw[:]),
+			"nss_clientCapabilitiesTrap":         cltCaps.Nss,
+			"phyMode_clientCapabilitiesTrap":     ahutil.CleanCString(cltCaps.Mode[:]),
+			"minTxPower_clientCapabilitiesTrap":  cltCaps.MinTxPower,
+			"maxTxPower_clientCapabilitiesTrap":  cltCaps.MaxTxPower,
+			"muMimo_clientCapabilitiesTrap":      ahutil.CleanCString(cltCaps.MuMimo[:]),
+			"wmm_clientCapabilitiesTrap":         ahutil.CleanCString(cltCaps.Wmm[:]),
+			"cipher_clientCapabilitiesTrap":      ahutil.CleanCString(cltCaps.Cipher[:]),
+			"akm_clientCapabilitiesTrap":         ahutil.CleanCString(cltCaps.Akm[:]),
+			"mfp_clientCapabilitiesTrap":         ahutil.CleanCString(cltCaps.Mfp[:]),
+			"mobility_clientCapabilitiesTrap":    ahutil.CleanCString(cltCaps.Mobile[:]),
+			"uapsd_clientCapabilitiesTrap":       ahutil.CleanCString(cltCaps.Uapsd[:]),
+			"isClear_trapMessage_clientCapabilitiesTrap": GetTrapClearStatus(uint32(cltCaps.TrapType), trapBuf[:]),
+		}, nil)
+	case AH_MSG_TRAP_CAPWAP_DELAY:
+		var capwapDelayTrap AhTgrafCapwapDelayTrap
+		copy((*[unsafe.Sizeof(capwapDelayTrap)]byte)(unsafe.Pointer(&capwapDelayTrap))[:], trapBuf[:unsafe.Sizeof(capwapDelayTrap)])
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapType_capwapDelayTrap":       AH_MSG_TRAP_CAPWAP_DELAY,
+			"trapId_capwapDelayTrap":         capwapDelayTrap.TrapId,
+			"averageDelay_capwapDelayTrap":   capwapDelayTrap.AvgDelay,
+			"currentDelay_capwapDelayTrap":   capwapDelayTrap.CurDelay,
+			"minimumThreshold_capwapDelayTrap": capwapDelayTrap.MinorThreshold,
+			"maximumThreshold_capwapDelayTrap": capwapDelayTrap.MajorThreshold,
+			"description_capwapDelayTrap":    ahutil.CleanCString(capwapDelayTrap.Desc[:]),
+			"isClear_trapMessage_capwapDelayTrap": GetTrapClearStatus(uint32(capwapDelayTrap.TrapId), trapBuf[:]),
+			"severityLevel_trapMessage_capwapDelayTrap":       ahutil.CleanCString(capwapDelayTrap.Severity[:]),
 		}, nil)
 	}
 
 	return nil
 }
 
-/*Helper function to format IPv6 data for DEV_IP_CHANGE trap
-*/
+func ipv4MaskToLength(mask uint32) int {
+	m := make(net.IPMask, 4)
+	binary.LittleEndian.PutUint32(m, mask)
+	ones, _ := net.IPv4Mask(m[0], m[1], m[2], m[3]).Size()
+	return ones
+}
+
+func ipv6AddressTypeToString(addrType uint8) string {
+	switch addrType {
+	case 1:
+		return "STATIC"
+	case 2:
+		return "LINK_LOCAL"
+	default:
+		return fmt.Sprintf("UNKNOWN(%d)", addrType)
+	}
+}
+
 func formatDevIpChangeIpv6Data(ipv6Data []AhTgrafDevIpChangeIpv6Data, count int) string {
 	var result []map[string]interface{}
 	for i := 0; i < count && i < len(ipv6Data); i++ {
@@ -449,8 +544,8 @@ func formatDevIpChangeIpv6Data(ipv6Data []AhTgrafDevIpChangeIpv6Data, count int)
 		binary.LittleEndian.PutUint32(prefixBytes, ipv6Data[i].Ipv6Prefix)
 		prefixHostOrder := binary.BigEndian.Uint32(prefixBytes)
 		entry := map[string]interface{}{
-			"ipv6AddrType":       ipv6Data[i].Ipv6AddrType,
-			"ipv6Addr":           net.IP(ipv6Data[i].Ipv6Addr[:]).String(),
+			"ipv6AddressType":       ipv6AddressTypeToString(ipv6Data[i].Ipv6AddrType),
+			"ipv6Address":           net.IP(ipv6Data[i].Ipv6Addr[:]).String(),
 			"ipv6Prefix":         prefixHostOrder,
 			"ipv6DefaultGateway": net.IP(ipv6Data[i].Ipv6DefaultGateway[:]).String(),
 		}
@@ -462,6 +557,7 @@ func formatDevIpChangeIpv6Data(ipv6Data []AhTgrafDevIpChangeIpv6Data, count int)
 	}
 	return string(jsonBytes)
 }
+
 /*
 Helper function to convert state value to string for SSID bind/unbind
 */
@@ -511,6 +607,66 @@ func (t *TrapPlugin) Ah_send_bssid_spoofing_trap(trapType uint32, trapBuf [AH_TR
         "sourceIp_bssidSpoofingTrap":     ahutil.IntToIpv4(bssidSpoofing.SourceIP),
         "targetIp_bssidSpoofingTrap":     ahutil.IntToIpv4(bssidSpoofing.TargetIP),
         "isClear_trapMessage_bssidSpoofingTrap":        GetTrapClearStatus(trapType, trapBuf[:]),
+    }, nil)
+    return nil
+}
+
+func (t *TrapPlugin) Ah_send_capture_warn_trap(trapType uint32, trapBuf [600]byte, acc telegraf.Accumulator) error {
+	var captureTrap AhTgrafCaptureWarnTrap
+	copy((*[unsafe.Sizeof(captureTrap)]byte)(unsafe.Pointer(&captureTrap))[:], trapBuf[:unsafe.Sizeof(captureTrap)])
+	fields := map[string]interface{}{
+		"trapId_captureTrap":      captureTrap.TrapId,
+		"description_captureTrap": ahutil.CleanCString(captureTrap.Desc[:]),
+		"totalSize_captureTrap":   captureTrap.TotalSize,
+		"isClear_trapMessage_captureTrap": GetTrapClearStatus(uint32(captureTrap.TrapId), trapBuf[:]),
+	}
+	if captureTrap.FileCount > 0 {
+		for i := 0; i < int(captureTrap.FileCount) && i < MAX_CAPTURE_FILES; i++ {
+			fileName := ahutil.CleanCString(captureTrap.Files[i].FileName[:])
+			fileSize := captureTrap.Files[i].FileSize
+			fields[fmt.Sprintf("name_@%d_capturedFiles_captureTrap", i)] = fileName
+			fields[fmt.Sprintf("size_@%d_capturedFiles_captureTrap", i)] = fileSize
+		}
+	}
+	acc.AddFields("TrapEvent", fields, nil)
+	return nil
+}
+
+func (t *TrapPlugin) Ah_send_fa_assign_map_trap(trapType uint32, trapBuf [800]byte, acc telegraf.Accumulator) error {
+	var faAssignTrap AhTgrafFaAssignMapChangeTrap
+	copy((*[unsafe.Sizeof(faAssignTrap)]byte)(unsafe.Pointer(&faAssignTrap))[:], trapBuf[:unsafe.Sizeof(faAssignTrap)])
+	fields := map[string]interface{}{
+		"trapId_faAssignTrap":      faAssignTrap.TrapId,
+		"ifIndex_faAssignTrap":     faAssignTrap.Ifindex,
+		"isClear_trapMessage_faAssignTrap": GetTrapClearStatus(uint32(faAssignTrap.TrapId), trapBuf[:]),
+	}
+	if faAssignTrap.Count > 0 && faAssignTrap.Count <= AH_TELEGRAF_FA_MAP_MAX_ENTRIES {
+		for i := 0; i < int(faAssignTrap.Count); i++ {
+			vlanId := faAssignTrap.Data[i].Vlan
+			isid := faAssignTrap.Data[i].Isid
+			state := MapStateToString(faAssignTrap.Data[i].State)
+			fields[fmt.Sprintf("vlanId_@%d_faMapData_faAssignTrap", i)] = vlanId
+			fields[fmt.Sprintf("isid_@%d_faMapData_faAssignTrap", i)] = isid
+			fields[fmt.Sprintf("state_@%d_faMapData_faAssignTrap", i)] = state
+		}
+	}
+	acc.AddFields("TrapEvent", fields, nil)
+	return nil
+}
+
+func (t *TrapPlugin) Ah_send_cwp_self_reg_info_send_trap(trapType uint32, trapBuf [800]byte, acc telegraf.Accumulator) error {
+    var CwpSelfRegInfoTrap AhTgrafCwpSelfRegInfoTrap
+    copy((*[unsafe.Sizeof(CwpSelfRegInfoTrap)]byte)(unsafe.Pointer(&CwpSelfRegInfoTrap))[:], trapBuf[:unsafe.Sizeof(CwpSelfRegInfoTrap)])
+
+    acc.AddFields("TrapEvent", map[string]interface{}{
+		"trapId_captivePortalSelfRegInfoTrap": CwpSelfRegInfoTrap.TrapType,
+		"stationMac_captivePortalSelfRegInfoTrap": ahutil.FormatMac(CwpSelfRegInfoTrap.StaMAC),
+		"expireTime_captivePortalSelfRegInfoTrap": time.Unix(int64(CwpSelfRegInfoTrap.ExpireTime), 0).UTC().Format(time.RFC3339),
+		"userName_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.UserName[:]),
+		"email_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.Email[:]),
+		"companyName_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.CompanyName[:]),
+		"ssid_captivePortalSelfRegInfoTrap": ahutil.CleanCString(CwpSelfRegInfoTrap.CwpSsid[:]),
+		"isClear_trapMessage_captivePortalSelfRegInfoTrap": GetTrapClearStatus(trapType, trapBuf[:]),
     }, nil)
     return nil
 }
@@ -619,6 +775,33 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			if err := t.Ah_send_ssid_bind_unbind_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering SSID Bind Unbind trap: %v", err)
 			}
+
+		case AH_MSG_TRAP_TB:
+			var tbTrap AhTgrafTbTrap
+			expected := int(unsafe.Sizeof(tbTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid TB trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering TB trap: %v", err)
+			}
+
+		case AH_MSG_TRAP_VPN:
+			var vpnTrap AhTgrafVpnTrap
+			expected := int(unsafe.Sizeof(vpnTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid VPN trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering VPN trap: %v", err)
+			}
+
 		case AH_MSG_TRAP_BSSID_SPOOFING:
 			var bssidSpoofing AhTgrafBSSIDSpoofingTrap
 			expected := int(unsafe.Sizeof(bssidSpoofing))
@@ -643,6 +826,91 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering DEV_IP_CHANGE trap: %v", err)
 			}
+		case AH_MSG_TRAP_VERIFY_OOB_SN:
+			var oobSn  AhVerifyOobSnTrap
+			expected := int(unsafe.Sizeof(oobSn))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid OutOfBox SerialNumbe size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [AH_TRAP_SIZE_256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering OutOfBox SerialNumber trap: %v", err)
+			}
+		case AH_MSG_TRAP_PORTAL_CHANGE:
+			var portalChange AhPortalChangeTrap
+			expected := int(unsafe.Sizeof(portalChange))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Portal Change size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [AH_TRAP_SIZE_256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering Portal Change trap: %v", err)
+			}
+		case AH_MSG_TRAP_CLT_CAPS:
+			var cltCaps AhTelegrafCltCapsTrap
+			expected := int(unsafe.Sizeof(cltCaps))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid CLIENT CAPS size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering CLIENT CAPS trap: %v", err)
+			}
+		case AH_MSG_TRAP_CAPTURE_WARN:
+			var captureTrap AhTgrafCaptureWarnTrap
+			expected := int(unsafe.Sizeof(captureTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Capture warning trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [600]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Ah_send_capture_warn_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering capture trap: %v", err)
+			}
+		case AH_MSG_TRAP_CAPWAP_DELAY:
+			var capwapDelayTrap AhTgrafCapwapDelayTrap
+			expected := int(unsafe.Sizeof(capwapDelayTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid CAPWAP delay trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering CAPWAP delay trap: %v", err)
+			}
+		case AH_MSG_TRAP_FA_ASSGN_MAP_CHANGE:
+			var faAssignTrap AhTgrafFaAssignMapChangeTrap
+			expected := int(unsafe.Sizeof(faAssignTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid FA assign map change trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [800]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Ah_send_fa_assign_map_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error FA assign map change trap: %v", err)
+			}
+		case AH_MSG_TRAP_SELF_REG_INFO:
+			var CwpSelfRegInfoTrap AhTgrafCwpSelfRegInfoTrap
+			expected := int(unsafe.Sizeof(CwpSelfRegInfoTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Captive Portal self reg info trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [800]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Ah_send_cwp_self_reg_info_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering Captive Portal self reg info trap: %v", err)
+			}
+
 		}
 	}
 }

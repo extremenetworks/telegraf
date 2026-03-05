@@ -5,6 +5,7 @@ package ah_trap
 import (
 	"log"
 	"unsafe"
+	"strings"
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/plugins/common/ahutil"
 )
@@ -76,15 +77,15 @@ func (t *TrapPlugin) Ah_send_sta_leave_trap(trapType uint32, trapBuf [600]byte, 
 		"trapId_staLeaveStatsTrap":				staLeave.TrapId,
 
 		"objectName_staLeaveStatsTrap":			ahutil.CleanCString(staLeave.ObjName[:]),
-		"reasonCode_staLeaveStatsTrap":			staLeave.ReasonCode,
+		"reasonCode_staLeaveStatsTrap":			reasonCodeToString(staLeave.ReasonCode),
 		"description_staLeaveStatsTrap":		ahutil.CleanCString(staLeave.Describable[:]),
 		"disassocTime_staLeaveStatsTrap":		staLeave.DisassocTime,
 		"mac_staLeaveStatsTrap":				ahutil.FormatMac(staLeave.Mac),
 		"rssi_staLeaveStatsTrap":				staLeave.Rssi,
 		"linkUptime_staLeaveStatsTrap":			staLeave.LinkupTime,
-		"clientAuthMethod_staLeaveStatsTrap":		staLeave.AuthMethod,
-		"clientEncryptMethod_staLeaveStatsTrap":	staLeave.EncryptMethod,
-		"clientMacProto_staLeaveStatsTrap":		staLeave.MacProtocol,
+		"clientAuthMethod_staLeaveStatsTrap":		clientAuthMethodToString(int32(staLeave.AuthMethod)),
+		"clientEncryptMethod_staLeaveStatsTrap":	clientEncryptMethodToString(int32(staLeave.EncryptMethod)),
+		"clientMacProto_staLeaveStatsTrap":		    clientMacProtoToString(int32(staLeave.MacProtocol)),
 		"clientCwpUsed_staLeaveStatsTrap":		staLeave.CwpUsed,
 		"clientVlan_staLeaveStatsTrap":			staLeave.Vlan,
 		"clientChannel_staLeaveStatsTrap":		staLeave.Channel,
@@ -117,9 +118,9 @@ func (t *TrapPlugin) Ah_send_sta_leave_trap(trapType uint32, trapBuf [600]byte, 
 		"txairtime_staLeaveStatsTrap":		staLeave.TxAirTime,
 		"ts_staLeaveStatsTrap":				staLeave.Ts,
 		"staAddr6Num_staLeaveStatsTrap":	staLeave.StaAddr6Num,
-		"staAddr6_staLeaveStatsTrap":		IntToIPv6_1(staLeave.StaAddr6[:], int(staLeave.StaAddr6Num)),
-		"eventreasoncode_staLeaveStatsTrap":	staLeave.EventReasonCode,
-		"eventtype_staLeaveStatsTrap":		staLeave.EventType,
+		"eventreasoncode_staLeaveStatsTrap":   eventReasonCodeToString(staLeave.EventReasonCode),
+		"eventtype_staLeaveStatsTrap":		   eventTypeToString(staLeave.EventType),
+		"staAddr6_staLeaveStatsTrap":		strings.Join(IntToIPv6_1(staLeave.StaAddr6[:], int(staLeave.StaAddr6Num)), ","),
 		"isClear_trapMessage_staLeaveStatsTrap": GetTrapClearStatus(trapType, trapBuf[:]),
 	}, nil)
 	return nil

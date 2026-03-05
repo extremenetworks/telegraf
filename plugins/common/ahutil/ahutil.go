@@ -389,14 +389,14 @@ func GetAPName() string {
     return "NA"
 }
 
-func GetRrmId() int {
-	var ret int
+func GetRrmId() int64 {
+	var ret int64
 	ret = 0
 	content, err := os.ReadFile("/tmp/rrmid")
 	if err != nil {
 		return 0
 	}
-	ret, err = strconv.Atoi(string(content))
+	ret, err = strconv.ParseInt(string(content), 10, 64)
 	if err != nil {
 		return 0
 	}

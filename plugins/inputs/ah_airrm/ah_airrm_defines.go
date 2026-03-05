@@ -49,8 +49,7 @@ type ah_ieee80211_airrm_nbr_tbl_t struct {
 
 // AIRRM neighbor information structure
 type ah_ieee80211_airrm_nbr_t struct {
-	rrmId					uint32			// unique identifier for RRM
-	_pad0					[4]byte			// pad to align timestamp (was implicit)
+	rrmId					uint64			// unique identifier for RRM
 	timestamp				uint64			// Date and timestamp
 	extremeAP				uint8			// Is AP managed by Extreme?
 	rssi					int8			// RSS value in dBm

@@ -24,7 +24,7 @@ import (
 var (
 	offsetsMutex = new(sync.Mutex)
 	newLineByte  = []byte("\n")
-	rrmid int = 0
+	rrmid int64 = 0
 )
 
 
