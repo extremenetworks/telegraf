@@ -22,6 +22,7 @@ const (
 	TRAP_DCRPT_LEN           = 96
 	AH_MSG_TRAP_DFS_BANG     = 12
 	AH_MSG_TRAP_STA_LEAVE_STATS = 6
+	AH_MSG_TRAP_PSE          = 13
 	MACADDR_LEN              = 6
 	MAX_DESCRIBLE_LEN        = 128
 	AH_CAPWAP_STAT_NAME_MAX_LEN = 32
@@ -111,6 +112,43 @@ func severityToString(level int32) string {
 	default:
 		return "UNKNOWN"
 	}
+}
+
+func errorTypeToString(errorType int32) string {
+	switch errorType {
+	case 0:
+		return "NO_ERROR"
+	case 1:
+		return "TEST_ERROR"
+	case 2:
+		return "CLASS_ERROR"
+	case 3:
+		return "STARTUP_OVERLOAD"
+	case 4:
+		return "STARTUP_UNDERLOAD"
+	case 5:
+		return "STARTUP_SHORT"
+	case 6:
+		return "STARTUP_DVDT_FAIL"
+	case 7:
+		return "STARTUP_TEST_ERROR"
+	case 8:
+		return "OVERLOAD"
+	case 9:
+		return "UNDERLOADER"
+	case 10:
+		return "SHORT_CIRCUIT"
+	case 11:
+		return "SYSTEM_DISABLED"
+	case 12:
+		return "OTHER_ERROR"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+func portToPseString(port int32) string {
+	return fmt.Sprintf("PSE%d", port)
 }
 
 func clientAuthMethodToString(method int32) string {
@@ -376,6 +414,15 @@ type AhTgrafCapwapDelayTrap struct {
 	_             [4]byte
 }
 
+
+type AhTgrafPseTrap struct {
+	TrapType  uint8
+	TrapId    uint8
+	ObjName   [AH_MAX_TRAP_OBJ_NAME]byte
+	Desc      [TRAP_DCRPT_LEN]byte
+	Port      uint8
+	ErrorFlag uint8
+}
 type AhTgrafSsidBindUnbindTrap struct {
 	TrapType    uint8
 	TrapID      uint8

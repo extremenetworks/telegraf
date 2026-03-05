@@ -431,6 +431,18 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 			"isClear_trapMessage_vpnTrap": GetTrapClearStatus(uint32(vpnTrap.TrapId), trapBuf[:]),
 		}, nil)
 
+	case AH_MSG_TRAP_PSE:
+		var pse AhTgrafPseTrap
+		copy((*[unsafe.Sizeof(pse)]byte)(unsafe.Pointer(&pse))[:], trapBuf[:unsafe.Sizeof(pse)])
+
+		acc.AddFields("TrapEvent", map[string]interface{}{
+			"trapId_pseTrap":            pse.TrapId,
+			"objName_pseTrap":           ahutil.CleanCString(pse.ObjName[:]),
+			"port_pseTrap":              portToPseString(pse.Port),
+			"errorType_pseTrap":         errorTypeToString(pse.ErrorFlag),
+			"desc_pseTrap":              ahutil.CleanCString(pse.Desc[:]),
+		}, nil)
+
 	case AH_MSG_TRAP_DEV_IP_CHANGE:
 		var devIpChange AhTgrafDevIpChangeTrap
 		copy((*[unsafe.Sizeof(devIpChange)]byte)(unsafe.Pointer(&devIpChange))[:], trapBuf[:unsafe.Sizeof(devIpChange)])
@@ -724,6 +736,19 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering DFS trap: %v", err)
+			}
+
+		case AH_MSG_TRAP_PSE:
+			var pse AhTgrafPseTrap
+			expected := int(unsafe.Sizeof(pse))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid PSE size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [256]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Gather_Ah_send_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering PSE trap: %v", err)
 			}
 
 		case AH_MSG_TRAP_STA_LEAVE_STATS:
