@@ -121,6 +121,17 @@ func clientAuthMethodToString(method int32) string {
 	}
 }
 
+func alarmTypeToString(alarmType int32) string {
+    switch alarmType {
+    case 0:
+        return "NET_JOIN"
+    case 1:
+        return "BIND_DN"
+    default:
+        return "UNKNOWN"
+    }
+}
+
 func clientEncryptMethodToString(method int32) string {
 	switch method {
 	case 0:
