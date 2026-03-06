@@ -31,6 +31,8 @@ const (
 	AH_MSG_TRAP_TB           = 2
 	AH_TRAP_SIZE_300	  = 300
 	AH_TRAP_SIZE_256         = 256
+	AH_MSG_TRAP_POE          = 16
+	AH_MSG_TRAP_BOOTOS       = 121
 	AH_MSG_TRAP_DEV_IP_CHANGE = 17
 	AH_MSG_TRAP_CLT_CAPS = 119
 	AH_MGT0_ADDR6_NUM_MAX    = 2
@@ -500,6 +502,22 @@ type AhTelegrafCltCapsTrap struct {
 	Uapsd       [AH_TRAP_CLT_CAPS_MIN_STR_LEN]byte
 }
 
+
+type AhTgrafPoeTrap struct {
+       TrapID      uint8
+       IfIndex     uint8
+       PowerClass  uint8
+       IfName      [MAX_OBJ_NAME_LEN + 1]byte
+       Description [TRAP_DCRPT_LEN]byte
+}
+
+type AhTgrafBootOsTrap struct {
+	TrapID		uint8
+	OsType		uint8
+	Status		uint8
+	Description	[TRAP_DCRPT_LEN]byte
+}
+
 type AhFailureTrap struct {
 	Name  [AH_MAX_TRAP_OBJ_NAME+1]byte
 	Cause int32
@@ -745,4 +763,38 @@ func GetTrapClearStatus(trapType uint32, unionData []byte) bool {
 	}
 
 	return isClear
+}
+
+/*
+Helper function to convert bootos status value to string
+*/
+func bootosStatusToString(status uint8) string {
+       switch status {
+       case 0:
+               return "SUCCESS"
+       case 1:
+               return "FAILURE"
+       case 2:
+               return "LEGACY_HW"
+	default:
+		return "UNKNOWN"
+       }
+}
+
+/*
+Helper function to convert osType value to string for bootos trap
+*/
+func osTypeToString(osType uint8) string {
+	switch osType{
+	case 0:
+		return "HOS"
+	case 1:
+		return "WiNG"
+	case 2:
+		return "WiNG_CAMP"
+	case 3:
+		return "WiNG_DIST"
+	default:
+		return "UNKNOWN"
+	}
 }
