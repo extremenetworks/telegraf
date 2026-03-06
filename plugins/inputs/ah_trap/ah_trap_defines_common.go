@@ -58,7 +58,10 @@ const (
 	AH_TELEGRAF_CWP_FIELD_LEN      = 65
 	AH_TELEGRAF_CWP_MAX_FIELDS     = 8
 	AH_TELEGRAF_CWP_MAX_OPT_FIELDS = 8
-
+	AH_MSG_TRAP_GENERIC_ALARM     = 113
+	AH_TELEGRAF_GENERIC_ALARM_DESC_LEN   = 256
+	AH_TELEGRAF_GENERIC_ALARM_TAG3_LEN   = 64
+	AH_TELEGRAF_GENERIC_ALARM_MAX_ITEMS  = 6
 )
 
 const (
@@ -416,6 +419,23 @@ type AhTgrafCwpInfoTrap struct {
         OptFieldCount uint8
         Fields        [AH_TELEGRAF_CWP_MAX_FIELDS]AhTgrafCwpField
         OptFields     [AH_TELEGRAF_CWP_MAX_OPT_FIELDS]AhTgrafCwpField
+}
+
+type AhTelegrafGenericAlarmItem struct {
+       AlarmId  uint16
+       Severity uint8
+       Clear    uint8
+       Desc     [AH_TELEGRAF_GENERIC_ALARM_DESC_LEN]byte
+       Tag1     int32
+       Tag2     int32
+       Tag3     [AH_TELEGRAF_GENERIC_ALARM_TAG3_LEN]byte
+}
+
+type AhTelegrafGenericAlarmTrap struct {
+       TrapType uint8
+       _        [1]byte
+       ItemNum  uint16
+       Items    [AH_TELEGRAF_GENERIC_ALARM_MAX_ITEMS]AhTelegrafGenericAlarmItem
 }
 
 type AhTgrafBSSIDSpoofingTrap struct {
