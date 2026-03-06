@@ -688,6 +688,38 @@ func (t *TrapPlugin) Ah_send_cwp_info_trap(trapType uint32, trapBuf [2046]byte, 
     return nil
 }
 
+func (t *TrapPlugin) Ah_send_generic_alarm_trap(trapType uint32, trapBuf [2048]byte, acc telegraf.Accumulator) error {
+	var genericAlarmTrap AhTelegrafGenericAlarmTrap
+	copy((*[unsafe.Sizeof(genericAlarmTrap)]byte)(unsafe.Pointer(&genericAlarmTrap))[:], trapBuf[:unsafe.Sizeof(genericAlarmTrap)])
+
+	fields := map[string]interface{}{
+		"trapId_genericAlarmTrap": genericAlarmTrap.TrapType,
+	}
+
+	itemCount := int(genericAlarmTrap.ItemNum)
+	if itemCount > AH_TELEGRAF_GENERIC_ALARM_MAX_ITEMS {
+		itemCount = AH_TELEGRAF_GENERIC_ALARM_MAX_ITEMS
+	}
+
+	for i := 0; i < itemCount; i++ {
+		item := genericAlarmTrap.Items[i]
+		fields[fmt.Sprintf("alarmId_@%d_alarms_genericAlarmTrap", i)] = item.AlarmId
+		fields[fmt.Sprintf("severityLevel_trapMessage_@%d_alarms_genericAlarmTrap", i)] = severityToString(int32(item.Severity))
+		fields[fmt.Sprintf("desc_trapMessage_@%d_alarms_genericAlarmTrap", i)] = ahutil.CleanCString(item.Desc[:])
+		fields[fmt.Sprintf("tag1_@%d_alarms_genericAlarmTrap", i)] = item.Tag1
+		fields[fmt.Sprintf("tag2_@%d_alarms_genericAlarmTrap", i)] = item.Tag2
+		fields[fmt.Sprintf("tag3_@%d_alarms_genericAlarmTrap", i)] = ahutil.CleanCString(item.Tag3[:])
+		if item.Clear == 1 {
+			fields[fmt.Sprintf("isClear_trapMessage_@%d_alarms_genericAlarmTrap", i)] = "true"
+		} else {
+			fields[fmt.Sprintf("isClear_trapMessage_@%d_alarms_genericAlarmTrap", i)] = "false"
+		}
+	}
+
+	acc.AddFields("TrapEvent", fields, nil)
+	return nil
+}
+
 /*
  trapListener listens for incoming trap messages on a UDP connection,
  extracts the trap type and payload, and processes supported trap types.
@@ -925,6 +957,18 @@ func (t *TrapPlugin) trapListener(conn net.PacketConn) {
 			copy(trapBuf[:expected], payload)
 			if err := t.Ah_send_cwp_info_trap(trapType, trapBuf, t.acc); err != nil {
 				log.Printf("[ah_trap] Error gathering CWP info trap: %v", err)
+			}
+		case AH_MSG_TRAP_GENERIC_ALARM:
+			var genericAlarmTrap AhTelegrafGenericAlarmTrap
+			expected := int(unsafe.Sizeof(genericAlarmTrap))
+			if len(payload) != expected {
+				log.Printf("[ah_trap] Invalid Generic Alarm trap size: got %d, expected %d", len(payload), expected)
+				continue
+			}
+			var trapBuf [2048]byte
+			copy(trapBuf[:expected], payload)
+			if err := t.Ah_send_generic_alarm_trap(trapType, trapBuf, t.acc); err != nil {
+				log.Printf("[ah_trap] Error gathering Generic Alarm trap: %v", err)
 			}
 		}
 	}
