@@ -367,10 +367,18 @@ func (t *TrapPlugin) Gather_Ah_send_trap(trapType uint32, trapBuf [256]byte, acc
 		if optLen > len(dhcp.Data) {
 			optLen = len(dhcp.Data)
 		}
+		
+		option := map[string]interface{}{
+			"code":  55,
+			"value": optionValue,
+		}
+
+		optionJSON, _ := json.Marshal(option)
+
 		acc.AddFields("TrapEvent", map[string]interface{}{
-			"trapId_dhcpOption55Trap":  dhcp.TrapId,
-			"staMac_dhcpOption55Trap":    ahutil.FormatMac(dhcp.StaMac),
-			"option55_dhcpOption55Trap":  ahutil.CleanCString(dhcp.Data[:optLen]),
+			"trapId_dhcpOptionTrap":     dhcp.TrapId,
+			"stationMac_dhcpOptionTrap": ahutil.FormatMac(dhcp.StaMac),
+			"option_dhcpOptionTrap":     string(optionJSON),
 		}, nil)
 
 	case AH_MSG_TRAP_DFS_BANG:
