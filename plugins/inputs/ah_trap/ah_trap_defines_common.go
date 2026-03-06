@@ -53,6 +53,12 @@ const (
 	AH_TELEGRAF_SELF_REG_MAX_LEN  = 129
 	AH_TELEGRAF_SELF_REG_USER_LEN = 257
 	AH_MSG_TRAP_SELF_REG_INFO     = 11
+	AH_MSG_TRAP_REPORT_CWP_INFO   = 15
+	AH_TELEGRAF_CWP_FIELD_NAME_LEN = 50
+	AH_TELEGRAF_CWP_FIELD_LEN      = 65
+	AH_TELEGRAF_CWP_MAX_FIELDS     = 8
+	AH_TELEGRAF_CWP_MAX_OPT_FIELDS = 8
+
 )
 
 const (
@@ -395,6 +401,21 @@ type AhTgrafCwpSelfRegInfoTrap struct {
         Email       [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
         CompanyName [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
         CwpSsid     [AH_TELEGRAF_SELF_REG_MAX_LEN]byte
+}
+
+type AhTgrafCwpField struct {
+        Name  [AH_TELEGRAF_CWP_FIELD_NAME_LEN]byte
+        Value [AH_TELEGRAF_CWP_FIELD_LEN]byte
+}
+
+type AhTgrafCwpInfoTrap struct {
+        TrapType      uint8
+        MacAddr       [MACADDR_LEN]byte
+        ObjName       [6]byte
+        FieldCount    uint8
+        OptFieldCount uint8
+        Fields        [AH_TELEGRAF_CWP_MAX_FIELDS]AhTgrafCwpField
+        OptFields     [AH_TELEGRAF_CWP_MAX_OPT_FIELDS]AhTgrafCwpField
 }
 
 type AhTgrafBSSIDSpoofingTrap struct {
